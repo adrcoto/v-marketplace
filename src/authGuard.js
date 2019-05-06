@@ -1,9 +1,10 @@
 import store from './store/store';
 
 export default (to, from, next) => {
-    if (store.getters.user)
+    if (store.getters.token)
         next();
-    else
-        next('/autentificare');
-
+    else {
+        store.dispatch('showLogin');
+        next('/');
+    }
 }

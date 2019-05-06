@@ -37,28 +37,30 @@
             <v-spacer></v-spacer>
             <v-toolbar-items class="hidden-sm-and-down" id="hook">
 
-                <v-btn flat v-if="auth">
+                <v-btn class="text-none font-weight-regular subheading" flat v-if="auth">
                     <v-avatar size="45px" tile>
                         <img src="https://cdn.vuetifyjs.com/images/logos/logo.svg" alt="Vuetify">
                     </v-avatar>
                     {{user}}
                 </v-btn>
-                <v-btn flat v-if="!auth" @click.stop="openLoginModal">
+                <v-btn class="text-none font-weight-regular subheading" flat v-if="!auth" @click.stop="openLoginModal">
                     <v-icon left>lock_open</v-icon>
                     Autentificare
                 </v-btn>
 
-                <v-btn flat v-if="!auth" @click.stop="openRegisterModal">
+                <v-btn class="text-none font-weight-regular subheading" flat v-if="!auth"
+                       @click.stop="openRegisterModal">
                     <v-icon left>face</v-icon>
                     Creare cont
                 </v-btn>
 
-                <v-btn flat v-for="item in menuItems" :key="item.title" :to="item.link">
+                <v-btn class="text-none font-weight-regular subheading" flat v-for="item in menuItems" :key="item.title"
+                       :to="item.link">
                     <v-icon left>{{item.icon}}</v-icon>
                     {{item.title}}
                 </v-btn>
 
-                <v-btn flat v-if="auth" @click="logout">
+                <v-btn class="text-none font-weight-regular subheading" flat v-if="auth" @click="logout">
                     <v-icon left>exit_to_app</v-icon>
                     Deconectare
                 </v-btn>
@@ -76,7 +78,8 @@
 
     export default {
         data: () => ({
-            drawer: false
+            drawer: false,
+            dialog: false
         }),
         methods: {
             openLoginModal() {
@@ -91,21 +94,16 @@
         },
         computed: {
             menuItems() {
-                let menuItems = [
+                const menuItems = [
                     {icon: 'add_to_queue', title: 'Adaugare anunt', link: '/anunt/nou'}
                 ];
-                if (this.auth) {
-                    menuItems = [
-                        {icon: 'add_to_queue', title: 'Adaugare anunt', link: '/anunt/nou'}
-                    ];
-                }
                 return menuItems;
             },
             auth() {
                 return this.$store.getters.isAuthenticated;
             },
             user() {
-                return this.$store.getters.user;
+                return this.$store.getters.user.name;
             }
         }
     };

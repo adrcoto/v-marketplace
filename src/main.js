@@ -3,19 +3,18 @@ import './plugins/vuetify';
 import App from './App.vue';
 import VueRouter from 'vue-router';
 import store from './store/store';
-import {routes} from './router';
+import router from './router';
 import Vuelidate from 'vuelidate';
 
+import Alert from './components/modal/shared/Alert'
 
 Vue.config.productionTip = false;
 
-const router = new VueRouter({
-    mode: 'history',
-    routes
-});
-
 Vue.use(Vuelidate);
 Vue.use(VueRouter);
+
+Vue.component('app-alert', Alert);
+
 new Vue({
     store,
     router,

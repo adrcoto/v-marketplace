@@ -1,10 +1,10 @@
 <template>
-    <v-app app>
+    <v-app app dark>
         <app-header/>
+        <app-login-modal/>
+        <app-register-modal/>
         <v-container>
             <v-content>
-                <app-login-modal/>
-                <app-register-modal/>
                 <router-view></router-view>
             </v-content>
         </v-container>

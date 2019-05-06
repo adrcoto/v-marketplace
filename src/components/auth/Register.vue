@@ -82,7 +82,7 @@
                     email: this.email,
                     password: this.password
                 };
-                this.$store.dispatch('register',authData);
+                this.$store.dispatch('register', authData);
             }
         }
     };
