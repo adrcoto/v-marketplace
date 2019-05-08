@@ -37,12 +37,28 @@
             <v-spacer></v-spacer>
             <v-toolbar-items class="hidden-sm-and-down" id="hook">
 
-                <v-btn class="text-none font-weight-regular subheading" flat v-if="auth">
-                    <v-avatar size="45px" tile>
-                        <img src="https://cdn.vuetifyjs.com/images/logos/logo.svg" alt="Vuetify">
-                    </v-avatar>
-                    {{user}}
-                </v-btn>
+
+                <v-menu v-if="auth" offset-y>
+                    <v-btn class="text-none font-weight-regular subheading" flat slot="activator">
+                        <v-avatar size="45px" tile>
+                            <img src="https://cdn.vuetifyjs.com/images/logos/logo.svg" alt="Vuetify">
+                        </v-avatar>
+                        {{user}}
+                        <v-icon>expand_more</v-icon>
+                    </v-btn>
+                    <v-list>
+                        <v-list-tile
+                                v-for="(item, index) in items"
+                                :key="index"
+                                @click=""
+                        >
+                            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                        </v-list-tile>
+                    </v-list>
+
+                </v-menu>
+
+
                 <v-btn class="text-none font-weight-regular subheading" flat v-if="!auth" @click.stop="openLoginModal">
                     <v-icon left>lock_open</v-icon>
                     Autentificare
@@ -79,7 +95,13 @@
     export default {
         data: () => ({
             drawer: false,
-            dialog: false
+            dialog: false,
+            items: [
+                {title: 'Anunturile mele'},
+                {title: 'Mesaje'},
+                {title: 'Favorite'},
+                {title: 'Setari cont'},
+            ],
         }),
         methods: {
             openLoginModal() {
@@ -90,22 +112,21 @@
             },
             logout() {
                 this.$store.dispatch('logout');
-            }
+            },
         },
         computed: {
             menuItems() {
-                const menuItems = [
-                    {icon: 'add_to_queue', title: 'Adaugare anunt', link: '/anunt/nou'}
+                return [
+                    {icon: 'add_to_queue', title: 'Adaugare anunt', link: '/anunt/nou'},
                 ];
-                return menuItems;
             },
             auth() {
                 return this.$store.getters.isAuthenticated;
             },
             user() {
                 return this.$store.getters.user.name;
-            }
-        }
+            },
+        },
     };
 </script>
 

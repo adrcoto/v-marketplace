@@ -5,6 +5,7 @@ import router from '../router';
 //modules
 import loginModal from './modules/loginModal';
 import registerModal from './modules/registerModal';
+import darkTheme from './modules/darkTheme'
 // axios.defaults.headers.common.Authorization = 'Bearer ' + token
 
 Vue.use(Vuex);
@@ -15,10 +16,11 @@ export default new Vuex.Store({
         user: {
             id: null,
             name: null,
-            email: null
+            email: null,
         },
         loading: false,
-        error: null
+        error: null,
+        verify: false
     },
     mutations: {
         authUser(state, userData) {
@@ -46,8 +48,10 @@ export default new Vuex.Store({
         },
         clearError(state) {
             state.error = null;
+        },
+        setVerify(state){
+            state.verify = true;
         }
-
     },
     getters: {
         token: state => {
@@ -64,6 +68,9 @@ export default new Vuex.Store({
         },
         error: state => {
             return state.error;
+        },
+        verify: state => {
+            return state.verify;
         }
     },
     /**
@@ -83,13 +90,13 @@ export default new Vuex.Store({
                 name: authData.name,
                 email: authData.email,
                 password: authData.password,
-                url: process.env.VUE_APP_URL + '/verificare-cont'
+                url: process.env.VUE_APP_URL + '/verificare-cont',
             }).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     commit('setLoading', false);
                     console.log('Register -> Success');
                     commit('closeRegister');
-                    router.push('/');
+                    router.push('/verificare-cont/0');
                 } else {
                     console.log('Register -> Error');
                     console.log('Register -> Error -> Message: ' + response.data.errorMessage);
@@ -105,25 +112,25 @@ export default new Vuex.Store({
          * @param authData
          */
         login({commit}, authData) {
-            // commit('setLoading', true);
-            // commit('clearError');
+            commit('setLoading', true);
+            commit('clearError');
             axios.post('/login', {
                 email: authData.email,
-                password: authData.password
+                password: authData.password,
             }).then(response => {
-                // commit('setLoading', false);
+                commit('setLoading', false);
 
                 if (response && response.data && response.data.responseType === 'success') {
+                    commit('closeLogin');
                     console.log('Login -> Success');
                     const authData = {
                         token: response.data.data.jwt,
                         id: response.data.data.user.id,
                         name: response.data.data.user.name,
-                        email: response.data.data.user.email
+                        email: response.data.data.user.email,
                     };
                     localStorage.setItem('token', authData.token);
                     commit('authUser', authData);
-                    commit('closeLogin');
                     router.push('/profil');
                 } else {
                     console.log('Login -> Error');
@@ -133,31 +140,58 @@ export default new Vuex.Store({
                 }
             });
         },
+        /**
+         * Re-login on refresh
+         * @param commit
+         * @returns {number}
+         */
         tryAutoLogin({commit}) {
             const token = localStorage.getItem('token');
             if (!token)
                 return 0;
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
             axios.get('/user').then(res => {
-                commit('authUser', res.data.data);
+                const authData = {
+                    token,
+                    id: res.data.data.id,
+                    name: res.data.data.name,
+                    email: res.data.data.email,
+                };
+                commit('authUser', authData);
             });
         },
+        /**
+         * Logout
+         * @param commit
+         */
         logout({commit}) {
             router.push('/');
             commit('clearAuthData');
         },
+        /**
+         * Verify account
+         * @param commit
+         * @param state
+         * @param authData
+         * @returns {number}
+         */
         verify({commit, state}, authData) {
             if (state.token)
                 return 0;
             axios.post('verify', {
-                code: authData.code
-            }).then(res => {
-                console.log(res.data);
-            }).catch(error => console.log(error));
-        }
+                code: authData.code,
+            }).then(response => {
+        console.log(response);
+                if (response && response.data && response.data.responseType === 'success'){
+                    console.log('intru');
+                    state.verify = true;
+                }
+            });
+        },
     },
     modules: {
         loginModal,
-        registerModal
-    }
+        registerModal,
+        darkTheme
+    },
 });
