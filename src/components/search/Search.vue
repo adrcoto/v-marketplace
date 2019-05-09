@@ -8,7 +8,7 @@
                         hide-details
                         prepend-inner-icon="search"
                         label="Search"
-                        class="hidden-sm-and-down"
+
                 ></v-text-field>
             </v-card>
         </v-flex>
