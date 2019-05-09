@@ -1,19 +1,19 @@
 <template>
-    <v-layout>
-        <app-items></app-items>
-    </v-layout>
+    <section>
+        <app-search class="mb-3"/>
+        <app-items/>
+    </section>
 </template>
 
 <script>
-    import items from '../components/item/Items';
-
+    import Search from '../components/search/Search';
+    import Items from '../components/item/Items';
 
     export default {
         components: {
-            appItems: items
+            appItems: Items,
+            appSearch: Search,
         },
-        methods: {
-
-        }
+        methods: {},
     };
 </script>

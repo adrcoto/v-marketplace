@@ -33,10 +33,8 @@
             <v-toolbar-title>
                 <router-link to="/" tag="span" style="cursor: pointer">V-Marketplace</router-link>
             </v-toolbar-title>
-
             <v-spacer></v-spacer>
             <v-toolbar-items class="hidden-sm-and-down" id="hook">
-
 
                 <v-menu v-if="auth" offset-y>
                     <v-btn class="text-none font-weight-regular subheading" flat slot="activator">
@@ -55,9 +53,7 @@
                             <v-list-tile-title>{{ item.title }}</v-list-tile-title>
                         </v-list-tile>
                     </v-list>
-
                 </v-menu>
-
 
                 <v-btn class="text-none font-weight-regular subheading" flat v-if="!auth" @click.stop="openLoginModal">
                     <v-icon left>lock_open</v-icon>
