@@ -1,5 +1,5 @@
 <template>
-    <v-app app dark>
+    <v-app app>
         <app-header/>
         <app-login-modal/>
         <app-register-modal/>

@@ -16,14 +16,16 @@
                                                 <div v-if="hover"
                                                      class="d-flex transition-fast-in-fast-out v-card--reveal">
                                                     <v-card-actions>
-                                                        <v-btn icon>
-                                                            <v-icon color="white">favorite</v-icon>
+                                                        <v-btn icon @click="like = !like"
+                                                               :class="{'hover-btn-pressed': like, 'hover-btn': !like}"
+                                                               class="hover-btn">
+                                                            <v-icon>favorite</v-icon>
                                                         </v-btn>
-                                                        <v-btn icon>
-                                                            <v-icon color="white">bookmark</v-icon>
+                                                        <v-btn icon class="hover-btn">
+                                                            <v-icon>bookmark</v-icon>
                                                         </v-btn>
-                                                        <v-btn icon>
-                                                            <v-icon color="white">share</v-icon>
+                                                        <v-btn icon class="hover-btn">
+                                                            <v-icon>share</v-icon>
                                                         </v-btn>
                                                         <v-spacer></v-spacer>
                                                     </v-card-actions>
@@ -34,7 +36,9 @@
                                         <v-card-title primary-title class="item-card-title subheading font-weight-bold">
                                             {{card.title}}
                                         </v-card-title>
-                                        <span class="price shadow"><i>Preţ</i>61.500 EUR</span>
+                                        <v-chip class="price" color="primary" app>
+                                            61.500 EUR
+                                        </v-chip>
                                         <v-card-actions class="item-card-action">
                                             <div v-if="hover"
                                                  class="d-flex transition-fast-in-fast-out">
@@ -72,6 +76,7 @@
     export default {
         components: {Home},
         data: () => ({
+            like: false,
             show: false,
             cards: [
                 // {title: 'Pre-fab homes', src: 'https://cdn.vuetifyjs.com/images/cards/house.jpg', flex: 12},
@@ -433,16 +438,6 @@
 
 <style scoped>
 
-    /*.item-card-price {*/
-    /*    !*top: 165px;*!*/
-    /*    !*right: 10px;*!*/
-    /*   right: 100px;*/
-    /*    height: 30px;*/
-    /*    padding: 0 6px;*/
-    /*    line-height: 30px;*/
-    /*    font-size: 18px;*/
-    /*    opacity: .8;*/
-    /*}*/
     .price {
         position: absolute;
         top: 170px;
@@ -453,22 +448,25 @@
         color: #fff;
         font-weight: bold;
         font-size: 18px;
-        background-color: #009687;
-    }
-
-    .price > i {
-        float: left;
-        font-size: 9px;
-        line-height: 9px;
-        color: #b2dfdb;
-        margin: 7px 5px 0 0;
-        font-style: normal;
-        text-transform: uppercase;
+        opacity: .8;
     }
 
     .item-card-title {
         height: 110px;
         overflow: hidden;
     }
+
+    .hover-btn {
+        color: white;
+    }
+
+    .hover-btn:hover {
+        color: orangered;
+    }
+
+    .hover-btn-pressed {
+        color: orangered;
+    }
+
 
 </style>

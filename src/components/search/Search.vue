@@ -8,7 +8,6 @@
                         hide-details
                         prepend-inner-icon="search"
                         label="Search"
-
                 ></v-text-field>
             </v-card>
         </v-flex>
