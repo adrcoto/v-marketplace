@@ -437,7 +437,6 @@
                 </v-flex>-->
 
 <style scoped>
-
     .price {
         position: absolute;
         top: 170px;
@@ -467,6 +466,5 @@
     .hover-btn-pressed {
         color: orangered;
     }
-
 
 </style>
