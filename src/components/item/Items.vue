@@ -5,13 +5,15 @@
             <v-card>
                 <v-container>
                     <v-layout row wrap>
-                        <v-flex v-for="card in cards" :key="card.title" xs12 sm6 md4 lg3 xl2>
+                        <v-flex v-for="(item, index) in items" :key="item.item_id" xs12 sm6 md4 lg3 xl2>
                             <v-layout justify-center>
                                 <v-hover>
                                     <v-card slot-scope="{ hover }" :class="`elevation-${hover ? 20 : 2}`" width="92%"
                                             height="95%"
                                             class="item-card mb-4">
-                                        <v-img :src="card.src" height="185">
+                                        <v-img :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
+                                               height="185">
+
                                             <v-expand-transition>
                                                 <div v-if="hover"
                                                      class="d-flex transition-fast-in-fast-out v-card--reveal">
@@ -20,6 +22,7 @@
                                                                :class="{'hover-btn-pressed': like, 'hover-btn': !like}"
                                                                class="hover-btn">
                                                             <v-icon>favorite</v-icon>
+                                                            <!--                                                            http://dev.shop/storage/images/images/jG1QCFkVHIW4kDqwbCzl30pNhxC38Moehy1961Wn.jpeg-->
                                                         </v-btn>
                                                         <v-btn icon class="hover-btn">
                                                             <v-icon>bookmark</v-icon>
@@ -33,24 +36,25 @@
                                             </v-expand-transition>
                                         </v-img>
 
-                                        <v-card-title primary-title class="item-card-title subheading font-weight-bold">
-                                            {{card.title}}
+                                        <v-card-title primary-title
+                                                      class="item-card-title subheading font-weight-bold">
+                                            {{item.title}}
                                         </v-card-title>
                                         <v-chip class="price" color="primary" app>
-                                            61.500 EUR
+                                            {{item.price}}
                                         </v-chip>
                                         <v-card-actions class="item-card-action">
                                             <div v-if="hover"
                                                  class="d-flex transition-fast-in-fast-out">
                                                     <span>
                                                         <v-icon class="grey--text">location_on</v-icon>
-                                                        {{card.location}}
+                                                        {{item.location}}
                                                     </span>
                                             </div>
                                             <div v-else>
                                                 <span>
                                                     <v-icon class="gray--text">query_builder</v-icon>
-                                                    {{card.date}}
+                                                    {{item.created_at}}
                                                 </span>
                                             </div>
                                             <v-spacer/>
@@ -71,342 +75,18 @@
 </template>
 
 <script>
-    import Home from '../../views/Home';
-
     export default {
-        components: {Home},
+
         data: () => ({
+            API_URL: 'http://dev.shop/storage/',
             like: false,
             show: false,
-            cards: [
-                // {title: 'Pre-fab homes', src: 'https://cdn.vuetifyjs.com/images/cards/house.jpg', flex: 12},
-                {
-                    title: 'Buton reglare lumini Vw Scirocco 2008-prezent Cod: 1K8941333',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_5.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '23.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_2.jpg',
-                    location: 'Craiova, Dolj',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/6/100/10042046_iphone-8-64-gb-space-grey_1.jpg',
-                    location: 'Bals, Olt',
-                    date: 'Acum o ora',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/8/896/8964358_husa-plastic-slim-perforata-huawei-mate-10-10-pro-10-lite_2.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Buton reglare lumini Vw Scirocco 2008-prezent Cod: 1K8941333',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_5.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '23.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_2.jpg',
-                    location: 'Craiova, Dolj',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/6/100/10042046_iphone-8-64-gb-space-grey_1.jpg',
-                    location: 'Bals, Olt',
-                    date: 'Acum o ora',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/8/896/8964358_husa-plastic-slim-perforata-huawei-mate-10-10-pro-10-lite_2.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Buton reglare lumini Vw Scirocco 2008-prezent Cod: 1K8941333',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_5.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '23.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_2.jpg',
-                    location: 'Craiova, Dolj',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/6/100/10042046_iphone-8-64-gb-space-grey_1.jpg',
-                    location: 'Bals, Olt',
-                    date: 'Acum o ora',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/8/896/8964358_husa-plastic-slim-perforata-huawei-mate-10-10-pro-10-lite_2.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Buton reglare lumini Vw Scirocco 2008-prezent Cod: 1K8941333',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_5.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '23.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_2.jpg',
-                    location: 'Craiova, Dolj',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/6/100/10042046_iphone-8-64-gb-space-grey_1.jpg',
-                    location: 'Bals, Olt',
-                    date: 'Acum o ora',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/8/896/8964358_husa-plastic-slim-perforata-huawei-mate-10-10-pro-10-lite_2.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Buton reglare lumini Vw Scirocco 2008-prezent Cod: 1K8941333',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_5.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '23.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_2.jpg',
-                    location: 'Craiova, Dolj',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/6/100/10042046_iphone-8-64-gb-space-grey_1.jpg',
-                    location: 'Bals, Olt',
-                    date: 'Acum o ora',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/8/896/8964358_husa-plastic-slim-perforata-huawei-mate-10-10-pro-10-lite_2.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Buton reglare lumini Vw Scirocco 2008-prezent Cod: 1K8941333',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_5.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '23.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_2.jpg',
-                    location: 'Craiova, Dolj',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/6/100/10042046_iphone-8-64-gb-space-grey_1.jpg',
-                    location: 'Bals, Olt',
-                    date: 'Acum o ora',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/8/896/8964358_husa-plastic-slim-perforata-huawei-mate-10-10-pro-10-lite_2.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Buton reglare lumini Vw Scirocco 2008-prezent Cod: 1K8941333',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_5.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '23.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_2.jpg',
-                    location: 'Craiova, Dolj',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/6/100/10042046_iphone-8-64-gb-space-grey_1.jpg',
-                    location: 'Bals, Olt',
-                    date: 'Acum o ora',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/8/896/8964358_husa-plastic-slim-perforata-huawei-mate-10-10-pro-10-lite_2.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Buton reglare lumini Vw Scirocco 2008-prezent Cod: 1K8941333',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_5.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '23.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_2.jpg',
-                    location: 'Craiova, Dolj',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/6/100/10042046_iphone-8-64-gb-space-grey_1.jpg',
-                    location: 'Bals, Olt',
-                    date: 'Acum o ora',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/8/896/8964358_husa-plastic-slim-perforata-huawei-mate-10-10-pro-10-lite_2.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Buton reglare lumini Vw Scirocco 2008-prezent Cod: 1K8941333',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_5.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '23.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_2.jpg',
-                    location: 'Craiova, Dolj',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/6/100/10042046_iphone-8-64-gb-space-grey_1.jpg',
-                    location: 'Bals, Olt',
-                    date: 'Acum o ora',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/8/896/8964358_husa-plastic-slim-perforata-huawei-mate-10-10-pro-10-lite_2.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Buton reglare lumini Vw Scirocco 2008-prezent Cod: 1K8941333',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_5.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '23.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media2.lajumate.ro/media/i/new_details/5/100/10049795_opel-astra-caravan_2.jpg',
-                    location: 'Craiova, Dolj',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/6/100/10042046_iphone-8-64-gb-space-grey_1.jpg',
-                    location: 'Bals, Olt',
-                    date: 'Acum o ora',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/8/896/8964358_husa-plastic-slim-perforata-huawei-mate-10-10-pro-10-lite_2.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Best airlines',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Far Skoda Fabia 2 stanga - dreapta de la 2007 pana la 2010',
-                    src: 'https://media1.lajumate.ro/media/i/new_details/8/987/9879088_far-skoda-fabia-2-stanga-dreapta-de-la-2007-pana-la-2010_1.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Best airlines',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-                {
-                    title: 'Favorite road trips',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
-                    location: 'Bucuresti, Ilfov',
-                    date: '02.05.2019',
-                },
-
-            ],
         }),
+        computed: {
+            items() {
+                return this.$store.getters.items;
+            },
+        },
     };
 </script>
 
@@ -456,7 +136,8 @@
     }
 
     .hover-btn {
-        color: white;
+        color: #1976d2;
+        opacity: .8;
     }
 
     .hover-btn:hover {
@@ -466,5 +147,4 @@
     .hover-btn-pressed {
         color: orangered;
     }
-
 </style>

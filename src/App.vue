@@ -23,9 +23,9 @@
             appLoginModal: LoginModal,
             appRegisterModal: RegisterModal,
         },
-        created() {
-            this.$store.dispatch('tryAutoLogin');
-        },
+        // created() {
+        //     this.$store.dispatch('tryAutoLogin');
+        // },
     };
 </script>
 

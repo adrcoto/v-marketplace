@@ -5,7 +5,7 @@ import router from '../router';
 //modules
 import loginModal from './modules/loginModal';
 import registerModal from './modules/registerModal';
-import darkTheme from './modules/darkTheme'
+import darkTheme from './modules/darkTheme';
 // axios.defaults.headers.common.Authorization = 'Bearer ' + token
 
 Vue.use(Vuex);
@@ -20,7 +20,9 @@ export default new Vuex.Store({
         },
         loading: false,
         error: null,
-        verify: false
+        verify: false,
+
+        items: [],
     },
     mutations: {
         authUser(state, userData) {
@@ -49,9 +51,12 @@ export default new Vuex.Store({
         clearError(state) {
             state.error = null;
         },
-        setVerify(state){
+        setVerify(state) {
             state.verify = true;
-        }
+        },
+        setItems(state, payload) {
+            state.items = payload;
+        },
     },
     getters: {
         token: state => {
@@ -71,7 +76,10 @@ export default new Vuex.Store({
         },
         verify: state => {
             return state.verify;
-        }
+        },
+        items: state => {
+            return state.items;
+        },
     },
     /**
      * Actions
@@ -181,10 +189,32 @@ export default new Vuex.Store({
             axios.post('verify', {
                 code: authData.code,
             }).then(response => {
-        console.log(response);
-                if (response && response.data && response.data.responseType === 'success'){
+                console.log(response);
+                if (response && response.data && response.data.responseType === 'success') {
                     console.log('intru');
                     state.verify = true;
+                }
+            });
+        },
+        loadItems({commit}, query) {
+            axios.get('/search').then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    console.log('Get -> Success');
+                    let items = response.data.data;
+
+                    items.forEach((element) => {
+                        element.images.forEach((u) => {
+                            //   console.log("Id: " + element.id + " filename: " +  u.filename);
+                        });
+                    });
+
+
+                    // items.forEach((e) => {
+                    //     console.log(e.filename);
+                    // });
+                    commit('setItems', items);
+                } else {
+                    console.log('Get -> Error');
                 }
             });
         },
@@ -192,6 +222,6 @@ export default new Vuex.Store({
     modules: {
         loginModal,
         registerModal,
-        darkTheme
+        darkTheme,
     },
 });

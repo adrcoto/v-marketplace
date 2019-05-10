@@ -6,7 +6,7 @@ import store from './store/store';
 import router from './router';
 import Vuelidate from 'vuelidate';
 
-import Alert from './components/modal/shared/Alert'
+import Alert from './components/modal/shared/Alert';
 
 Vue.config.productionTip = false;
 
@@ -15,8 +15,20 @@ Vue.use(VueRouter);
 
 Vue.component('app-alert', Alert);
 
+// new Vue({
+//     store,
+//     router,
+//     render: h => h(App),
+// }).$mount('#app');
+
+
 new Vue({
-    store,
+    el: '#app',
     router,
-    render: h => h(App)
-}).$mount('#app');
+    store,
+    render: h => h(App),
+    created() {
+        this.$store.dispatch('tryAutoLogin');
+        this.$store.dispatch('loadItems');
+    },
+});

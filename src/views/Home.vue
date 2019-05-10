@@ -1,6 +1,6 @@
 <template>
     <section>
-        <app-search class="mb-3"/>
+        <app-search class="mb-3 mt-3"/>
         <app-items/>
     </section>
 </template>
@@ -15,5 +15,8 @@
             appSearch: Search,
         },
         methods: {},
+        computed: {
+
+        }
     };
 </script>
