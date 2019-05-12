@@ -207,8 +207,6 @@ export default new Vuex.Store({
                             //   console.log("Id: " + element.id + " filename: " +  u.filename);
                         });
                     });
-
-
                     // items.forEach((e) => {
                     //     console.log(e.filename);
                     // });

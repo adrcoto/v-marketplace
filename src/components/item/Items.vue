@@ -1,33 +1,34 @@
 <!--v-bind="{ [`xs${card.flex}`]: true }"-->
 <template>
     <v-layout justify-center row>
-        <v-flex sm8 md12 xl11>
+        <v-flex xs6 sm8 md10 lg11 xl11>
             <v-card>
+
                 <v-container>
                     <v-layout row wrap>
-                        <v-flex v-for="(item, index) in items" :key="item.item_id" xs12 sm6 md4 lg3 xl2>
+                        <v-flex :key="item.item_id" lg3 md4 sm6 v-for="(item, index) in items" xl2 xs12>
                             <v-layout justify-center>
                                 <v-hover>
-                                    <v-card slot-scope="{ hover }" :class="`elevation-${hover ? 20 : 2}`" width="92%"
-                                            height="95%"
-                                            class="item-card mb-4">
+                                    <v-card :class="`elevation-${hover ? 20 : 2}`" class="item-card mb-4" height="90%"
+                                            slot-scope="{ hover }"
+                                            width="90%">
                                         <v-img :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
-                                               height="185">
+                                               height="165">
 
                                             <v-expand-transition>
-                                                <div v-if="hover"
-                                                     class="d-flex transition-fast-in-fast-out v-card--reveal">
+                                                <div class="d-flex transition-fast-in-fast-out v-card--reveal"
+                                                     v-if="hover">
                                                     <v-card-actions>
-                                                        <v-btn icon @click="like = !like"
-                                                               :class="{'hover-btn-pressed': like, 'hover-btn': !like}"
-                                                               class="hover-btn">
+                                                        <v-btn :class="{'hover-btn-pressed': like, 'hover-btn': !like}" @click="like = !like"
+                                                               class="hover-btn"
+                                                               icon>
                                                             <v-icon>favorite</v-icon>
                                                             <!--                                                            http://dev.shop/storage/images/images/jG1QCFkVHIW4kDqwbCzl30pNhxC38Moehy1961Wn.jpeg-->
                                                         </v-btn>
-                                                        <v-btn icon class="hover-btn">
+                                                        <v-btn class="hover-btn" icon>
                                                             <v-icon>bookmark</v-icon>
                                                         </v-btn>
-                                                        <v-btn icon class="hover-btn">
+                                                        <v-btn class="hover-btn" icon>
                                                             <v-icon>share</v-icon>
                                                         </v-btn>
                                                         <v-spacer></v-spacer>
@@ -36,16 +37,17 @@
                                             </v-expand-transition>
                                         </v-img>
 
-                                        <v-card-title primary-title
-                                                      class="item-card-title subheading font-weight-bold">
+                                        <v-card-title class="item-card-title subheading font-weight-bold"
+                                                      primary-title>
                                             {{item.title}}
                                         </v-card-title>
-                                        <v-chip class="price" color="primary" app>
+                                        <v-chip app class="price" color="primary">
                                             {{item.price}}
+                                            <span class="ml-2" v-if="item.currency === 0">LEI</span>
+                                            <span class="ml-2" v-else>EURO</span>
                                         </v-chip>
                                         <v-card-actions class="item-card-action">
-                                            <div v-if="hover"
-                                                 class="d-flex transition-fast-in-fast-out">
+                                            <div class="d-flex transition-fast-in-fast-out" v-if="hover">
                                                     <span>
                                                         <v-icon class="grey--text">location_on</v-icon>
                                                         {{item.location}}
@@ -54,11 +56,11 @@
                                             <div v-else>
                                                 <span>
                                                     <v-icon class="gray--text">query_builder</v-icon>
-                                                    {{item.created_at}}
+                                                    {{item.category}}
                                                 </span>
                                             </div>
                                             <v-spacer/>
-                                            <v-btn icon @click="show = !show" class="arrow-icon">
+                                            <v-btn @click="show = !show" class="arrow-icon" icon>
                                                 <v-icon>{{ show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}
                                                 </v-icon>
                                             </v-btn>
@@ -80,13 +82,15 @@
         data: () => ({
             API_URL: 'http://dev.shop/storage/',
             like: false,
-            show: false,
+            show: false
         }),
+        methods: {
+        },
         computed: {
             items() {
                 return this.$store.getters.items;
-            },
-        },
+            }
+        }
     };
 </script>
 
@@ -127,7 +131,7 @@
         color: #fff;
         font-weight: bold;
         font-size: 18px;
-        opacity: .8;
+        opacity: .9;
     }
 
     .item-card-title {
@@ -136,8 +140,8 @@
     }
 
     .hover-btn {
-        color: #1976d2;
-        opacity: .8;
+        color: #3c444b;
+        opacity: .9;
     }
 
     .hover-btn:hover {
@@ -147,4 +151,5 @@
     .hover-btn-pressed {
         color: orangered;
     }
+
 </style>
