@@ -1,6 +1,7 @@
 const state = {
     login: false
 };
+
 const getters = {
     showLogin: state => {
         return state.login;

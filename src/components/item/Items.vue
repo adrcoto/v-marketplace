@@ -1,12 +1,11 @@
 <!--v-bind="{ [`xs${card.flex}`]: true }"-->
 <template>
     <v-layout justify-center row>
-        <v-flex xs6 sm8 md10 lg11 xl11>
+        <v-flex xs6 sm8 md10 lg11 xl10>
             <v-card>
-
                 <v-container>
                     <v-layout row wrap>
-                        <v-flex :key="item.item_id" lg3 md4 sm6 v-for="(item, index) in items" xl2 xs12>
+                        <v-flex :key="item.item_id"  v-for="(item, index) in items" xs12 sm6 md4 lg3 xl2>
                             <v-layout justify-center>
                                 <v-hover>
                                     <v-card :class="`elevation-${hover ? 20 : 2}`" class="item-card mb-4" height="90%"
@@ -19,7 +18,8 @@
                                                 <div class="d-flex transition-fast-in-fast-out v-card--reveal"
                                                      v-if="hover">
                                                     <v-card-actions>
-                                                        <v-btn :class="{'hover-btn-pressed': like, 'hover-btn': !like}" @click="like = !like"
+                                                        <v-btn :class="{'hover-btn-pressed': like, 'hover-btn': !like}"
+                                                               @click="like = !like"
                                                                class="hover-btn"
                                                                icon>
                                                             <v-icon>favorite</v-icon>
@@ -37,10 +37,14 @@
                                             </v-expand-transition>
                                         </v-img>
 
-                                        <v-card-title class="item-card-title subheading font-weight-bold"
-                                                      primary-title>
+                                        <!--                                        /<v-card-title class="item-card-title subheading font-weight-bold"-->
+                                        <!--                                                      primary-title>-->
+                                        <v-layout align-start justify-start
+                                                  class="ml-3 mt-4 mr-2 item-card-title subheading font-weight-bold">
                                             {{item.title}}
-                                        </v-card-title>
+                                        </v-layout>
+                                        <!--                                        </v-card-title>-->
+                                        <!---->
                                         <v-chip app class="price" color="primary">
                                             {{item.price}}
                                             <span class="ml-2" v-if="item.currency === 0">LEI</span>
@@ -82,15 +86,14 @@
         data: () => ({
             API_URL: 'http://dev.shop/storage/',
             like: false,
-            show: false
+            show: false,
         }),
-        methods: {
-        },
+        methods: {},
         computed: {
             items() {
                 return this.$store.getters.items;
-            }
-        }
+            },
+        },
     };
 </script>
 
@@ -123,7 +126,7 @@
 <style scoped>
     .price {
         position: absolute;
-        top: 170px;
+        top: 145px;
         right: 10px;
         height: 30px;
         padding: 0 6px;
@@ -135,7 +138,7 @@
     }
 
     .item-card-title {
-        height: 110px;
+        height: 80px;
         overflow: hidden;
     }
 

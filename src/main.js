@@ -27,7 +27,7 @@ new Vue({
     router,
     store,
     render: h => h(App),
-    created() {
+    beforeCreate() {
         this.$store.dispatch('tryAutoLogin');
         this.$store.dispatch('loadItems');
     },
