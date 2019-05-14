@@ -201,15 +201,6 @@ export default new Vuex.Store({
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Get -> Success');
                     let items = response.data.data;
-
-                    items.forEach((element) => {
-                        element.images.forEach((u) => {
-                            //   console.log("Id: " + element.id + " filename: " +  u.filename);
-                        });
-                    });
-                    // items.forEach((e) => {
-                    //     console.log(e.filename);
-                    // });
                     commit('setItems', items);
                 } else {
                     console.log('Get -> Error');

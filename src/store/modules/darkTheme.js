@@ -1,9 +1,12 @@
 const state = {
-    darkTheme: false
+    darkTheme: false,
 };
 const getters = {
     dark: state => {
         return state.darkTheme;
+    },
+    month: (state, payload) => {
+        return state.months[payload];
     }
 };
 

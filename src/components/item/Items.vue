@@ -5,7 +5,7 @@
             <v-card>
                 <v-container>
                     <v-layout row wrap>
-                        <v-flex :key="item.item_id"  v-for="(item, index) in items" xs12 sm6 md4 lg3 xl2>
+                        <v-flex :key="item.item_id" v-for="(item, index) in items" xs12 sm6 md4 lg3 xl2>
                             <v-layout justify-center>
                                 <v-hover>
                                     <v-card :class="`elevation-${hover ? 20 : 2}`" class="item-card mb-4" height="90%"
@@ -60,14 +60,10 @@
                                             <div v-else>
                                                 <span>
                                                     <v-icon class="gray--text">query_builder</v-icon>
-                                                    {{item.category}}
+                                                    {{calculateDate(item.created_at)}}
                                                 </span>
                                             </div>
                                             <v-spacer/>
-                                            <v-btn @click="show = !show" class="arrow-icon" icon>
-                                                <v-icon>{{ show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}
-                                                </v-icon>
-                                            </v-btn>
                                         </v-card-actions>
                                     </v-card>
                                 </v-hover>
@@ -88,7 +84,68 @@
             like: false,
             show: false,
         }),
-        methods: {},
+        methods: {
+            calculateDate(createdDate) {
+                const created = new Date(createdDate);
+
+                const createdYear = created.getFullYear();
+                const createdMonth = created.getMonth() + 1;
+                const createdDay = created.getDate();
+                const createdHour = created.getHours();
+                const createdMin = created.getMinutes();
+
+                const actual = new Date();
+                const actualYear = actual.getFullYear();
+                const actualDay = new Date().getDate();
+
+                let date = '';
+
+                if (actualDay - createdDay === 1)
+                    date = 'Ieri ' + createdHour + ':' + createdMin;
+                else if (createdDay - actualDay === 0)
+                    date = 'Azi ' + createdHour + ':' + createdMin;
+                else {
+                    if (createdYear === actualYear)
+                        date = createdDay + ' ' + this.setMonthName(createdMonth);
+                    else
+                        date = createdDay + ' ' + this.setMonthName(createdMonth) + ' ' + createdYear;
+                }
+
+                console.log(' ');
+                return date;
+            },
+
+            setMonthName(number) {
+                switch (number) {
+                    case 1 :
+                        return 'ian';
+                    case 2 :
+                        return 'feb';
+                    case 3 :
+                        return 'mar';
+                    case 4 :
+                        return 'apr';
+                    case 5 :
+                        return 'mai';
+                    case 6 :
+                        return 'iun';
+                    case 7 :
+                        return 'iul';
+                    case 8 :
+                        return 'aug';
+                    case 9:
+                        return 'sep';
+                    case 10 :
+                        return 'oct';
+                    case 11 :
+                        return 'noi';
+                    case 12 :
+                        return 'dec';
+                    default:
+                        return 'not a month';
+                }
+            },
+        },
         computed: {
             items() {
                 return this.$store.getters.items;
