@@ -43,6 +43,7 @@
                             :rules="[comparePasswords]"
                             @click:append="showRePassword = !showRePassword"
                     ></v-text-field>
+
                 </v-form>
                 <v-card-text>
                     <v-layout align-center justify-space-around row fill-height>

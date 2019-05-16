@@ -8,7 +8,7 @@
                         <v-flex :key="item.item_id" v-for="(item, index) in items" xs12 sm6 md4 lg3 xl2>
                             <v-layout justify-center>
                                 <v-hover>
-                                    <v-card :class="`elevation-${hover ? 20 : 2}`" class="item-card mb-4" height="90%"
+                                    <v-card :class="`elevation-${hover ? 20 : 2}`" class="item-card mb-4"
                                             slot-scope="{ hover }"
                                             width="90%">
                                         <v-img :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
@@ -47,8 +47,8 @@
                                         <!---->
                                         <v-chip app class="price" color="primary">
                                             {{item.price}}
-                                            <span class="ml-2" v-if="item.currency === 0">LEI</span>
-                                            <span class="ml-2" v-else>EURO</span>
+                                            <span class="ml-2" v-if="item.currency === 0">lei</span>
+                                            <span class="ml-2" v-else>€</span>
                                         </v-chip>
                                         <v-card-actions class="item-card-action">
                                             <div class="d-flex transition-fast-in-fast-out" v-if="hover">
@@ -60,7 +60,7 @@
                                             <div v-else>
                                                 <span>
                                                     <v-icon class="gray--text">query_builder</v-icon>
-                                                    {{calculateDate(item.created_at)}}
+                                                    {{item.created_at}}
                                                 </span>
                                             </div>
                                             <v-spacer/>
@@ -84,68 +84,7 @@
             like: false,
             show: false,
         }),
-        methods: {
-            calculateDate(createdDate) {
-                const created = new Date(createdDate);
-
-                const createdYear = created.getFullYear();
-                const createdMonth = created.getMonth() + 1;
-                const createdDay = created.getDate();
-                const createdHour = created.getHours();
-                const createdMin = created.getMinutes();
-
-                const actual = new Date();
-                const actualYear = actual.getFullYear();
-                const actualDay = new Date().getDate();
-
-                let date = '';
-
-                if (actualDay - createdDay === 1)
-                    date = 'Ieri ' + createdHour + ':' + createdMin;
-                else if (createdDay - actualDay === 0)
-                    date = 'Azi ' + createdHour + ':' + createdMin;
-                else {
-                    if (createdYear === actualYear)
-                        date = createdDay + ' ' + this.setMonthName(createdMonth);
-                    else
-                        date = createdDay + ' ' + this.setMonthName(createdMonth) + ' ' + createdYear;
-                }
-
-                console.log(' ');
-                return date;
-            },
-
-            setMonthName(number) {
-                switch (number) {
-                    case 1 :
-                        return 'ian';
-                    case 2 :
-                        return 'feb';
-                    case 3 :
-                        return 'mar';
-                    case 4 :
-                        return 'apr';
-                    case 5 :
-                        return 'mai';
-                    case 6 :
-                        return 'iun';
-                    case 7 :
-                        return 'iul';
-                    case 8 :
-                        return 'aug';
-                    case 9:
-                        return 'sep';
-                    case 10 :
-                        return 'oct';
-                    case 11 :
-                        return 'noi';
-                    case 12 :
-                        return 'dec';
-                    default:
-                        return 'not a month';
-                }
-            },
-        },
+        methods: {},
         computed: {
             items() {
                 return this.$store.getters.items;
@@ -200,7 +139,7 @@
     }
 
     .hover-btn {
-        color: #3c444b;
+        color: orange;
         opacity: .9;
     }
 

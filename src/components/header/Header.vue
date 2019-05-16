@@ -36,7 +36,6 @@
             </v-list>
         </v-navigation-drawer>
 
-
         <!--   Toolbar     -->
         <v-toolbar prominent fixed app dark clipped-left color="blue darken-3">
             <v-toolbar-side-icon @click.stop="drawer = !drawer" class="hidden-md-and-up"></v-toolbar-side-icon>

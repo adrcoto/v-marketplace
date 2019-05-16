@@ -23,6 +23,7 @@ export default new Vuex.Store({
         verify: false,
 
         items: [],
+        months: ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'august', 'sept', 'oct', 'noi', 'dec'],
     },
     mutations: {
         authUser(state, userData) {
@@ -196,11 +197,49 @@ export default new Vuex.Store({
                 }
             });
         },
-        loadItems({commit}, query) {
+        loadItems({commit, status}, query) {
             axios.get('/search').then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Get -> Success');
+
                     let items = response.data.data;
+                    let created = null;
+
+                    let createdYear = null;
+                    let createdMonth = null;
+                    let createdDay = null;
+                    let createdHour = null;
+                    let createdMin = null;
+
+                    const actual = new Date();
+                    const actualYear = actual.getFullYear();
+                    const actualDay = new Date().getDate();
+
+                    let date = '';
+
+
+                    items.forEach((item) => {
+                        created = new Date(item.created_at);
+
+                        createdYear = created.getFullYear();
+                        createdMonth = created.getMonth() + 1;
+                        createdDay = created.getDate();
+                        createdHour = created.getHours();
+                        createdMin = created.getMinutes();
+
+                        if (actualDay - createdDay === 1)
+                            date = 'Ieri ' + createdHour + ':' + createdMin;
+                        else if (createdDay - actualDay === 0)
+                            date = 'Azi ' + createdHour + ':' + createdMin;
+                        else {
+                            if (createdYear === actualYear)
+                                date = createdDay + ' ' + state.months[createdMonth];
+                            else
+                                date = createdDay + ' ' + state.months[createdMonth] + ' ' + createdYear;
+                        }
+
+                        item.created_at = date;
+                    });
                     commit('setItems', items);
                 } else {
                     console.log('Get -> Error');

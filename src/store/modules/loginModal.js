@@ -1,11 +1,11 @@
 const state = {
-    login: false
+    login: false,
 };
 
 const getters = {
     showLogin: state => {
         return state.login;
-    }
+    },
 };
 
 const mutations = {
@@ -14,7 +14,7 @@ const mutations = {
     },
     closeLogin: state => {
         state.login = false;
-    }
+    },
 };
 
 const actions = {
@@ -23,12 +23,12 @@ const actions = {
     },
     closeLogin: ({commit}) => {
         commit('closeLogin');
-    }
+    },
 };
 
 export default {
     state,
     getters,
     mutations,
-    actions
+    actions,
 };

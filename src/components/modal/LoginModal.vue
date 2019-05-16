@@ -14,6 +14,7 @@
                                   label="E-mail"
                                   placeholder="Adresa de e-mail"
                                   :rules="[rules.email.required, rules.email.valid]"
+                                  class="mb-3"
                     ></v-text-field>
                     <v-text-field
                             v-model="password"
@@ -25,12 +26,8 @@
                             :rules="[rules.password.required, rules.password.min]"
                             hint="Cel putin 6 caractere"
                             @click:append="showPassword = !showPassword"
+                            class="mb-3"
                     ></v-text-field>
-
-                    <!--                    <router-link tag="a" to="/anunt/nou">-->
-                    <!--                        <a>Mi-am uitat parola</a>-->
-                    <!--                    </router-link>-->
-
 
                     <v-layout align-center justify-space-around row fill-height>
                         <v-btn class="text-none font-weight-regular subheading" color="warning" @click="close">

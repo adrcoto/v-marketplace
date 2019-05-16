@@ -30,7 +30,7 @@ export default new Router({
         },
         {
             path: '/anunt/nou',
-            name: 'Create Ite,',
+            name: 'Create Item',
             component: CreateItem,
             beforeEnter: authGuard
         },
