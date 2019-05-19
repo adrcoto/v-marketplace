@@ -16,14 +16,17 @@ export default new Vuex.Store({
         user: {
             id: null,
             name: null,
-            email: null,
+            email: null
         },
         loading: false,
         error: null,
         verify: false,
 
         items: [],
-        months: ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'august', 'sept', 'oct', 'noi', 'dec'],
+        months: ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec'],
+        categories: [],
+        subcategories: [],
+        types: []
     },
     mutations: {
         authUser(state, userData) {
@@ -58,6 +61,15 @@ export default new Vuex.Store({
         setItems(state, payload) {
             state.items = payload;
         },
+        setCategories(state, payload) {
+            state.categories = payload;
+        },
+        setSubcategories(state, payload) {
+            state.subcategories = payload;
+        },
+        setTypes(state, payload) {
+            state.types = payload;
+        }
     },
     getters: {
         token: state => {
@@ -81,6 +93,15 @@ export default new Vuex.Store({
         items: state => {
             return state.items;
         },
+        categories: state => {
+            return state.categories;
+        },
+        subcategories: state => {
+            return state.subcategories;
+        },
+        types: state => {
+            return state.types;
+        }
     },
     /**
      * Actions
@@ -99,7 +120,7 @@ export default new Vuex.Store({
                 name: authData.name,
                 email: authData.email,
                 password: authData.password,
-                url: process.env.VUE_APP_URL + '/verificare-cont',
+                url: process.env.VUE_APP_URL + '/verificare-cont'
             }).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     commit('setLoading', false);
@@ -125,7 +146,7 @@ export default new Vuex.Store({
             commit('clearError');
             axios.post('/login', {
                 email: authData.email,
-                password: authData.password,
+                password: authData.password
             }).then(response => {
                 commit('setLoading', false);
 
@@ -136,7 +157,7 @@ export default new Vuex.Store({
                         token: response.data.data.jwt,
                         id: response.data.data.user.id,
                         name: response.data.data.user.name,
-                        email: response.data.data.user.email,
+                        email: response.data.data.user.email
                     };
                     localStorage.setItem('token', authData.token);
                     commit('authUser', authData);
@@ -164,7 +185,7 @@ export default new Vuex.Store({
                     token,
                     id: res.data.data.id,
                     name: res.data.data.name,
-                    email: res.data.data.email,
+                    email: res.data.data.email
                 };
                 commit('authUser', authData);
             });
@@ -188,7 +209,7 @@ export default new Vuex.Store({
             if (state.token)
                 return 0;
             axios.post('verify', {
-                code: authData.code,
+                code: authData.code
             }).then(response => {
                 console.log(response);
                 if (response && response.data && response.data.responseType === 'success') {
@@ -197,7 +218,13 @@ export default new Vuex.Store({
                 }
             });
         },
-        loadItems({commit, status}, query) {
+        /**
+         * Gets all items from server
+         * @param commit
+         * @param state
+         * @param query
+         */
+        loadItems({commit, state}, query) {
             axios.get('/search').then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Get -> Success');
@@ -231,12 +258,11 @@ export default new Vuex.Store({
                             date = 'Ieri ' + createdHour + ':' + createdMin;
                         else if (createdDay - actualDay === 0)
                             date = 'Azi ' + createdHour + ':' + createdMin;
-                        else {
-                            if (createdYear === actualYear)
-                                date = createdDay + ' ' + state.months[createdMonth];
-                            else
-                                date = createdDay + ' ' + state.months[createdMonth] + ' ' + createdYear;
-                        }
+                        else
+                            date = createdDay + ' ' + state.months[createdMonth - 1];
+
+                        if (createdYear !== actualYear)
+                            date = createdDay + ' ' + state.months[createdMonth - 1] + ' ' + createdYear;
 
                         item.created_at = date;
                     });
@@ -246,10 +272,54 @@ export default new Vuex.Store({
                 }
             });
         },
+        /**
+         * Gets all available categories
+         * @param commit
+         */
+        loadCategories({commit}){
+            axios.get('/categories').then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    console.log('Get Categories-> Success');
+                    let categories = response.data.data;
+                    commit('setCategories', categories);
+                }
+                else {
+                    console.log('Get Categories-> Error');
+                }
+            });
+        },
+        /**
+         * Gets all available subcategories for a given category
+         * @param commit
+         */
+        loadSubcategories({commit}, category){
+            axios.get('/subcategories/' + category ).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    console.log('Get Subcategories -> Success');
+                    let subcategories = response.data.data;
+                    commit('setSubcategories', subcategories);
+                }
+                else {
+                    console.log('Get Subcategories -> Error');
+                }
+            });
+        },
+        loadTypes({commit}, subcategory){
+            axios.get('/types/' + subcategory ).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    console.log('Get Types -> Success');
+                    let types = response.data.data;
+                    commit('setTypes', types);
+                }
+                else {
+                    console.log('Get Types -> Error');
+                }
+            });
+        }
     },
     modules: {
         loginModal,
         registerModal,
-        darkTheme,
-    },
+        darkTheme
+    }
 });
