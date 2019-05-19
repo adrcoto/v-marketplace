@@ -1716,12 +1716,81 @@
                         {name: 'Zlatna'}
                     ]
                 },
-                {id: 2, name: 'Arad'},
-                {id: 3, name: 'Argeș'},
-                {id: 4, name: 'Bacău'},
-                {id: 5, name: 'Bihor'},
-                {id: 6, name: 'Bistrița-Năsăud'},
-                {id: 7, name: 'Botoșani'},
+                {
+                    id: 2, name: 'Arad',
+                    cities: [
+                        {nme: 'Arad'},
+                        {nme: 'Chișineu - Criș'},
+                        {nme: 'Curtuci'},
+                        {nme: 'Ineu'},
+                        {nme: 'Ipova'},
+                        {nme: 'Nădlac'},
+                        {nme: 'Poncota'},
+                        {nme: 'Pecita'},
+                        {nme: 'Sântana'},
+                        {nme: 'Sebiș'}
+                    ]
+                },
+                {
+                    id: 3, name: 'Argeș',
+                    cities: [
+                        {name: 'Câmpulung'},
+                        {nme: 'Costești'},
+                        {nme: 'Mioveni'},
+                        {nme: 'Pitești'},
+                        {nme: 'Ștefănești'},
+                        {nme: 'Topoloveni'}
+                    ]
+                },
+                {
+                    id: 4, name: 'Bacău',
+                    cities: [
+                        {nme: 'Bacău'},
+                        {nme: 'Buhuși'},
+                        {nme: 'Comănești'},
+                        {nme: 'Dărmănești'},
+                        {nme: 'Moinești'},
+                        {nme: 'Onești'},
+                        {nme: 'Slanic - Moldova'},
+                        {nme: 'Târgu - Ocna'}
+                    ]
+                },
+                {
+                    id: 5, name: 'Bihor',
+                    cities: [
+                        {nme: 'Costești'},
+                        {nme: 'Beiuș'},
+                        {nme: 'Marghita'},
+                        {nme: 'Nucet'},
+                        {nme: 'Oradea'},
+                        {nme: 'Săcueni'},
+                        {nme: 'Salonta'},
+                        {nme: 'Ștei'},
+                        {nme: 'Valea lui Mihai'},
+                        {nme: 'Vașcău'}
+                    ]
+                },
+                {
+                    id: 6, name: 'Bistrița-Năsăud',
+                    cities: [
+                        {nme: 'Becleni'},
+                        {nme: 'Bistrița'},
+                        {nme: 'Năsăud'},
+                        {nme: 'Sângeorz-Băi'}
+                    ]
+                },
+                {
+                	id: 7, name: 'Botoșani',
+	                cities: [
+		                {nme: 'Botoșani'},
+		                {nme: 'Bucecea'},
+		                {nme: 'Darabani'},
+		                {nme: 'Dorohoi'},
+		                {nme: 'Flămânzi'},
+		                {nme: 'Săveni'},
+		                {nme: 'Ștefănești'},
+	                ]
+                },
                 {id: 8, name: 'Brașov'},
                 {id: 9, name: 'Brăila'},
                 {id: 10, name: 'Buzău'},
@@ -1731,15 +1800,18 @@
                 {id: 14, name: 'Constanța'},
                 {id: 15, name: 'Covasna'},
                 {id: 16, name: 'Dâmbovița'},
-                {id: 17, name: 'Dolj', cities: [
-		                {name: 'Bailești'},
-		                {name: 'Bechet'},
-		                {name: 'Calafat'},
-		                {name: 'Craiova'},
-		                {name: 'Dăbuleni'},
-		                {name: 'Filiași'},
-		                {name: 'Segarcea'},
-	                ]},
+                {
+                    id: 17, name: 'Dolj',
+                    cities: [
+                        {name: 'Bailești'},
+                        {name: 'Bechet'},
+                        {name: 'Calafat'},
+                        {name: 'Craiova'},
+                        {name: 'Dăbuleni'},
+                        {name: 'Filiași'},
+                        {name: 'Segarcea'}
+                    ]
+                },
                 {id: 18, name: 'Galați'},
                 {id: 19, name: 'Giurgiu'},
                 {id: 20, name: 'Gorj'},
@@ -1752,16 +1824,18 @@
                 {id: 27, name: 'Mehedinți'},
                 {id: 28, name: 'Mureș'},
                 {id: 29, name: 'Neamț'},
-                {id: 30, name: 'Olt', cities: [
-		                {name: 'Balș'},
-		                {name: 'Caracal'},
-		                {name: 'Corabia'},
-		                {name: 'Dragănești - Olt'},
-		                {name: 'Piatra - Olt'},
-		                {name: 'Potcoava'},
-		                {name: 'Scornicesti'},
-		                {name: 'Slatina'},
-	                ]},
+                {
+                    id: 30, name: 'Olt', cities: [
+                        {name: 'Balș'},
+                        {name: 'Caracal'},
+                        {name: 'Corabia'},
+                        {name: 'Dragănești - Olt'},
+                        {name: 'Piatra - Olt'},
+                        {name: 'Potcoava'},
+                        {name: 'Scornicesti'},
+                        {name: 'Slatina'}
+                    ]
+                },
                 {id: 31, name: 'Prahova'},
                 {id: 32, name: 'Satu Mare'},
                 {id: 33, name: 'Sălaj'},
