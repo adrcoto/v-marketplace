@@ -1,7 +1,7 @@
 <template>
     <svg id="regions_map" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
          x="0px" y="0px" viewBox="500 -135 1611.1 1151.5"
-         xml:space="preserve" width="580" height="390"
+         xml:space="preserve" width="600" height="390"
     >
 		<g id="Arad" class="map_group" @click="getDistrict(2)">
 			<a xlink:href="#">
@@ -816,7 +816,7 @@
 		</g>
 	         </a>
 	</g>
-        <g id="Hargita" class="map_group" @click="getDistrict(21)">
+        <g id="Harghita" class="map_group" @click="getDistrict(21)">
 	         <a xlink:href="#">
 		<polygon class="st0" points="1509.9,388.3 1513.8,379.2 1514.8,376.6 1514.5,376.4 1512.3,373.9 1511.6,371.3 1511.8,368.8
 			1513.8,364.6 1514.7,360.7 1515.1,357.5 1514.4,356.1 1513.5,355.3 1510.6,355 1509.4,355.2 1506.1,355.3 1498.8,356.2
@@ -1713,93 +1713,192 @@
                         {name: 'Ocna Mureș'},
                         {name: 'Sebeș'},
                         {name: 'Teiuș'},
-                        {name: 'Zlatna'}
-                    ]
+                        {name: 'Zlatna'},
+                    ],
                 },
                 {
                     id: 2, name: 'Arad',
                     cities: [
-                        {nme: 'Arad'},
-                        {nme: 'Chișineu - Criș'},
-                        {nme: 'Curtuci'},
-                        {nme: 'Ineu'},
-                        {nme: 'Ipova'},
-                        {nme: 'Nădlac'},
-                        {nme: 'Poncota'},
-                        {nme: 'Pecita'},
-                        {nme: 'Sântana'},
-                        {nme: 'Sebiș'}
-                    ]
+                        {name: 'Arad'},
+                        {name: 'Chișineu - Criș'},
+                        {name: 'Curtuci'},
+                        {name: 'Ineu'},
+                        {name: 'Ipova'},
+                        {name: 'Nădlac'},
+                        {name: 'Poncota'},
+                        {name: 'Pecita'},
+                        {name: 'Sântana'},
+                        {name: 'Sebiș'},
+                    ],
                 },
                 {
                     id: 3, name: 'Argeș',
                     cities: [
                         {name: 'Câmpulung'},
-                        {nme: 'Costești'},
-                        {nme: 'Mioveni'},
-                        {nme: 'Pitești'},
-                        {nme: 'Ștefănești'},
-                        {nme: 'Topoloveni'}
-                    ]
+                        {name: 'Costești'},
+                        {name: 'Mioveni'},
+                        {name: 'Pitești'},
+                        {name: 'Ștefănești'},
+                        {name: 'Topoloveni'},
+                    ],
                 },
                 {
                     id: 4, name: 'Bacău',
                     cities: [
-                        {nme: 'Bacău'},
-                        {nme: 'Buhuși'},
-                        {nme: 'Comănești'},
-                        {nme: 'Dărmănești'},
-                        {nme: 'Moinești'},
-                        {nme: 'Onești'},
-                        {nme: 'Slanic - Moldova'},
-                        {nme: 'Târgu - Ocna'}
-                    ]
+                        {name: 'Bacău'},
+                        {name: 'Buhuși'},
+                        {name: 'Comănești'},
+                        {name: 'Dărmănești'},
+                        {name: 'Moinești'},
+                        {name: 'Onești'},
+                        {name: 'Slanic - Moldova'},
+                        {name: 'Târgu - Ocna'},
+                    ],
                 },
                 {
                     id: 5, name: 'Bihor',
                     cities: [
-                        {nme: 'Costești'},
-                        {nme: 'Beiuș'},
-                        {nme: 'Marghita'},
-                        {nme: 'Nucet'},
-                        {nme: 'Oradea'},
-                        {nme: 'Săcueni'},
-                        {nme: 'Salonta'},
-                        {nme: 'Ștei'},
-                        {nme: 'Valea lui Mihai'},
-                        {nme: 'Vașcău'}
-                    ]
+                        {name: 'Costești'},
+                        {name: 'Beiuș'},
+                        {name: 'Marghita'},
+                        {name: 'Nucet'},
+                        {name: 'Oradea'},
+                        {name: 'Săcueni'},
+                        {name: 'Salonta'},
+                        {name: 'Ștei'},
+                        {name: 'Valea lui Mihai'},
+                        {name: 'Vașcău'},
+                    ],
                 },
                 {
                     id: 6, name: 'Bistrița-Năsăud',
                     cities: [
-                        {nme: 'Becleni'},
-                        {nme: 'Bistrița'},
-                        {nme: 'Năsăud'},
-                        {nme: 'Sângeorz-Băi'}
-                    ]
+                        {name: 'Becleni'},
+                        {name: 'Bistrița'},
+                        {name: 'Năsăud'},
+                        {name: 'Sângeorz-Băi'},
+                    ],
                 },
                 {
-                	id: 7, name: 'Botoșani',
-	                cities: [
-		                {nme: 'Botoșani'},
-		                {nme: 'Bucecea'},
-		                {nme: 'Darabani'},
-		                {nme: 'Dorohoi'},
-		                {nme: 'Flămânzi'},
-		                {nme: 'Săveni'},
-		                {nme: 'Ștefănești'},
-	                ]
+                    id: 7, name: 'Botoșani',
+                    cities: [
+                        {name: 'Botoșani'},
+                        {name: 'Bucecea'},
+                        {name: 'Darabani'},
+                        {name: 'Dorohoi'},
+                        {name: 'Flămânzi'},
+                        {name: 'Săveni'},
+                        {name: 'Ștefănești'},
+                    ],
                 },
-                {id: 8, name: 'Brașov'},
-                {id: 9, name: 'Brăila'},
-                {id: 10, name: 'Buzău'},
-                {id: 11, name: 'Caraș-Severin'},
-                {id: 12, name: 'Călărași'},
-                {id: 13, name: 'Cluj'},
-                {id: 14, name: 'Constanța'},
-                {id: 15, name: 'Covasna'},
-                {id: 16, name: 'Dâmbovița'},
+                {
+                    id: 8, name: 'Brașov',
+                    cities: [
+                        {name: 'Bran '},
+                        {name: 'Brașov'},
+                        {name: 'Codlea'},
+                        {name: 'Făgăraș'},
+                        {name: 'Ghimbav'},
+                        {name: 'Predeal'},
+                        {name: 'Râșnov'},
+                        {name: 'Rupea'},
+                        {name: 'Săcele'},
+                        {name: 'Victoria'},
+                        {name: 'Zărnăești'},
+                    ],
+                },
+                {
+                    id: 9, name: 'Brăila',
+                    cities: [
+                        {name: 'Brăila'},
+                        {name: 'Făurei'},
+                        {name: 'Ianca'},
+                        {name: 'Însurăței'},
+                    ],
+                },
+                {
+                    id: 10, name: 'Buzău',
+                    cities: [
+                        {name: 'Buzău'},
+                        {name: 'Nehoiu'},
+                        {name: 'Pătârlagele'},
+                        {name: 'Pogoanele'},
+                        {name: 'Râmnicu Sărat'},
+                    ],
+                },
+                {
+                    id: 11, name: 'Caraș-Severin',
+                    cities: [
+                        {name: 'Anina'},
+                        {name: 'Baile Herculane'},
+                        {name: 'Bocșa'},
+                        {name: 'Caransebeș'},
+                        {name: 'Moldova Noua'},
+                        {name: 'Oravița'},
+                        {name: 'Oțelu Roșu'},
+                        {name: 'Reșița'},
+                    ],
+                },
+                {
+                    id: 12, name: 'Călărași',
+                    cities: [
+                        {name: 'Budești'},
+                        {name: 'Călărași'},
+                        {name: 'Fundulea'},
+                        {name: 'Lehliu - Gară'},
+                        {name: 'Oltenița'},
+                    ],
+                },
+                {
+                    id: 13, name: 'Cluj',
+                    cities: [
+                        {name: 'Câmpia Turzii'},
+                        {name: 'Cluj - Napoca'},
+                        {name: 'Dej'},
+                        {name: 'Gherla'},
+                        {name: 'Huedin'},
+                        {name: 'Turda'},
+                    ],
+                },
+                {
+                    id: 14, name: 'Constanța',
+                    cities: [
+                        {name: 'Băneasa'},
+                        {name: 'Cernavodă'},
+                        {name: 'Constanța'},
+                        {name: 'Eforie'},
+                        {name: 'Hârșova'},
+                        {name: 'Mangalia'},
+                        {name: 'Medgidia'},
+                        {name: 'Murfatlar'},
+                        {name: 'Năvodari'},
+                        {name: 'Negru Vodă'},
+                        {name: 'Ovidiu'},
+                        {name: 'Techirghiol'},
+                    ],
+                },
+                {
+                    id: 15, name: 'Covasna',
+                    cities: [
+                        {name: 'Baraolt'},
+                        {name: 'Covasna'},
+                        {name: 'Întorsura Buzăului'},
+                        {name: 'Sfântu Gheorghe'},
+                        {name: 'Târgu Secuiesc'},
+                    ],
+                },
+                {
+                    id: 16, name: 'Dâmbovița',
+                    cities: [
+                        {name: 'Fieni'},
+                        {name: 'Găiești'},
+                        {name: 'Moreni'},
+                        {name: 'Pucioasa'},
+                        {name: 'Răcari'},
+                        {name: 'Târgoviște'},
+                        {name: 'Titu'},
+                    ],
+                },
                 {
                     id: 17, name: 'Dolj',
                     cities: [
@@ -1809,21 +1908,162 @@
                         {name: 'Craiova'},
                         {name: 'Dăbuleni'},
                         {name: 'Filiași'},
-                        {name: 'Segarcea'}
-                    ]
+                        {name: 'Segarcea'},
+                    ],
                 },
-                {id: 18, name: 'Galați'},
-                {id: 19, name: 'Giurgiu'},
-                {id: 20, name: 'Gorj'},
-                {id: 21, name: 'Hargita'},
-                {id: 22, name: 'Hunedoara'},
-                {id: 23, name: 'Ialomița'},
-                {id: 24, name: 'Iași'},
-                {id: 25, name: 'Ilfov'},
-                {id: 26, name: 'Maramureș'},
-                {id: 27, name: 'Mehedinți'},
-                {id: 28, name: 'Mureș'},
-                {id: 29, name: 'Neamț'},
+                {
+                    id: 18, name: 'Galați',
+                    cities: [
+                        {name: 'Berești'},
+                        {name: 'Galați'},
+                        {name: 'Târgu Bujor'},
+                        {name: 'Tecuci'},
+                    ],
+                },
+                {
+                    id: 19, name: 'Giurgiu',
+                    cities: [
+                        {name: 'Bolintin - Vale'},
+                        {name: 'Giurgiu'},
+                        {name: 'Mihăilești'},
+                    ],
+                },
+                {
+                    id: 20, name: 'Gorj',
+                    cities: [
+                        {name: 'Bumbești - Jiu'},
+                        {name: 'Motru'},
+                        {name: 'Novaci'},
+                        {name: 'Novinari'},
+                        {name: 'Târgu Cărbunești'},
+                        {name: 'Târgu Jiu'},
+                        {name: 'Țicleni'},
+                        {name: 'Tismana'},
+                        {name: 'Turceni'},
+                    ],
+                },
+                {
+                    id: 21, name: 'Harghita',
+                    cities: [
+                        {name: 'Băile Tușnad'},
+                        {name: 'Bălan'},
+                        {name: 'Borsec'},
+                        {name: 'Cristuru Secuiesc'},
+                        {name: 'Gheorgheni'},
+                        {name: 'Miercurea - Ciuc'},
+                        {name: 'Ordoheiu Secuiesc'},
+                        {name: 'Vlăhița'},
+                    ],
+                },
+                {
+                    id: 22, name: 'Hunedoara',
+                    cities: [
+                        {name: 'Aninoasa'},
+                        {name: 'Brad'},
+                        {name: 'Călan'},
+                        {name: 'Deva'},
+                        {name: 'Geoagiu'},
+                        {name: 'Hațeg'},
+                        {name: 'Hunedoara'},
+                        {name: 'Lupeni'},
+                        {name: 'Oraștie'},
+                        {name: 'Petrila'},
+                        {name: 'Petroșani'},
+                        {name: 'Simeria'},
+                        {name: 'Uricani'},
+                        {name: 'Vulcan'},
+                    ],
+                },
+                {
+                    id: 23, name: 'Ialomița',
+                    cities: [
+                        {name: 'Amara'},
+                        {name: 'Căzănești'},
+                        {name: 'Fetești'},
+                        {name: 'Fierbinți - Târg'},
+                        {name: 'Slobozia'},
+                        {name: 'Țăndărei'},
+                        {name: 'Urziceni'},
+                    ],
+                },
+                {
+                    id: 24, name: 'Iași',
+                    cities: [
+                        {name: 'Hârlău'},
+                        {name: 'Iași'},
+                        {name: 'Pașcani'},
+                        {name: 'Podu Iloaiei'},
+                        {name: 'Târgu Frumos'},
+                    ],
+                },
+                {
+                    id: 25, name: 'Ilfov',
+                    cities: [
+                        {name: 'București'},
+                        {name: 'Bragadiru'},
+                        {name: 'Buftea'},
+                        {name: 'Chitila'},
+                        {name: 'Corbeanca'},
+                        {name: 'Măgurele'},
+                        {name: 'Otopeni'},
+                        {name: 'Pantelimon'},
+                        {name: 'Popești Leordeni'},
+                        {name: 'Voluntari'},
+                    ],
+                },
+                {
+                    id: 26, name: 'Maramureș',
+                    cities: [
+                        {name: 'Baia Mare'},
+                        {name: 'Baia Sprie'},
+                        {name: 'Borșa'},
+                        {name: 'Cavnic'},
+                        {name: 'Dragomirești'},
+                        {name: 'Săliștea de Sus'},
+                        {name: 'Seini'},
+                        {name: 'Sighetu Marmației'},
+                        {name: 'Șomcuta Mare'},
+                        {name: 'Târgu Lăpuș'},
+                        {name: 'Tăuții - Măgherăuș'},
+                        {name: 'Ulmeni'},
+                        {name: 'Vișeu de Sus'},
+                    ],
+                },
+                {
+                    id: 27, name: 'Mehedinți',
+                    cities: [
+                        {name: 'Baia de Aramă'},
+                        {name: 'Drobeta - Turnu - Severin'},
+                        {name: 'Orșova'},
+                        {name: 'Strehaia'},
+                        {name: 'Vânju Mare'},
+                    ],
+                },
+                {
+                    id: 28, name: 'Mureș',
+                    cities: [
+                        {name: 'Luduș'},
+                        {name: 'Miercurea Nirajului'},
+                        {name: 'Reghin'},
+                        {name: 'Sângeorgiu de Pădure'},
+                        {name: 'Sărmașu'},
+                        {name: 'Sighișoara'},
+                        {name: 'Sovata'},
+                        {name: 'Târgu Mureș'},
+                        {name: 'Târnăveni'},
+                        {name: 'Ungheni'},
+                    ],
+                },
+                {
+                    id: 29, name: 'Neamț',
+                    cities: [
+                        {name: 'Bicaz'},
+                        {name: 'Piatra Neamț'},
+                        {name: 'Roman'},
+                        {name: 'Roznov'},
+                        {name: 'Târgu Neamț'},
+                    ],
+                },
                 {
                     id: 30, name: 'Olt', cities: [
                         {name: 'Balș'},
@@ -1833,21 +2073,158 @@
                         {name: 'Piatra - Olt'},
                         {name: 'Potcoava'},
                         {name: 'Scornicesti'},
-                        {name: 'Slatina'}
-                    ]
+                        {name: 'Slatina'},
+                    ],
                 },
-                {id: 31, name: 'Prahova'},
-                {id: 32, name: 'Satu Mare'},
-                {id: 33, name: 'Sălaj'},
-                {id: 34, name: 'Sibiu'},
-                {id: 35, name: 'Suceava'},
-                {id: 36, name: 'Teleorman'},
-                {id: 37, name: 'Timiș'},
-                {id: 38, name: 'Tulcea'},
-                {id: 39, name: 'Vaslui'},
-                {id: 40, name: 'Vâlcea'},
-                {id: 41, name: 'Vrancea'}
-            ]
+                {
+                    id: 31, name: 'Prahova',
+                    cities: [
+                        {name: 'Azuga'},
+                        {name: 'Băicoi'},
+                        {name: 'Boldești-Scăeni'},
+                        {name: 'Breaza'},
+                        {name: 'Bușteni'},
+                        {name: 'Câmpina'},
+                        {name: 'Comarnic'},
+                        {name: 'Mizil'},
+                        {name: 'Ploiești'},
+                        {name: 'Plopeni'},
+                        {name: 'Sinaia'},
+                        {name: 'Slănic'},
+                        {name: 'Urlați'},
+                        {name: 'Vălenii de Munte'},
+                    ],
+                },
+                {
+                    id: 32, name: 'Satu Mare',
+                    cities: [
+                        {name: 'Ardud'},
+                        {name: 'Carei'},
+                        {name: 'Livada'},
+                        {name: 'Negrești - Oaș'},
+                        {name: 'Satu Mare'},
+                        {name: 'Tășnad'},
+                    ],
+                },
+                {
+                    id: 33, name: 'Sălaj',
+                    cities: [
+                        {name: 'Cehu Silvaniei'},
+                        {name: 'Jibou'},
+                        {name: 'Simleu Silvaniei'},
+                        {name: 'Zalău'},
+                    ],
+                },
+                {
+                    id: 34, name: 'Sibiu',
+                    cities: [
+                        {name: 'Agnita'},
+                        {name: 'Avrig'},
+                        {name: 'Cisnădie'},
+                        {name: 'Copșa Mică'},
+                        {name: 'Dumbrăveni'},
+                        {name: 'Mediaș'},
+                        {name: 'Miercurea Sibiului'},
+                        {name: 'Ocna Sibiului'},
+                        {name: 'Săliște'},
+                        {name: 'Sibiu'},
+                        {name: 'Tălmaciu'},
+                    ],
+                },
+                {
+                    id: 35, name: 'Suceava',
+                    cities: [
+                        {name: 'Broșteni'},
+                        {name: 'Cajvana'},
+                        {name: 'Câmpulung Moldovenesc'},
+                        {name: 'Dolhasca'},
+                        {name: 'Fălticeni'},
+                        {name: 'Frasin'},
+                        {name: 'Gura Humorului'},
+                        {name: 'Liteni'},
+                        {name: 'Milișăuți'},
+                        {name: 'Rădăuți'},
+                        {name: 'Salcea'},
+                        {name: 'Siret'},
+                        {name: 'Solca'},
+                        {name: 'Suceava'},
+                        {name: 'Vatra Dornei'},
+                        {name: 'Vicovu de Sus'},
+                    ],
+                },
+                {
+                    id: 36, name: 'Teleorman',
+                    cities: [
+                        {name: 'Alexandria'},
+                        {name: 'Roșiorii de Vede'},
+                        {name: 'Turnu Măgurele'},
+                        {name: 'Videle'},
+                        {name: 'Zimnicea'},
+                    ],
+                },
+                {
+                    id: 37, name: 'Timiș',
+                    cities: [
+                        {name: 'Buziaș'},
+                        {name: 'Ciacova'},
+                        {name: 'Deta'},
+                        {name: 'Făget'},
+                        {name: 'Gătaia'},
+                        {name: 'Jimbolia'},
+                        {name: 'Lugoj'},
+                        {name: 'Recaș'},
+                        {name: 'Sânnicolau Mare'},
+                        {name: 'Timișoara'},
+                    ],
+                },
+                {
+                    id: 38, name: 'Tulcea',
+                    cities: [
+                        {name: 'Babadag'},
+                        {name: 'Isaccea'},
+                        {name: 'Măcin'},
+                        {name: 'Sulina'},
+                        {name: 'Tulcea'},
+                    ],
+                },
+                {
+                    id: 39, name: 'Vaslui',
+                    cities: [
+                        {name: 'Bârlad'},
+                        {name: 'Huși'},
+                        {name: 'Murgeni'},
+                        {name: 'Negrești'},
+                        {name: 'Vaslui'},
+
+                    ],
+                },
+                {
+                    id: 40, name: 'Vâlcea',
+                    cities: [
+                        {name: 'Băbeni'},
+                        {name: 'Băile Govara'},
+                        {name: 'Băile Olănești'},
+                        {name: 'Bălcești'},
+                        {name: 'Berbești'},
+                        {name: 'Brezoi'},
+                        {name: 'Calimănești'},
+                        {name: 'Drăgășani'},
+                        {name: 'Horezu'},
+                        {name: 'Ocenele Mari'},
+                        {name: 'Râmnicu Vâlcea'},
+                    ],
+                },
+                {
+                    id: 41, name: 'Vrancea',
+                    cities: [
+                        {name: 'Adjud'},
+                        {name: 'Focșani'},
+                        {name: 'Mărășești'},
+                        {name: 'Odobești'},
+                        {name: 'Panciu'},
+                    ],
+                },
+            ],
         }),
         methods: {
             handleMouseClick(e) {
@@ -1858,8 +2235,8 @@
             },
             getDistrict(id) {
                 this.$emit('selectedDistrict', this.map[id - 1]);
-            }
-        }
+            },
+        },
     };
 </script>
 
@@ -1869,12 +2246,7 @@
     }
 
     .st0 {
-        fill: #009688;
-        -webkit-transition: all .15s ease;
-        -moz-transition: all .15s ease;
-        -o-transition: all .15s ease;
-        -ms-transition: all .15s ease;
-        transition: all .15s ease;
+        fill: #1976D2;
     }
 
     .map_group:hover .st0, .region_active .st0 {

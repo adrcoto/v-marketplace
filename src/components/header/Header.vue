@@ -123,7 +123,7 @@
         computed: {
             menuItems() {
                 return [
-                    {icon: 'add_to_queue', title: 'Adaugare anunt', link: '/anunt/nou'},
+                    {icon: 'add_to_queue', title: 'Adăugare anunț', link: '/anunt/nou'},
                 ];
             },
             auth() {

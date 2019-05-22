@@ -16,7 +16,7 @@ export default new Vuex.Store({
         user: {
             id: null,
             name: null,
-            email: null
+            email: null,
         },
         loading: false,
         error: null,
@@ -26,7 +26,7 @@ export default new Vuex.Store({
         months: ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec'],
         categories: [],
         subcategories: [],
-        types: []
+        types: [],
     },
     mutations: {
         authUser(state, userData) {
@@ -69,7 +69,7 @@ export default new Vuex.Store({
         },
         setTypes(state, payload) {
             state.types = payload;
-        }
+        },
     },
     getters: {
         token: state => {
@@ -101,7 +101,7 @@ export default new Vuex.Store({
         },
         types: state => {
             return state.types;
-        }
+        },
     },
     /**
      * Actions
@@ -120,7 +120,7 @@ export default new Vuex.Store({
                 name: authData.name,
                 email: authData.email,
                 password: authData.password,
-                url: process.env.VUE_APP_URL + '/verificare-cont'
+                url: process.env.VUE_APP_URL + '/verificare-cont',
             }).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     commit('setLoading', false);
@@ -146,7 +146,7 @@ export default new Vuex.Store({
             commit('clearError');
             axios.post('/login', {
                 email: authData.email,
-                password: authData.password
+                password: authData.password,
             }).then(response => {
                 commit('setLoading', false);
 
@@ -157,8 +157,9 @@ export default new Vuex.Store({
                         token: response.data.data.jwt,
                         id: response.data.data.user.id,
                         name: response.data.data.user.name,
-                        email: response.data.data.user.email
+                        email: response.data.data.user.email,
                     };
+
                     localStorage.setItem('token', authData.token);
                     commit('authUser', authData);
                     router.push('/profil');
@@ -185,7 +186,7 @@ export default new Vuex.Store({
                     token,
                     id: res.data.data.id,
                     name: res.data.data.name,
-                    email: res.data.data.email
+                    email: res.data.data.email,
                 };
                 commit('authUser', authData);
             });
@@ -209,7 +210,7 @@ export default new Vuex.Store({
             if (state.token)
                 return 0;
             axios.post('verify', {
-                code: authData.code
+                code: authData.code,
             }).then(response => {
                 console.log(response);
                 if (response && response.data && response.data.responseType === 'success') {
@@ -276,14 +277,22 @@ export default new Vuex.Store({
          * Gets all available categories
          * @param commit
          */
-        loadCategories({commit}){
+        loadCategories({commit}) {
             axios.get('/categories').then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Get Categories-> Success');
-                    let categories = response.data.data;
+                    let res = response.data.data;
+                    let categories = [];
+
+                    res.forEach((cat) => {
+                        const category = {
+                            id: cat.id,
+                            name: cat.name,
+                        };
+                        categories.push(category);
+                    });
                     commit('setCategories', categories);
-                }
-                else {
+                } else {
                     console.log('Get Categories-> Error');
                 }
             });
@@ -292,34 +301,73 @@ export default new Vuex.Store({
          * Gets all available subcategories for a given category
          * @param commit
          */
-        loadSubcategories({commit}, category){
-            axios.get('/subcategories/' + category ).then(response => {
+        loadSubcategories({commit}, category) {
+            axios.get('/subcategories/' + category).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Get Subcategories -> Success');
-                    let subcategories = response.data.data;
+                    let res = response.data.data;
+                    let subcategories = [];
+
+                    res.forEach((sub) => {
+                        const subcategory = {
+                            id: sub.id,
+                            name: sub.name,
+                        };
+                        subcategories.push(subcategory);
+                    });
                     commit('setSubcategories', subcategories);
-                }
-                else {
+                } else {
                     console.log('Get Subcategories -> Error');
                 }
             });
         },
-        loadTypes({commit}, subcategory){
-            axios.get('/types/' + subcategory ).then(response => {
+
+        /**
+         * Gets all avaible types for a given subcategory
+         * @param commit
+         * @param subcategory
+         */
+        loadTypes({commit}, subcategory) {
+            axios.get('/types/' + subcategory).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Get Types -> Success');
-                    let types = response.data.data;
+                    let res = response.data.data;
+                    let types = [];
+
+                    res.forEach((t) => {
+                        const type = {
+                            id: t.id,
+                            name: t.name,
+                        };
+                        types.push(type);
+                    });
                     commit('setTypes', types);
-                }
-                else {
+                } else {
                     console.log('Get Types -> Error');
                 }
             });
-        }
+        },
+
+        /**
+         * Add new item
+         * @param commit
+         * @param item
+         */
+        addItem({commit}, item) {
+            console.log(item);
+            axios.post('/user', item).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    console.log('Add item -> Success');
+                } else {
+                    console.log('Add item -> Error');
+                }
+
+            });
+        },
     },
     modules: {
         loginModal,
         registerModal,
-        darkTheme
-    }
+        darkTheme,
+    },
 });

@@ -6,55 +6,94 @@
                     <h2>Adaugare anunt nou</h2>
                 </v-card-title>
                 <v-form lazy-validation ref="form" v-model="valid">
-                    <v-text-field :counter="60"
-                                  :rules="[rules.title.required, rules.title.length]"
-                                  class="mb-3"
-                                  label="Titlu"
-                                  prepend-icon="title">
-                    </v-text-field>
 
-                    <v-textarea :counter="5000"
-                                :rules="[rules.description.length]"
-                                class="mb-3"
-                                label="Descriere"
-                                prepend-icon="description">
-                    </v-textarea>
+                    <!-- Title -->
+                    <v-layout class="mb-3">
+                        <v-flex>
+                            <v-text-field :counter="60"
+                                          :rules="[rules.title.required, rules.title.length]"
+                                          label="Titlu"
+                                          prepend-icon="title"
+                                          v-model="title"
+                            >
+                            </v-text-field>
+                        </v-flex>
+                    </v-layout>
+
+                    <!-- Description -->
+                    <v-layout class="mb-3">
+                        <v-flex>
+                            <v-textarea :counter="5000"
+                                        :rules="[rules.description.length]"
+                                        label="Descriere"
+                                        prepend-icon="description"
+                                        v-model="description"
+                            >
+                            </v-textarea>
+                        </v-flex>
+                    </v-layout>
+
+                    <!--Pret-->
+                    <v-layout row align-center justify-space-between class="mb-3">
+                        <v-flex xs5 sm5 md5 lg5 xl5>
+                            <v-text-field
+                                    :disabled="currency.value === 2"
+                                    type="number"
+                                    prepend-icon="money"
+                                    label="Preț"
+                                    :suffix="setPricePrefix"
+                                    min="0"
+                                    v-model="price"
+                            ></v-text-field>
+                        </v-flex>
+                        <v-flex xs5 sm5 md5 lg5 xl5>
+                            <v-btn-toggle v-model="currency.value" class="transparent">
+                                <v-btn v-for="currencyType in currency.types" :key="currencyType.value"
+                                       :value="currencyType.value"
+                                       flat>
+                                    {{currencyType.name}}
+                                </v-btn>
+                            </v-btn-toggle>
+                        </v-flex>
+                    </v-layout>
 
                     <!-- Location -->
-                    <div class="mb-3">
-                        <v-chip close v-model="locationChip" @input="resetLocation" class="subheading">
+                    <div class="mb-3 space">
+                        <v-chip close v-model="location.chip" @input="resetLocation" class="subheading">
                             <v-avatar>
                                 <v-icon>location_on</v-icon>
                             </v-avatar>
-                            {{location}}
+                            {{location.name}}
                         </v-chip>
-                        <v-btn @click="locationDialog = true" class="text-none font-weight-regular subheading" flat
-                               v-if="!locationChip">
+                        <v-btn @click="location.dialog = true" class="text-none font-weight-regular subheading"
+                               flat
+                               v-if="!location.chip">
                             <v-icon left>location_on</v-icon>
                             Locație
                         </v-btn>
                     </div>
-                    <v-dialog max-width="850" v-model="locationDialog">
+                    <v-dialog max-width="850" v-model="location.dialog">
                         <v-card>
-                            <v-toolbar color="blue darken-3">
+                            <v-toolbar dark color="blue darken-3">
                                 <v-toolbar-title>
                                     <v-card-title class="subheading">Locație</v-card-title>
                                 </v-toolbar-title>
                                 <v-spacer></v-spacer>
                                 <v-toolbar-title>
-                                    <v-card-title class="subheading" v-model="district">{{district}}
+                                    <v-card-title class="subheading" v-model="location.district">
+                                        {{location.district}}
                                     </v-card-title>
                                 </v-toolbar-title>
                             </v-toolbar>
                             <v-card-text>
-                                <v-layout class="ma-2 location-container" row>
-                                    <v-flex class="scroll-y" xs0>
+                                <v-layout class="location-container" row>
+                                    <v-flex class="scroll-y" xs9>
                                         <app-romanian-map @selectedDistrict="districtWasSelected"/>
                                     </v-flex>
                                     <v-divider vertical></v-divider>
                                     <v-flex class="scroll-y" xs3>
-                                        <v-list class="ml-2 mr-2" dense>
-                                            <v-list-tile v-for="city in cities" :key="city.name"
+                                        <v-list class="ml-3" dense>
+                                            <v-list-tile v-for="city in location.cities" :key="city.name"
                                                          @click="setLocationChip(city.name)">
                                                 <v-list-tile-title>
                                                     {{city.name}}
@@ -68,56 +107,60 @@
                     </v-dialog>
 
                     <!-- Category -->
-                    <v-layout align-center justify-center row class="mb-3" style="height: 30px;">
-                        <v-flex xs6 sm6 md6 lg6 xl6>
-                            <v-btn @click="dialog = true" class="text-none font-weight-regular subheading" flat
-                                   v-if="!categoryChip">
+                    <v-layout align-center justify-space-between row class="mb-4 space">
+                        <v-flex xs5 sm5 md5 lg5 xl5>
+                            <v-btn @click="category.dialog = true"
+                                   class="text-none font-weight-regular subheading" flat
+                                   v-if="!subcategory.chip">
                                 <v-icon left>view_module</v-icon>
                                 Categorie
                             </v-btn>
-                            <v-chip close v-model="categoryChip" @input="resetCategory" class="subheading">
+                            <v-chip close v-model="subcategory.chip" @input="resetCategory" class="subheading">
                                 <v-avatar>
                                     <v-icon>view_module</v-icon>
                                 </v-avatar>
-                                {{category}}
+                                {{subcategory.name}}
                             </v-chip>
                         </v-flex>
-                        <v-flex xs6 sm6 md6 lg6 xl6>
-                            <v-select v-if="categoryChip && !typeChip"
+                        <v-flex xs5 sm5 md5 lg5 xl5>
+                            <v-select v-if="subcategory.chip && !chip.value"
                                       flat
                                       :items="types"
                                       item-text="name"
-                                      item-value="last"
+                                      item-value="id"
                                       menu-props="offsetY"
                                       prepend-icon="view_quilt"
                                       placeholder="Tip"
-                                      @change="typeChip = true"
+                                      return-object
+                                      @change="typeSelected"
                                       v-model="type"
                             ></v-select>
-                            <v-chip close v-if="categoryChip" @input="resetType" v-model="typeChip" class="subheading">
+                            <v-chip close v-model="chip.value"
+                                    class="subheading">
                                 <v-avatar>
                                     <v-icon>view_quilt</v-icon>
                                 </v-avatar>
-                                {{type}}
+                                {{type.name}}
                             </v-chip>
                         </v-flex>
                     </v-layout>
-                    <v-dialog max-width="500" v-model="dialog">
+                    <v-dialog max-width="500" v-model="category.dialog">
                         <v-card>
-                            <v-toolbar color="blue darken-3">
+                            <v-toolbar dark color="blue darken-3">
                                 <v-toolbar-title>
                                     <v-card-title class="subheading">Categorie</v-card-title>
                                 </v-toolbar-title>
                                 <v-spacer></v-spacer>
                                 <v-toolbar-title>
-                                    <v-card-title class="subheading" v-model="categoryTitle">{{categoryTitle}}
+                                    <v-card-title class="subheading" v-model="category.name">
+                                        {{category.name}}
                                     </v-card-title>
                                 </v-toolbar-title>
                             </v-toolbar>
                             <v-card-text>
-                                <v-layout class="ma-2 category-container" row>
+                                <v-layout class="category-container" row>
                                     <v-flex class="scroll-y" xs6>
-                                        <v-list class="ml-2 mr-2" dense>
+                                        <v-list class="mr-3" dense>
                                             <v-list-tile :key="category.id" @click="loadSubcategories(category)"
                                                          v-for="category in categories">
                                                 <v-list-tile-content>
@@ -130,7 +173,7 @@
                                     </v-flex>
                                     <v-divider vertical></v-divider>
                                     <v-flex class="scroll-y" xs6>
-                                        <v-list class="ml-2 mr-2" dense>
+                                        <v-list class="ml-3" dense>
                                             <v-list-tile :key="subcategory.id" @click="loadTypes(subcategory)"
                                                          v-for="subcategory in subcategories">
                                                 <v-list-tile-title>
@@ -144,68 +187,46 @@
                         </v-card>
                     </v-dialog>
 
-                    <!--Pret-->
-                    <v-layout row align-center justify-space-around class="mb-3">
-                        <v-flex xs6 sm6 md6 lg6 xl6>
-                            <v-text-field
-                                    :disabled="priceCurrency === 2"
-                                    type="number"
-                                    label="Preț"
-                                    :suffix="setPricePrefix"
-                            ></v-text-field>
-                        </v-flex>
-                        <v-flex xs5 sm5 md5 lg5 xl5>
-                            <v-btn-toggle v-model="priceCurrency" class="transparent">
-                                <v-btn :value="0" flat>
-                                    Ron
-                                </v-btn>
-                                <v-btn :value="1" flat>
-                                    Euro
-                                </v-btn>
-                                <v-btn :value="2" flat>
-                                    Schimb
-                                </v-btn>
-                            </v-btn-toggle>
-                        </v-flex>
-                    </v-layout>
-
                     <!--images-->
                     <label class="subheading">
                         <v-icon>photo</v-icon>
-                        Imagini
+                        Fotografii
                     </label>
                     <v-layout align-center justify-center class="pa-2 mb-3 ml-1">
-                        <v-flex class="mr-1">
+                        <v-flex class="mr-1 mt-2">
                             <v-layout align-center column>
-                                <input @change="addPic" accept="image/*" ref="inputUpload" type="file"
+                                <input @change="addPic" accept="image/*" ref="inputUpload"
+                                       type="file"
                                        v-show="false">
-                                <label v-show="images.length < 8">{{images.length}} / 8</label>
+                                <label v-show="images.data.length < images.number">
+                                    {{images.data.length}} / {{images.number}}
+                                </label>
                                 <v-progress-circular
                                         :rotate="360"
                                         :size="setSize"
-                                        :value="(images.length / 8) * 100"
+                                        :value="(images.data.length / images.number) * 100"
                                         :width="10"
                                         color="teal"
                                 >
-                                    <v-tooltip bottom v-if="images.length < 8">
+                                    <v-tooltip bottom v-if="images.data.length < images.number">
                                         <template v-slot:activator="{ on }">
                                             <v-btn @click="$refs.inputUpload.click()" color="primary" fab
                                                    small
                                                    v-on="on">
-                                                <v-icon :size="setSize / 4">
+                                                <v-icon :size="setSize / 3">
                                                     add_a_photo
                                                 </v-icon>
                                             </v-btn>
                                         </template>
                                         <span>Adauga fotografie</span>
                                     </v-tooltip>
-                                    <span v-else>{{images.length}} / 8</span>
+                                    <span v-else>{{images.data.length}} / {{images.number}}</span>
                                 </v-progress-circular>
                             </v-layout>
                         </v-flex>
                         <v-flex lg11 md12 sm12 xl12 xs12>
                             <v-layout row wrap>
-                                <v-flex :key="image.url" lg3 md3 sm4 v-for="(image, index) in images" xl3 xs6>
+                                <v-flex :key="image.url" lg3 md3 sm4 v-for="(image, index) in images.data" xl3 xs6>
                                     <v-hover>
                                         <v-card :class="`elevation-${hover ? 12 : 2}`" class="pa-1 ma-1"
                                                 slot-scope="{ hover }"
@@ -233,7 +254,57 @@
                         </v-flex>
                     </v-layout>
 
+
+                    <v-divider class="mb-3"></v-divider>
+
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn flat @click="showDetails = !showDetails">
+                            Filtre opționale
+                            <v-icon>{{ showDetails ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
+                        </v-btn>
+                    </v-card-actions>
+
+                    <!--Details-->
+                    <v-scale-transition>
+                        <v-card-text v-show="showDetails">
+                            <v-layout class="mb-3" column>
+                                <v-layout justify-space-between>
+                                    <v-flex xs5 sm5 md5 lg5>
+                                        <v-text-field label="Producator" v-model="manufacturer">
+                                        </v-text-field>
+                                    </v-flex>
+                                    <v-flex xs5 sm5 md5 lg5>
+                                        <v-text-field label="Model" v-model="model">
+                                        </v-text-field>
+                                    </v-flex>
+                                </v-layout>
+                                <v-layout justify-space-between>
+                                    <v-flex xs5 sm5 md5 lg5>
+                                        <v-text-field label="Anul lansării" v-model="manufacturerYear">
+                                        </v-text-field>
+                                    </v-flex>
+                                    <v-flex xs5 sm5 md5 lg5>
+                                        <v-select
+                                                label="Stare"
+                                                menu-props="offsetY"
+                                                :items="used.status"
+                                                item-text="name"
+                                                item-value="value"
+                                                v-model="used.value"
+                                        >
+                                        </v-select>
+                                    </v-flex>
+                                </v-layout>
+                            </v-layout>
+                        </v-card-text>
+                    </v-scale-transition>
                 </v-form>
+
+                <v-btn @click="addNewItem" class="subheading text-none" color="success">
+                    <v-icon left>add_to_queue</v-icon>
+                    Adaugă anunț
+                </v-btn>
             </v-card>
         </v-flex>
     </v-layout>
@@ -244,91 +315,165 @@
 
     export default {
         data: () => ({
-            locationDialog: false,
-            dialog: false,
-            progressSize: 0,
-            photoSize: 0,
             valid: false,
-            title: '',
-            description: '',
+            showDetails: false,
+
+            chip: {
+                value: false,
+            },
+
             rules: {
                 title: {
                     required: v => !!v || 'Titlul anuntului este obligatoriu.',
-                    length: v => (v && v.length < 61) || 'Titlul este prea lung.'
+                    length: v => (v && v.length < 61) || 'Titlul este prea lung.',
                 },
                 description: {
-                    length: v => (v && v.length < 5000) || 'Descrierea este prea lunga.'
-                }
+                    length: v => (v.length < 5000) || 'Descrierea este prea lunga.',
+                },
             },
 
-
-            images: [],
-            locationChip: false,
-            district: '',
-            cities: [],
-            categoryTitle: '',
-            category: 'Categorie',
-            location: '',
-            type: 'Tip',
-            categoryChip: false,
-            typeChip: false,
-            pricePrefix: '',
-            priceCurrency: 0
+            title: '',
+            description: '',
+            price: null,
+            currency: {
+                value: 0,
+                types: [
+                    {name: 'Lei', value: 0},
+                    {name: 'Euro', value: 1},
+                    {name: 'Schimb', value: 2},
+                ],
+            },
+            location: {
+                name: '',
+                district: '',
+                city: '',
+                cities: '',
+                chip: false,
+                dialog: false,
+            },
+            category: {
+                name: 'Categorie',
+                id: null,
+                dialog: false,
+            },
+            subcategory: {
+                name: '',
+                id: null,
+                chip: false,
+            },
+            type: {
+                name: 'Tip',
+                id: null,
+                chip: false,
+            },
+            images: {
+                data: [],
+                number: 8,
+            },
+            manufacturer: '',
+            model: '',
+            manufacturerYear: '',
+            used: {
+                value: 0,
+                status: [
+                    {name: 'Nou', value: 0},
+                    {name: 'Utilizat', value: 1},
+                ],
+            },
         }),
         components: {
-            appRomanianMap: RomanianMap
+            appRomanianMap: RomanianMap,
         },
         methods: {
             clearForm() {
-                this.title = '';
-                this.description = '';
 
             },
             addPic(e) {
-
                 const image = e.target.files[0];
                 const url = URL.createObjectURL(image);
 
                 const newImg = {
                     image,
-                    url
+                    url,
                 };
 
-                this.images.push(newImg);
+                this.images.data.push(newImg);
+
+                this.$refs.inputUpload.value = null;
             },
             deleteImg(index) {
-                this.images.splice(index, 1);
+                this.images.data.splice(index, 1);
             },
             loadSubcategories(category) {
-                this.categoryTitle = category.name;
+                this.category.name = category.name;
+                this.category.id = category.id;
                 this.$store.dispatch('loadSubcategories', category.id);
             },
             loadTypes(subcategory) {
-                this.category = subcategory.name;
-                this.categoryChip = true;
+                this.subcategory.name = subcategory.name;
+                this.subcategory.id = subcategory.id;
+                this.subcategory.chip = true;
                 this.$store.dispatch('loadTypes', subcategory.id);
-                this.dialog = false;
+                this.category.dialog = false;
+            },
+            typeSelected() {
+                this.chip.value = true;
             },
             resetType() {
-                this.type = 'Tip';
+                this.chip.value = false;
             },
             resetCategory() {
                 this.resetType();
-                this.category = 'Categorie';
-                this.typeChip = false;
+                // this.category = 'Categorie';
+                this.type.chip = false;
             },
+
+            /**
+             * Location
+             * @param district
+             */
             districtWasSelected(district) {
-                this.district = district.name;
-                this.cities = district.cities;
+                this.location.district = district.name;
+                this.location.cities = district.cities;
             },
             setLocationChip(city) {
-                this.locationChip = true;
-                this.location = city + ', județ ' + this.district;
-                this.locationDialog = false;
+                this.location.chip = true;
+                this.location.city = city;
+                this.location.name = city + ', județ ' + this.location.district;
+                this.location.dialog = false;
             },
             resetLocation() {
 
-            }
+            },
+            addNewItem() {
+
+                const item = {
+                    title: this.title,
+                    description: this.description,
+                    price: this.price,
+                    currency: this.currency.value,
+                    location: this.location.city + ', ' + this.location.district,
+                    category: this.category.id,
+                    sub_category: this.subcategory.id,
+                    type: this.type.id,
+                    manufacturer: this.manufacturer,
+                    model: this.model,
+                    manufacturer_year: this.manufacturerYear,
+                    used: this.used.value,
+                };
+
+                let form = new FormData;
+
+                for (let key in item)
+                    form.append(key, item[key]);
+
+
+                this.images.data.forEach((img) => {
+                    form.append('images[]', img.image);
+                });
+
+                this.$store.dispatch('addItem', form);
+            },
         },
         created() {
             this.$store.dispatch('loadCategories');
@@ -375,7 +520,7 @@
                 return this.$store.getters.types;
             },
             setPricePrefix() {
-                switch (this.priceCurrency) {
+                switch (this.currency.value) {
                     case 0 :
                         return 'Lei';
                     case 1 :
@@ -383,8 +528,8 @@
                     case 2 :
                         return 'Schimb';
                 }
-            }
-        }
+            },
+        },
     };
 </script>
 
@@ -395,6 +540,10 @@
 
     .location-container {
         height: 400px;
+    }
+
+    .space {
+        height: 50px;
     }
 
 </style>

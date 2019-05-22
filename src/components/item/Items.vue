@@ -52,13 +52,13 @@
                                         </v-chip>
                                         <v-card-actions class="item-card-action">
                                             <div class="d-flex transition-fast-in-fast-out" v-if="hover">
-                                                    <span>
+                                                    <span class="caption">
                                                         <v-icon class="grey--text">location_on</v-icon>
                                                         {{item.location}}
                                                     </span>
                                             </div>
                                             <div v-else>
-                                                <span>
+                                                 <span class="caption">
                                                     <v-icon class="gray--text">query_builder</v-icon>
                                                     {{item.created_at}}
                                                 </span>
