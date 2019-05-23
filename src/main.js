@@ -7,6 +7,7 @@ import router from './router';
 import Vuelidate from 'vuelidate';
 
 import Alert from './components/modal/shared/Alert';
+import Notification from './components/notitication/Notification';
 
 Vue.config.productionTip = false;
 
@@ -14,6 +15,8 @@ Vue.use(Vuelidate);
 Vue.use(VueRouter);
 
 Vue.component('app-alert', Alert);
+Vue.component('app-notification', Notification);
+
 
 // new Vue({
 //     store,

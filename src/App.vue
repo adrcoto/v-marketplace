@@ -1,6 +1,7 @@
 <template>
     <v-app>
         <app-header/>
+        <app-notification/>
         <app-login-modal/>
         <app-register-modal/>
         <v-container>

@@ -5,9 +5,6 @@ const getters = {
     dark: state => {
         return state.darkTheme;
     },
-    month: (state, payload) => {
-        return state.months[payload];
-    }
 };
 
 const mutations = {

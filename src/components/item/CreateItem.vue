@@ -6,7 +6,6 @@
                     <h2>Adaugare anunt nou</h2>
                 </v-card-title>
                 <v-form lazy-validation ref="form" v-model="valid">
-
                     <!-- Title -->
                     <v-layout class="mb-3">
                         <v-flex>
@@ -38,16 +37,18 @@
                         <v-flex xs5 sm5 md5 lg5 xl5>
                             <v-text-field
                                     :disabled="currency.value === 2"
+                                    :rules="[rules.price.required]"
                                     type="number"
                                     prepend-icon="money"
                                     label="Preț"
                                     :suffix="setPricePrefix"
                                     min="0"
                                     v-model="price"
+                                    onkeypress="return event.charCode >= 48"
                             ></v-text-field>
                         </v-flex>
                         <v-flex xs5 sm5 md5 lg5 xl5>
-                            <v-btn-toggle v-model="currency.value" class="transparent">
+                            <v-btn-toggle mandatory v-model="currency.value" class="transparent">
                                 <v-btn v-for="currencyType in currency.types" :key="currencyType.value"
                                        :value="currencyType.value"
                                        flat>
@@ -59,7 +60,8 @@
 
                     <!-- Location -->
                     <div class="mb-3 space">
-                        <v-chip close v-model="location.chip" @input="resetLocation" class="subheading">
+                        <v-chip close :rules="[rules.title.require]" v-model="location.chip" @input="resetLocation"
+                                class="subheading">
                             <v-avatar>
                                 <v-icon>location_on</v-icon>
                             </v-avatar>
@@ -301,10 +303,11 @@
                     </v-scale-transition>
                 </v-form>
 
-                <v-btn @click="addNewItem" class="subheading text-none" color="success">
+                <v-btn @click="addNewItem" class="subheading text-none" color="success" :disabled="!valid">
                     <v-icon left>add_to_queue</v-icon>
                     Adaugă anunț
                 </v-btn>
+
             </v-card>
         </v-flex>
     </v-layout>
@@ -329,6 +332,12 @@
                 },
                 description: {
                     length: v => (v.length < 5000) || 'Descrierea este prea lunga.',
+                },
+                price: {
+                    required: v => !!v || 'Pretul este obligatoriu.',
+                },
+                location: {
+                    required: v => !!v || 'Locaia este obligatorie.',
                 },
             },
 
@@ -380,6 +389,8 @@
                     {name: 'Utilizat', value: 1},
                 ],
             },
+
+            message: '',
         }),
         components: {
             appRomanianMap: RomanianMap,
@@ -472,7 +483,8 @@
                     form.append('images[]', img.image);
                 });
 
-                this.$store.dispatch('addItem', form);
+                if (this.$refs.form.validate())
+                    this.$store.dispatch('addItem', form);
             },
         },
         created() {

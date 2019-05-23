@@ -6,6 +6,8 @@ import router from '../router';
 import loginModal from './modules/loginModal';
 import registerModal from './modules/registerModal';
 import darkTheme from './modules/darkTheme';
+
+import notification from './modules/notification';
 // axios.defaults.headers.common.Authorization = 'Bearer ' + token
 
 Vue.use(Vuex);
@@ -27,6 +29,12 @@ export default new Vuex.Store({
         categories: [],
         subcategories: [],
         types: [],
+
+        colors: {
+            error: 'rgba(1213,0,0, .9)',
+            warning: 'rgba(245,127,23, .9)',
+            info: 'rgba(1,87,155, .9)',
+        },
     },
     mutations: {
         authUser(state, userData) {
@@ -353,15 +361,25 @@ export default new Vuex.Store({
          * @param commit
          * @param item
          */
-        addItem({commit}, item) {
+        addItem({commit, state}, item) {
             console.log(item);
             axios.post('/user', item).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Add item -> Success');
+                    const payload = {
+                        message: 'Nu am putut adăuga anunțul dumneavoastra.',
+                        color: 'success',
+                    };
+
+                    commit('setSnack', payload);
                 } else {
+                    const payload = {
+                        message: 'Nu am putut adăuga anunțul dumneavoastra.',
+                        color: state.colors.warning,
+                    };
+                    commit('setSnack', payload);
                     console.log('Add item -> Error');
                 }
-
             });
         },
     },
@@ -369,5 +387,6 @@ export default new Vuex.Store({
         loginModal,
         registerModal,
         darkTheme,
+        notification,
     },
 });
