@@ -18,7 +18,7 @@ export default new Vuex.Store({
         user: {
             id: null,
             name: null,
-            email: null,
+            email: null
         },
         loading: false,
         error: null,
@@ -33,8 +33,8 @@ export default new Vuex.Store({
         colors: {
             error: 'rgba(1213,0,0, .9)',
             warning: 'rgba(245,127,23, .9)',
-            info: 'rgba(1,87,155, .9)',
-        },
+            info: 'rgba(1,87,155, .9)'
+        }
     },
     mutations: {
         authUser(state, userData) {
@@ -77,7 +77,7 @@ export default new Vuex.Store({
         },
         setTypes(state, payload) {
             state.types = payload;
-        },
+        }
     },
     getters: {
         token: state => {
@@ -110,6 +110,9 @@ export default new Vuex.Store({
         types: state => {
             return state.types;
         },
+        colors: state => {
+            return state.colors;
+        }
     },
     /**
      * Actions
@@ -128,7 +131,7 @@ export default new Vuex.Store({
                 name: authData.name,
                 email: authData.email,
                 password: authData.password,
-                url: process.env.VUE_APP_URL + '/verificare-cont',
+                url: process.env.VUE_APP_URL + '/verificare-cont'
             }).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     commit('setLoading', false);
@@ -154,7 +157,7 @@ export default new Vuex.Store({
             commit('clearError');
             axios.post('/login', {
                 email: authData.email,
-                password: authData.password,
+                password: authData.password
             }).then(response => {
                 commit('setLoading', false);
 
@@ -165,7 +168,7 @@ export default new Vuex.Store({
                         token: response.data.data.jwt,
                         id: response.data.data.user.id,
                         name: response.data.data.user.name,
-                        email: response.data.data.user.email,
+                        email: response.data.data.user.email
                     };
 
                     localStorage.setItem('token', authData.token);
@@ -194,7 +197,7 @@ export default new Vuex.Store({
                     token,
                     id: res.data.data.id,
                     name: res.data.data.name,
-                    email: res.data.data.email,
+                    email: res.data.data.email
                 };
                 commit('authUser', authData);
             });
@@ -218,7 +221,7 @@ export default new Vuex.Store({
             if (state.token)
                 return 0;
             axios.post('verify', {
-                code: authData.code,
+                code: authData.code
             }).then(response => {
                 console.log(response);
                 if (response && response.data && response.data.responseType === 'success') {
@@ -234,7 +237,9 @@ export default new Vuex.Store({
          * @param query
          */
         loadItems({commit, state}, query) {
-            axios.get('/search').then(response => {
+            if (query === undefined)
+                query = '';
+            axios.get('/search?q=' + query).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Get -> Success');
 
@@ -277,6 +282,11 @@ export default new Vuex.Store({
                     });
                     commit('setItems', items);
                 } else {
+                    if (response.data.data === null)
+                        commit('setSnack', {
+                            message: 'Căutarea nu a returnat nici un rezultat',
+                            color: state.colors.warning
+                        });
                     console.log('Get -> Error');
                 }
             });
@@ -295,7 +305,7 @@ export default new Vuex.Store({
                     res.forEach((cat) => {
                         const category = {
                             id: cat.id,
-                            name: cat.name,
+                            name: cat.name
                         };
                         categories.push(category);
                     });
@@ -319,7 +329,7 @@ export default new Vuex.Store({
                     res.forEach((sub) => {
                         const subcategory = {
                             id: sub.id,
-                            name: sub.name,
+                            name: sub.name
                         };
                         subcategories.push(subcategory);
                     });
@@ -345,7 +355,7 @@ export default new Vuex.Store({
                     res.forEach((t) => {
                         const type = {
                             id: t.id,
-                            name: t.name,
+                            name: t.name
                         };
                         types.push(type);
                     });
@@ -361,32 +371,34 @@ export default new Vuex.Store({
          * @param commit
          * @param item
          */
-        addItem({commit, state}, item) {
+        addItem({commit, state, dispatch}, item) {
             console.log(item);
             axios.post('/user', item).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Add item -> Success');
                     const payload = {
-                        message: 'Nu am putut adăuga anunțul dumneavoastra.',
-                        color: 'success',
+                        message: 'Anunțul a fost adăugat cu success.',
+                        color: 'success'
                     };
 
                     commit('setSnack', payload);
+                    dispatch('loadItems');
                 } else {
+                    console.log(response.data.errorMessage);
                     const payload = {
-                        message: 'Nu am putut adăuga anunțul dumneavoastra.',
-                        color: state.colors.warning,
+                        message: response.data.errorMessage.category.toString(),
+                        color: state.colors.warning
                     };
                     commit('setSnack', payload);
                     console.log('Add item -> Error');
                 }
             });
-        },
+        }
     },
     modules: {
         loginModal,
         registerModal,
         darkTheme,
-        notification,
-    },
+        notification
+    }
 });

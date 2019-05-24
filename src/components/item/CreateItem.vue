@@ -5,7 +5,9 @@
                 <v-card-title>
                     <h2>Adaugare anunt nou</h2>
                 </v-card-title>
-                <v-form lazy-validation ref="form" v-model="valid">
+                <v-form ref="form"
+                        v-model="valid"
+                        lazy-validation>
                     <!-- Title -->
                     <v-layout class="mb-3">
                         <v-flex>
@@ -23,7 +25,7 @@
                     <v-layout class="mb-3">
                         <v-flex>
                             <v-textarea :counter="5000"
-                                        :rules="[rules.description.length]"
+                                        :rules="[rules.description.length, rules.description.required]"
                                         label="Descriere"
                                         prepend-icon="description"
                                         v-model="description"
@@ -60,19 +62,28 @@
 
                     <!-- Location -->
                     <div class="mb-3 space">
-                        <v-chip close :rules="[rules.title.require]" v-model="location.chip" @input="resetLocation"
-                                class="subheading">
+                        <v-chip close v-model="location.chip"
+                                class="subheading"
+                                @input="clearLocation"
+                        >
                             <v-avatar>
                                 <v-icon>location_on</v-icon>
                             </v-avatar>
                             {{location.name}}
                         </v-chip>
+
                         <v-btn @click="location.dialog = true" class="text-none font-weight-regular subheading"
                                flat
-                               v-if="!location.chip">
-                            <v-icon left>location_on</v-icon>
+                               v-if="!location.chip"
+                               required
+                               @blur="$v.location.name.$touch()"
+                        >
+                            <v-icon left :color="locationColor">location_on</v-icon>
                             Locație
                         </v-btn>
+                        <div class="v-messages__message v-messages error--text location-category"
+                        >{{locationErrors}}
+                        </div>
                     </div>
                     <v-dialog max-width="850" v-model="location.dialog">
                         <v-card>
@@ -111,18 +122,27 @@
                     <!-- Category -->
                     <v-layout align-center justify-space-between row class="mb-4 space">
                         <v-flex xs5 sm5 md5 lg5 xl5>
-                            <v-btn @click="category.dialog = true"
-                                   class="text-none font-weight-regular subheading" flat
-                                   v-if="!subcategory.chip">
-                                <v-icon left>view_module</v-icon>
-                                Categorie
-                            </v-btn>
                             <v-chip close v-model="subcategory.chip" @input="resetCategory" class="subheading">
                                 <v-avatar>
                                     <v-icon>view_module</v-icon>
                                 </v-avatar>
                                 {{subcategory.name}}
                             </v-chip>
+
+                            <v-btn @click="category.dialog = true"
+                                   class="text-none font-weight-regular subheading" flat
+                                   v-if="!subcategory.chip"
+                                   @blur="$v.subcategory.name.$touch()"
+                                   required
+                            >
+                                <v-icon left :color="categoryColor">view_module</v-icon>
+                                Categorie
+                            </v-btn>
+                            <div v-if="!subcategory.chip"
+                                 class="v-messages__message v-messages error--text location-category"
+                            >{{categoryErrors}}
+                            </div>
+
                         </v-flex>
                         <v-flex xs5 sm5 md5 lg5 xl5>
                             <v-select v-if="subcategory.chip && !chip.value"
@@ -134,8 +154,11 @@
                                       prepend-icon="view_quilt"
                                       placeholder="Tip"
                                       return-object
-                                      @change="typeSelected"
+                                      @change="typeSelected(); $v.type.name.$touch();"
                                       v-model="type"
+                                      required
+                                      @blur="$v.type.name.$touch()"
+                                      :error-messages="typeErrors"
                             ></v-select>
                             <v-chip close v-model="chip.value"
                                     class="subheading">
@@ -199,7 +222,9 @@
                             <v-layout align-center column>
                                 <input @change="addPic" accept="image/*" ref="inputUpload"
                                        type="file"
-                                       v-show="false">
+                                       v-show="false"
+                                       multiple
+                                >
                                 <label v-show="images.data.length < images.number">
                                     {{images.data.length}} / {{images.number}}
                                 </label>
@@ -273,11 +298,15 @@
                             <v-layout class="mb-3" column>
                                 <v-layout justify-space-between>
                                     <v-flex xs5 sm5 md5 lg5>
-                                        <v-text-field label="Producator" v-model="manufacturer">
+                                        <v-text-field label="Producator"
+                                                      v-model="manufacturer"
+                                        >
                                         </v-text-field>
                                     </v-flex>
                                     <v-flex xs5 sm5 md5 lg5>
-                                        <v-text-field label="Model" v-model="model">
+                                        <v-text-field label="Model"
+                                                      v-model="model"
+                                        >
                                         </v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -303,11 +332,10 @@
                     </v-scale-transition>
                 </v-form>
 
-                <v-btn @click="addNewItem" class="subheading text-none" color="success" :disabled="!valid">
+                <v-btn @click="addNewItem" class="subheading text-none" color="success" :disabled="!valid || $v.$error">
                     <v-icon left>add_to_queue</v-icon>
                     Adaugă anunț
                 </v-btn>
-
             </v-card>
         </v-flex>
     </v-layout>
@@ -315,30 +343,29 @@
 
 <script>
     import RomanianMap from './RomanianMap';
+    import {required} from 'vuelidate/lib/validators';
 
     export default {
         data: () => ({
             valid: false,
-            showDetails: false,
+            showDetails: true,
 
             chip: {
-                value: false,
+                value: false
             },
 
             rules: {
                 title: {
                     required: v => !!v || 'Titlul anuntului este obligatoriu.',
-                    length: v => (v && v.length < 61) || 'Titlul este prea lung.',
+                    length: v => (v && v.length < 61) || 'Titlul este prea lung.'
                 },
                 description: {
-                    length: v => (v.length < 5000) || 'Descrierea este prea lunga.',
+                    required: v => !!v || 'Descrierea anuntului este obligatorie.',
+                    length: v => (v.length < 5000) || 'Descrierea este prea lunga.'
                 },
                 price: {
-                    required: v => !!v || 'Pretul este obligatoriu.',
-                },
-                location: {
-                    required: v => !!v || 'Locaia este obligatorie.',
-                },
+                    required: v => !!v || 'Pretul este obligatoriu.'
+                }
             },
 
             title: '',
@@ -349,8 +376,8 @@
                 types: [
                     {name: 'Lei', value: 0},
                     {name: 'Euro', value: 1},
-                    {name: 'Schimb', value: 2},
-                ],
+                    {name: 'Schimb', value: 2}
+                ]
             },
             location: {
                 name: '',
@@ -358,57 +385,91 @@
                 city: '',
                 cities: '',
                 chip: false,
-                dialog: false,
+                dialog: false
             },
             category: {
-                name: 'Categorie',
+                name: '',
                 id: null,
-                dialog: false,
+                dialog: false
             },
             subcategory: {
                 name: '',
                 id: null,
-                chip: false,
+                chip: false
             },
             type: {
-                name: 'Tip',
+                name: '',
                 id: null,
-                chip: false,
+                chip: false
             },
             images: {
                 data: [],
-                number: 8,
+                number: 8
             },
             manufacturer: '',
             model: '',
             manufacturerYear: '',
             used: {
-                value: 0,
+                value: 1,
                 status: [
                     {name: 'Nou', value: 0},
-                    {name: 'Utilizat', value: 1},
-                ],
+                    {name: 'Utilizat', value: 1}
+                ]
             },
 
-            message: '',
+            message: ''
         }),
         components: {
-            appRomanianMap: RomanianMap,
+            appRomanianMap: RomanianMap
         },
         methods: {
             clearForm() {
-
+                this.$v.$reset();
             },
             addPic(e) {
-                const image = e.target.files[0];
-                const url = URL.createObjectURL(image);
 
-                const newImg = {
-                    image,
-                    url,
-                };
+                // if (this.images.data.length >= this.images.number) {
+                //     this.$store.commit('setSnack', {
+                //         message: 'Ați atins limita de fotografii posibile',
+                //         color: this.$store.getters.colors.error
+                //     });
+                //     return;
+                // }
+                // const image = e.target.files[0];
+                // const url = URL.createObjectURL(image);
+                //
+                //
+                // const newImg = {
+                //     image,
+                //     url
+                // };
+                //
+                // this.images.data.push(newImg);
+                //
+                // this.$refs.inputUpload.value = null;
 
-                this.images.data.push(newImg);
+
+
+                const images = Array.from(e.target.files);
+                console.log(images);
+
+                images.forEach((i) => {
+                    const newImg = {
+                        image: i,
+                        url: URL.createObjectURL(i)
+                    };
+
+                    if (this.images.data.length < this.images.number)
+                        this.images.data.push(newImg);
+                });
+
+                if (this.images.data.length >= this.images.number) {
+                    this.$store.commit('setSnack', {
+                        message: 'Ați atins limita de fotografii posibile',
+                        color: this.$store.getters.colors.info
+                    });
+                    return;
+                }
 
                 this.$refs.inputUpload.value = null;
             },
@@ -432,10 +493,13 @@
             },
             resetType() {
                 this.chip.value = false;
+                this.type.name = '';
             },
             resetCategory() {
                 this.resetType();
-                // this.category = 'Categorie';
+                this.category.name = '';
+                this.subcategory.name = '';
+
                 this.type.chip = false;
             },
 
@@ -453,10 +517,13 @@
                 this.location.name = city + ', județ ' + this.location.district;
                 this.location.dialog = false;
             },
-            resetLocation() {
-
+            clearLocation() {
+                this.location.name = '';
             },
             addNewItem() {
+                this.$v.$touch();
+                if (!this.$refs.form.validate())
+                    return;
 
                 const item = {
                     title: this.title,
@@ -470,7 +537,7 @@
                     manufacturer: this.manufacturer,
                     model: this.model,
                     manufacturer_year: this.manufacturerYear,
-                    used: this.used.value,
+                    used: this.used.value
                 };
 
                 let form = new FormData;
@@ -483,9 +550,9 @@
                     form.append('images[]', img.image);
                 });
 
-                if (this.$refs.form.validate())
-                    this.$store.dispatch('addItem', form);
-            },
+                this.$store.dispatch('addItem', form);
+            }
+
         },
         created() {
             this.$store.dispatch('loadCategories');
@@ -493,6 +560,7 @@
         destroyed() {
             this.clearForm();
         },
+
         computed: {
             setSize() {
                 switch (this.$vuetify.breakpoint.name) {
@@ -541,7 +609,56 @@
                         return 'Schimb';
                 }
             },
+            locationErrors() {
+                let error = '';
+                if (!this.$v.location.name.$dirty)
+                    return error;
+                if (!this.$v.location.name.required)
+                    error = 'Locația este obligatorie.';
+
+                return error;
+            },
+            categoryErrors() {
+                let error = '';
+                if (!this.$v.subcategory.name.$dirty)
+                    return error;
+                if (!this.$v.subcategory.name.required)
+                    error = 'Categoria este obligatorie.';
+
+                return error;
+            },
+            typeErrors() {
+                const errors = [];
+                if (!this.$v.type.name.$dirty) return errors;
+                !this.$v.type.name.required && errors.push('Alegeti un tip.');
+                return errors;
+            },
+            locationColor() {
+                if (this.$v.location.name.$dirty)
+                    return 'red';
+            },
+            categoryColor() {
+                if (this.$v.subcategory.name.$dirty)
+                    return 'red';
+            }
         },
+        validations: {
+            location: {
+                name: {
+                    required
+                }
+            },
+            subcategory: {
+                name: {
+                    required
+                }
+            },
+            type: {
+                name: {
+                    required
+                }
+            }
+        }
     };
 </script>
 
@@ -557,5 +674,14 @@
     .space {
         height: 50px;
     }
+
+    .location-category {
+        margin-left: 28px;
+    }
+
+    .icon-error {
+        color: red;
+    }
+
 
 </style>
