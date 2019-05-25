@@ -5,6 +5,7 @@ import Home from './views/Home';
 import About from './views/About';
 import Verify from './components/auth/Verify';
 import CreateItem from './components/item/CreateItem';
+import ViewItem from './components/item/ViewItem'
 import Profile from './components/user/Profile';
 
 import authGuard from './authGuard';
@@ -33,6 +34,11 @@ export default new Router({
             name: 'Create Item',
             component: CreateItem,
             beforeEnter: authGuard
+        },
+        {
+            path: '/anunt/:title',
+            name: 'View Item',
+            component: ViewItem
         },
         {
             path: '/profil',

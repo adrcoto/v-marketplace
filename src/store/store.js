@@ -77,7 +77,7 @@ export default new Vuex.Store({
         },
         setTypes(state, payload) {
             state.types = payload;
-        }
+        },
     },
     getters: {
         token: state => {

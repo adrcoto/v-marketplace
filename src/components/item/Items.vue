@@ -5,10 +5,10 @@
             <v-card>
                 <v-container>
                     <v-layout row wrap>
-                        <v-flex :key="item.item_id" v-for="(item, index) in items" xs12 sm6 md4 lg3 xl2>
+                        <v-flex :key="item.item_id" v-for="item in items" xs12 sm6 md4 lg3 xl2>
                             <v-layout justify-center>
                                 <v-hover>
-                                    <v-card :class="`elevation-${hover ? 20 : 2}`" class="item-card mb-4"
+                                    <v-card @click="viewItem(item.title)" style="cursor: pointer" :class="`elevation-${hover ? 20 : 2}`" class="item-card mb-4"
                                             slot-scope="{ hover }"
                                             width="90%">
                                         <v-img :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
@@ -84,7 +84,19 @@
             like: false,
             show: false,
         }),
-        methods: {},
+        methods: {
+            viewItem(title){
+                this.$router.push('/anunt/' + this.slugify(title));
+            },
+            slugify(text) {
+                return text.toString().toLowerCase()
+                    .replace(/\s+/g, '-')           // Replace spaces with -
+                    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+                    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+                    .replace(/^-+/, '')             // Trim - from start of text
+                    .replace(/-+$/, '');            // Trim - from end of text
+            }
+        },
         computed: {
             items() {
                 return this.$store.getters.items;

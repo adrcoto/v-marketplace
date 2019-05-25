@@ -75,9 +75,6 @@
                         email: this.email,
                         password: this.password,
                     };
-                    console.log('Request: Login');
-                    console.log('Username: ' + authData.email);
-                    console.log('Password: ' + authData.password);
                     this.$store.dispatch('login', authData);
                 }
             },
@@ -90,7 +87,7 @@
                 this.$store.dispatch('clearError');
             },
             validate() {
-                console.log(this.$refs.form.validate());
+
             },
             clearForm() {
                 this.email = '';

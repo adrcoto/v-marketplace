@@ -1,6 +1,6 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <v-layout justify-center>
-        <v-flex lg7 md9 sm9 xl5 xs10>
+        <v-flex lg8 md10 sm10 xl6 xs11>
             <v-card class="pa-5">
                 <v-card-title>
                     <h2>Adaugare anunt nou</h2>
@@ -9,7 +9,7 @@
                         v-model="valid"
                         lazy-validation>
                     <!-- Title -->
-                    <v-layout class="mb-3">
+                    <v-layout class="mb-4">
                         <v-flex>
                             <v-text-field :counter="60"
                                           :rules="[rules.title.required, rules.title.length]"
@@ -22,7 +22,7 @@
                     </v-layout>
 
                     <!-- Description -->
-                    <v-layout class="mb-3">
+                    <v-layout class="mb-4">
                         <v-flex>
                             <v-textarea :counter="5000"
                                         :rules="[rules.description.length, rules.description.required]"
@@ -34,29 +34,48 @@
                         </v-flex>
                     </v-layout>
 
-                    <!--Pret-->
-                    <v-layout row align-center justify-space-between class="mb-3">
-                        <v-flex xs5 sm5 md5 lg5 xl5>
+                    <!--Price-->
+                    <v-layout row justify-space-between class="mb-3" wrap>
+                        <v-flex xs5 sm5 md5 lg4 xl4>
                             <v-text-field
-                                    :disabled="currency.value === 2"
                                     :rules="[rules.price.required]"
                                     type="number"
                                     prepend-icon="money"
                                     label="Preț"
                                     :suffix="setPricePrefix"
                                     min="0"
-                                    v-model="price"
+                                    v-model="price.value"
                                     onkeypress="return event.charCode >= 48"
                             ></v-text-field>
                         </v-flex>
-                        <v-flex xs5 sm5 md5 lg5 xl5>
-                            <v-btn-toggle mandatory v-model="currency.value" class="transparent">
-                                <v-btn v-for="currencyType in currency.types" :key="currencyType.value"
-                                       :value="currencyType.value"
-                                       flat>
-                                    {{currencyType.name}}
-                                </v-btn>
-                            </v-btn-toggle>
+                        <!-- Negotiable -->
+                        <v-flex xs5 sm5 md5 lg1 xl1>
+                            <v-select
+                                    menu-props="offsetY"
+                                    :items="currency.types"
+                                    item-text="name"
+                                    item-value="value"
+                                    v-model="currency.value"
+                            >
+                            </v-select>
+                        </v-flex>
+
+                        <v-flex xs5 sm5 md5 lg2 xl2>
+                            <v-checkbox
+                                    v-model="price.negotiable"
+                                    label="Negociabil"
+                                    color="success"
+                                    hide-details
+                            ></v-checkbox>
+                        </v-flex>
+
+                        <v-flex xs5 sm5 md5 lg3 xl3>
+                            <v-checkbox
+                                    v-model="price.change"
+                                    label="Accept schimburi"
+                                    color="success"
+                                    hide-details
+                            ></v-checkbox>
                         </v-flex>
                     </v-layout>
 
@@ -85,25 +104,31 @@
                         >{{locationErrors}}
                         </div>
                     </div>
-                    <v-dialog max-width="850" v-model="location.dialog">
+                    <v-dialog max-width="875" v-model="location.dialog">
                         <v-card>
+                            <!-- Toolbar -->
                             <v-toolbar dark color="blue darken-3">
+                                <!-- Toolbar -> Title -->
                                 <v-toolbar-title>
                                     <v-card-title class="subheading">Locație</v-card-title>
                                 </v-toolbar-title>
                                 <v-spacer></v-spacer>
+                                <!-- Toolbar -> Title -->
                                 <v-toolbar-title>
                                     <v-card-title class="subheading" v-model="location.district">
                                         {{location.district}}
                                     </v-card-title>
                                 </v-toolbar-title>
                             </v-toolbar>
+                            <!-- Location container -->
                             <v-card-text>
                                 <v-layout class="location-container" row>
+                                    <!-- Map -->
                                     <v-flex class="scroll-y" xs9>
                                         <app-romanian-map @selectedDistrict="districtWasSelected"/>
                                     </v-flex>
-                                    <v-divider vertical></v-divider>
+                                    <v-divider vertical/>
+                                    <!-- Cities list -> Title -->
                                     <v-flex class="scroll-y" xs3>
                                         <v-list class="ml-3" dense>
                                             <v-list-tile v-for="city in location.cities" :key="city.name"
@@ -122,14 +147,15 @@
                     <!-- Category -->
                     <v-layout align-center justify-space-between row class="mb-4 space">
                         <v-flex xs5 sm5 md5 lg5 xl5>
+                            <!-- Chip -->
                             <v-chip close v-model="subcategory.chip" @input="resetCategory" class="subheading">
                                 <v-avatar>
                                     <v-icon>view_module</v-icon>
                                 </v-avatar>
                                 {{subcategory.name}}
                             </v-chip>
-
-                            <v-btn @click="category.dialog = true"
+                            <!-- Button -->
+                            <v-btn @click="retryGetCategories"
                                    class="text-none font-weight-regular subheading" flat
                                    v-if="!subcategory.chip"
                                    @blur="$v.subcategory.name.$touch()"
@@ -138,14 +164,25 @@
                                 <v-icon left :color="categoryColor">view_module</v-icon>
                                 Categorie
                             </v-btn>
+                            <!-- Error Message -->
                             <div v-if="!subcategory.chip"
                                  class="v-messages__message v-messages error--text location-category"
                             >{{categoryErrors}}
                             </div>
-
                         </v-flex>
+                        <!-- Type -->
                         <v-flex xs5 sm5 md5 lg5 xl5>
-                            <v-select v-if="subcategory.chip && !chip.value"
+                            <!-- Chip -->
+                            <v-chip close v-model="chip.value"
+                                    @input="resetType"
+                                    class="subheading">
+                                <v-avatar>
+                                    <v-icon>view_quilt</v-icon>
+                                </v-avatar>
+                                {{type.name}}
+                            </v-chip>
+                            <!-- Select -->
+                            <v-select v-if="subcategory.chip && !chip.value && !type.isCar"
                                       flat
                                       :items="types"
                                       item-text="name"
@@ -160,17 +197,11 @@
                                       @blur="$v.type.name.$touch()"
                                       :error-messages="typeErrors"
                             ></v-select>
-                            <v-chip close v-model="chip.value"
-                                    class="subheading">
-                                <v-avatar>
-                                    <v-icon>view_quilt</v-icon>
-                                </v-avatar>
-                                {{type.name}}
-                            </v-chip>
                         </v-flex>
                     </v-layout>
-                    <v-dialog max-width="500" v-model="category.dialog">
+                    <v-dialog max-width="550" v-model="category.dialog">
                         <v-card>
+                            <!-- Toolbar -->
                             <v-toolbar dark color="blue darken-3">
                                 <v-toolbar-title>
                                     <v-card-title class="subheading">Categorie</v-card-title>
@@ -182,8 +213,10 @@
                                     </v-card-title>
                                 </v-toolbar-title>
                             </v-toolbar>
+                            <!-- Category - Subcategory List Container-->
                             <v-card-text>
                                 <v-layout class="category-container" row>
+                                    <!-- Category List -->
                                     <v-flex class="scroll-y" xs6>
                                         <v-list class="mr-3" dense>
                                             <v-list-tile :key="category.id" @click="loadSubcategories(category)"
@@ -197,6 +230,7 @@
                                         </v-list>
                                     </v-flex>
                                     <v-divider vertical></v-divider>
+                                    <!-- Subcategory List-->
                                     <v-flex class="scroll-y" xs6>
                                         <v-list class="ml-3" dense>
                                             <v-list-tile :key="subcategory.id" @click="loadTypes(subcategory)"
@@ -211,6 +245,18 @@
                             </v-card-text>
                         </v-card>
                     </v-dialog>
+                    <!-- Debug -->
+                    <!-- <v-layout align-center justify-space-between row class="mb-4 space">
+                         <v-flex xs4 sm4 md4 lg4 xl4>
+                             <p class="text-md-center">{{category.id}}</p>
+                         </v-flex>
+                         <v-flex xs4 sm4 md4 lg4 xl4>
+                             <p class="text-md-center">{{subcategory.id}}</p>
+                         </v-flex>
+                         <v-flex xs4 sm4 md4 lg4 xl4>
+                             <p class="text-md-center">{{type.id}}</p>
+                         </v-flex>
+                     </v-layout>-->
 
                     <!--images-->
                     <label class="subheading">
@@ -245,7 +291,7 @@
                                                 </v-icon>
                                             </v-btn>
                                         </template>
-                                        <span>Adauga fotografie</span>
+                                        <span>Adaugă fotografie</span>
                                     </v-tooltip>
                                     <span v-else>{{images.data.length}} / {{images.number}}</span>
                                 </v-progress-circular>
@@ -281,9 +327,7 @@
                         </v-flex>
                     </v-layout>
 
-
                     <v-divider class="mb-3"></v-divider>
-
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn flat @click="showDetails = !showDetails">
@@ -294,28 +338,38 @@
 
                     <!--Details-->
                     <v-scale-transition>
-                        <v-card-text v-show="showDetails">
+                        <v-card-text v-if="showDetails">
                             <v-layout class="mb-3" column>
-                                <v-layout justify-space-between>
-                                    <v-flex xs5 sm5 md5 lg5>
+                                <!--Basic-->
+                                <v-layout justify-space-between row wrap>
+                                    <!--Manufacturer-->
+                                    <v-flex xs12 sm5 md5 lg5>
                                         <v-text-field label="Producator"
                                                       v-model="manufacturer"
                                         >
                                         </v-text-field>
                                     </v-flex>
-                                    <v-flex xs5 sm5 md5 lg5>
+                                    <!--Model-->
+                                    <v-flex xs12 sm5 md5 lg5>
                                         <v-text-field label="Model"
                                                       v-model="model"
                                         >
                                         </v-text-field>
                                     </v-flex>
-                                </v-layout>
-                                <v-layout justify-space-between>
-                                    <v-flex xs5 sm5 md5 lg5>
-                                        <v-text-field label="Anul lansării" v-model="manufacturerYear">
-                                        </v-text-field>
+                                    <!--Manufacturer Year-->
+                                    <v-flex xs12 sm5 md5 lg5>
+                                        <v-select
+                                                label="An fabricație"
+                                                menu-props="offsetY"
+                                                :items="setManufacturerYear"
+                                                item-text="value"
+                                                v-model="manufacturerYear"
+                                                dense
+                                        >
+                                        </v-select>
                                     </v-flex>
-                                    <v-flex xs5 sm5 md5 lg5>
+                                    <!--Status-->
+                                    <v-flex xs12 sm5 md5 lg5>
                                         <v-select
                                                 label="Stare"
                                                 menu-props="offsetY"
@@ -323,15 +377,191 @@
                                                 item-text="name"
                                                 item-value="value"
                                                 v-model="used.value"
+                                                dense
                                         >
                                         </v-select>
                                     </v-flex>
                                 </v-layout>
+
+                                <!--Auto-->
+                                <div v-if="type.id === 32 || type.id === 33 || type.id === 34 || type.id === 35">
+                                    <v-layout justify-space-between row wrap>
+                                        <!--Engine-->
+                                        <v-flex xs12 sm5 md5 lg5>
+                                            <v-text-field label="Capacitate Cilindrică"
+                                                          v-model="engine"
+                                                          type="number"
+                                                          min="0"
+                                                          onkeypress="return event.charCode >= 48"
+                                            >
+                                            </v-text-field>
+                                        </v-flex>
+                                        <!--Power-->
+                                        <v-flex xs12 sm5 md5 lg5>
+                                            <v-text-field label="Putere"
+                                                          v-model="power"
+                                                          suffix="cp"
+                                                          type="number"
+                                                          min="0"
+                                                          onkeypress="return event.charCode >= 48"
+                                            >
+                                            </v-text-field>
+                                        </v-flex>
+
+                                        <!--Gearbox-->
+                                        <v-flex xs12 sm5 md5 lg5 v-if="type.id === 32">
+                                            <v-select
+                                                    label="Cutie de viteze"
+                                                    menu-props="offsetY"
+                                                    :items="gearbox.options"
+                                                    item-text="name"
+                                                    v-model="gearbox.value"
+                                                    dense
+                                            >
+                                            </v-select>
+                                        </v-flex>
+                                        <!--Caroserie-->
+                                        <v-flex xs12 sm5 md5 lg5 v-if="type.id === 32">
+                                            <v-select
+                                                    label="Caroserie"
+                                                    menu-props="offsetY"
+                                                    :items="body.options"
+                                                    item-text="name"
+                                                    v-model="body.value"
+                                                    dense
+                                            >
+                                            </v-select>
+                                        </v-flex>
+
+                                        <!--Fuel Type-->
+                                        <v-flex xs12 sm5 lg5 v-if="type.id === 32">
+                                            <v-select
+                                                    label="Combustibil"
+                                                    menu-props="offsetY"
+                                                    :items="fuelType.options"
+                                                    item-text="name"
+                                                    v-model="fuelType.value"
+                                                    dense
+                                            >
+                                            </v-select>
+                                        </v-flex>
+                                        <!--Mileage-->
+                                        <v-flex xs12 sm5 md5 lg5>
+                                            <v-text-field label="Rulaj"
+                                                          v-model="mileage"
+                                                          type="number"
+                                                          min="0"
+                                                          onkeypress="return event.charCode >= 48"
+                                                          suffix="km"
+                                            >
+                                            </v-text-field>
+                                        </v-flex>
+
+                                        <!--Drive-->
+                                        <v-flex xs12 sm5 md5 lg5>
+                                            <v-select
+                                                    label="Transmisie"
+                                                    menu-props="offsetY"
+                                                    :items="setTransmissionOptions"
+                                                    item-text="name"
+                                                    v-model="drive.value"
+                                                    dense
+                                            >
+                                            </v-select>
+                                        </v-flex>
+                                        <!--Emission Class-->
+                                        <v-flex xs12 sm5 md5 lg5 v-if="type.id === 32">
+                                            <v-select
+                                                    label="Normă de poluare"
+                                                    menu-props="offsetY"
+                                                    :items="emissionClass.classes"
+                                                    item-text="name"
+                                                    v-model="emissionClass.value"
+                                                    dense
+                                            >
+                                            </v-select>
+                                        </v-flex>
+
+                                        <!--Color-->
+                                        <v-flex xs12 sm5 md5 lg5>
+                                            <v-select
+                                                    label="Culoare"
+                                                    menu-props="offsetY"
+                                                    :items="color.options"
+                                                    item-text="name"
+                                                    v-model="color.value"
+                                                    dense
+                                            >
+                                            </v-select>
+                                        </v-flex>
+                                        <!--Origin-->
+                                        <v-flex xs12 sm5 md5 lg5>
+                                            <v-text-field label="Țară de origine" v-model="origin">
+                                            </v-text-field>
+                                        </v-flex>
+
+                                        <!--VIN-->
+                                        <v-flex xs12 sm5 md5 lg5>
+                                            <v-text-field label="VIN" v-model="VIN">
+                                            </v-text-field>
+                                        </v-flex>
+
+                                    </v-layout>
+                                    <v-layout justify-space-between row wrap>
+
+                                        <!--Pollution Tax-->
+                                        <v-flex xs5 sm5 md5 lg5 v-if="type.id === 32">
+                                            <v-checkbox
+                                                    v-model="pollutionTax"
+                                                    label="Timbru de mediu plătit"
+                                                    color="success"
+                                                    hide-details
+                                            ></v-checkbox>
+                                        </v-flex>
+                                        <!--Damage-->
+                                        <v-flex xs5 sm5 md5 lg5>
+                                            <v-checkbox
+                                                    v-model="damaged"
+                                                    label="Avariat"
+                                                    color="success"
+                                                    hide-details
+                                            ></v-checkbox>
+                                        </v-flex>
+
+                                        <!--Registered-->
+                                        <v-flex xs5 sm5 md5 lg5>
+                                            <v-checkbox
+                                                    v-model="registered"
+                                                    label="Înmatriculat"
+                                                    color="success"
+                                                    hide-details
+                                            ></v-checkbox>
+                                        </v-flex>
+                                        <!--First Owner-->
+                                        <v-flex xs5 sm5 md5 lg5>
+                                            <v-checkbox
+                                                    v-model="firstOwner"
+                                                    label="Primul proprietar"
+                                                    color="success"
+                                                    hide-details
+                                            ></v-checkbox>
+                                        </v-flex>
+
+                                        <!--Right hand drive-->
+                                        <v-flex xs5 sm5 md5 lg5 v-if="type.id === 32">
+                                            <v-checkbox
+                                                    v-model="rightHandDrive"
+                                                    label="Volan pe dreapta"
+                                                    color="success"
+                                                    hide-details
+                                            ></v-checkbox>
+                                        </v-flex>
+                                    </v-layout>
+                                </div>
                             </v-layout>
                         </v-card-text>
                     </v-scale-transition>
                 </v-form>
-
                 <v-btn @click="addNewItem" class="subheading text-none" color="success" :disabled="!valid || $v.$error">
                     <v-icon left>add_to_queue</v-icon>
                     Adaugă anunț
@@ -370,13 +600,16 @@
 
             title: '',
             description: '',
-            price: null,
+            price: {
+                value: null,
+                negotiable: false,
+                change: false
+            },
             currency: {
                 value: 0,
                 types: [
                     {name: 'Lei', value: 0},
-                    {name: 'Euro', value: 1},
-                    {name: 'Schimb', value: 2}
+                    {name: 'Euro', value: 1}
                 ]
             },
             location: {
@@ -390,17 +623,21 @@
             category: {
                 name: '',
                 id: null,
-                dialog: false
+                dialog: false,
+                categories: []
             },
             subcategory: {
                 name: '',
                 id: null,
-                chip: false
+                chip: false,
+                subcategories: []
             },
             type: {
                 name: '',
                 id: null,
-                chip: false
+                chip: false,
+                isCar: false,
+                types: []
             },
             images: {
                 data: [],
@@ -408,7 +645,7 @@
             },
             manufacturer: '',
             model: '',
-            manufacturerYear: '',
+            manufacturerYear: null,
             used: {
                 value: 1,
                 status: [
@@ -416,6 +653,95 @@
                     {name: 'Utilizat', value: 1}
                 ]
             },
+
+            engine: null,
+            power: null,
+            gearbox: {
+                value: '',
+                options: [
+                    {name: 'Manuală'},
+                    {name: 'Semi-automată'},
+                    {name: 'Automată'},
+                    {name: 'Automată (CVT)'},
+                    {name: 'Automată (dublu ambreaj'}
+                ]
+
+            },
+            body: {
+                value: '',
+                options: [
+                    {name: 'Berlină'},
+                    {name: 'Break'},
+                    {name: 'Cabrio'},
+                    {name: 'Coupe'},
+                    {name: 'Hatchback'},
+                    {name: 'Limuzină'},
+                    {name: 'Microbuz Cat B'},
+                    {name: 'Monovolum'},
+                    {name: 'Pick-up'},
+                    {name: 'Off-road'},
+                    {name: 'SUV'}
+                ]
+            },
+            fuelType: {
+                value: '',
+                options: [
+                    {name: 'Benzină'},
+                    {name: 'Diesel'},
+                    {name: 'GPL'},
+                    {name: 'Hibrid'},
+                    {name: 'Electric'}
+                ]
+            },
+            mileage: null,
+
+            drive: {
+                value: '',
+                car: [
+                    {name: 'Fată'},
+                    {name: 'Spate'},
+                    {name: 'Integrală'}
+                ],
+                bikes: [
+                    {name: 'Cardan'},
+                    {name: 'Curea'},
+                    {name: 'Lanț'}
+                ]
+            },
+            emissionClass: {
+                value: '',
+                classes: [
+                    {name: 'Non euro'},
+                    {name: 'Euro I'},
+                    {name: 'Euro II'},
+                    {name: 'Euro III'},
+                    {name: 'Euro IV'},
+                    {name: 'Euro V'},
+                    {name: 'Euro VI'}
+                ]
+            },
+            color: {
+                value: '',
+                options: [
+                    {name: 'Alb'},
+                    {name: 'Albastru'},
+                    {name: 'Argintiu'},
+                    {name: 'Galben / Auriu'},
+                    {name: 'Gri'},
+                    {name: 'Negru'},
+                    {name: 'Rosu'},
+                    {name: 'Verde'},
+                    {name: 'Altă culoare'}
+                ]
+            },
+            origin: '',
+            VIN: '',
+
+            pollutionTax: false,
+            damaged: false,
+            registered: false,
+            firstOwner: false,
+            rightHandDrive: false,
 
             message: ''
         }),
@@ -449,7 +775,6 @@
                 // this.$refs.inputUpload.value = null;
 
 
-
                 const images = Array.from(e.target.files);
                 console.log(images);
 
@@ -476,6 +801,11 @@
             deleteImg(index) {
                 this.images.data.splice(index, 1);
             },
+            retryGetCategories() {
+                if (this.categories.length === 0)
+                    this.$store.dispatch('loadCategories');
+                this.category.dialog = true;
+            },
             loadSubcategories(category) {
                 this.category.name = category.name;
                 this.category.id = category.id;
@@ -485,6 +815,13 @@
                 this.subcategory.name = subcategory.name;
                 this.subcategory.id = subcategory.id;
                 this.subcategory.chip = true;
+                if (subcategory.id === 8) {
+                    this.type.id = 32;
+                    this.type.name = 'Autoturism';
+                    this.type.isCar = true;
+                    this.category.dialog = false;
+                    return;
+                }
                 this.$store.dispatch('loadTypes', subcategory.id);
                 this.category.dialog = false;
             },
@@ -494,13 +831,18 @@
             resetType() {
                 this.chip.value = false;
                 this.type.name = '';
+                this.type.id = null;
+                this.$store.dispatch('loadTypes', this.subcategory.id);
             },
             resetCategory() {
                 this.resetType();
-                this.category.name = '';
                 this.subcategory.name = '';
-
+                this.category.name = '';
+                this.subcategory.id = null;
+                this.category.id = null;
+                this.type.isCar = false;
                 this.type.chip = false;
+                this.$store.commit('setSubcategories', {});
             },
 
             /**
@@ -518,7 +860,10 @@
                 this.location.dialog = false;
             },
             clearLocation() {
+                this.location.district = '';
+                this.location.city = '';
                 this.location.name = '';
+                this.location.cities = [];
             },
             addNewItem() {
                 this.$v.$touch();
@@ -528,7 +873,7 @@
                 const item = {
                     title: this.title,
                     description: this.description,
-                    price: this.price,
+                    price: this.price.value,
                     currency: this.currency.value,
                     location: this.location.city + ', ' + this.location.district,
                     category: this.category.id,
@@ -537,7 +882,26 @@
                     manufacturer: this.manufacturer,
                     model: this.model,
                     manufacturer_year: this.manufacturerYear,
-                    used: this.used.value
+                    used: this.used.value,
+
+                    engine: this.engine,
+                    power: this.power,
+                    gearbox: this.gearbox.value,
+                    body: this.body.value,
+                    fuel_type: this.fuelType.value,
+                    mileage: this.mileage,
+
+                    drive: this.drive.value,
+                    emission_class: this.emissionClass.value,
+                    color: this.color.value,
+                    origin: this.origin,
+                    VIN: this.VIN,
+
+                    pollution_tax: this.pollution_tax,
+                    damaged: this.damaged,
+                    registered: this.registered,
+                    first_owner: this.firstOwner,
+                    right_hand_drive: this.rightHandDrive
                 };
 
                 let form = new FormData;
@@ -550,9 +914,11 @@
                     form.append('images[]', img.image);
                 });
 
-                this.$store.dispatch('addItem', form);
-            }
 
+                console.log(item);
+
+                // this.$store.dispatch('addItem', form);
+            }
         },
         created() {
             this.$store.dispatch('loadCategories');
@@ -640,6 +1006,26 @@
             categoryColor() {
                 if (this.$v.subcategory.name.$dirty)
                     return 'red';
+            },
+            setTransmissionOptions() {
+                return this.type.id === 32 ? this.drive.car : this.drive.bikes;
+            },
+            setManufacturerYear() {
+
+                let options = [];
+                const now = new Date();
+                const start = now.getFullYear();
+                const stop = 1990;
+
+                for (let i = start; i >= stop; i--) {
+                    const year = {
+                        value: i.toString()
+                    };
+                    options.push(year);
+                }
+
+                options.push('Mai vechi de ' + stop);
+                return options;
             }
         },
         validations: {
