@@ -5,6 +5,8 @@
                 <v-card-title>
                     <h2>{{ this.$route.params.title}}</h2>
                 </v-card-title>
+
+                <v-btn @click="doTheTrick">Do the trick</v-btn>
             </v-card>
         </v-flex>
     </v-layout>
@@ -14,7 +16,9 @@
     export default {
         data: () => ({}),
         methods: {
-
+            doTheTrick(){
+                console.log(this.$store.getters.item(this.$route.params.title));
+            },
         }
     };
 </script>

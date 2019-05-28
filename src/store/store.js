@@ -101,6 +101,9 @@ export default new Vuex.Store({
         items: state => {
             return state.items;
         },
+        item: state => title => {
+            return state.items.find(item => item.slug === title);
+        },
         categories: state => {
             return state.categories;
         },
@@ -279,6 +282,12 @@ export default new Vuex.Store({
                             date = createdDay + ' ' + state.months[createdMonth - 1] + ' ' + createdYear;
 
                         item.created_at = date;
+                        item.slug = item.title.toString().toLowerCase()
+                            .replace(/\s+/g, '-')           // Replace spaces with -
+                            .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+                            .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+                            .replace(/^-+/, '')             // Trim - from start of text
+                            .replace(/-+$/, '');            //
                     });
                     commit('setItems', items);
                 } else {
