@@ -8,7 +8,8 @@
                         <v-flex :key="item.item_id" v-for="item in items" xs12 sm6 md4 lg3 xl2>
                             <v-layout justify-center>
                                 <v-hover>
-                                    <v-card @click="viewItem(item.title)" style="cursor: pointer" :class="`elevation-${hover ? 20 : 2}`" class="item-card mb-4"
+                                    <v-card @click="viewItem(item)" style="cursor: pointer"
+                                            :class="`elevation-${hover ? 20 : 2}`" class="item-card mb-4"
                                             slot-scope="{ hover }"
                                             width="90%">
                                         <v-img :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
@@ -52,14 +53,14 @@
                                         </v-chip>
                                         <v-card-actions class="item-card-action">
                                             <div class="d-flex transition-fast-in-fast-out" v-if="hover">
-                                                    <span class="caption">
+                                                    <span class="caption grey--text">
                                                         <v-icon class="grey--text">location_on</v-icon>
                                                         {{item.location}}
                                                     </span>
                                             </div>
                                             <div v-else>
-                                                 <span class="caption">
-                                                    <v-icon class="gray--text">query_builder</v-icon>
+                                                 <span class="caption grey--text">
+                                                    <v-icon class="grey--text">query_builder</v-icon>
                                                     {{item.created_at}}
                                                 </span>
                                             </div>
@@ -71,6 +72,15 @@
                         </v-flex>
                     </v-layout>
                 </v-container>
+                <div class="text-xs-center">
+                    <v-pagination
+                            v-model="page"
+                            :length="Math.ceil(itemsMaxLength / perPage)"
+                            circle
+                            :total-visible="pagesVisible"
+                            @input="changePage"
+                    ></v-pagination>
+                </div>
             </v-card>
         </v-flex>
     </v-layout>
@@ -83,25 +93,34 @@
             API_URL: 'http://dev.shop/storage/',
             like: false,
             show: false,
+            pagesVisible: 10,
+            page: 0,
+            perPage: 24,
         }),
         methods: {
-            viewItem(title){
-                this.$router.push('/anunt/' + this.slugify(title));
+            viewItem(item) {
+                this.$router.push({path: '/anunt/' + item.slug, query: {id: item.item_id}});
             },
-            slugify(text) {
-                return text.toString().toLowerCase()
-                    .replace(/\s+/g, '-')           // Replace spaces with -
-                    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-                    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-                    .replace(/^-+/, '')             // Trim - from start of text
-                    .replace(/-+$/, '');            // Trim - from end of text
-            }
+            changePage(page) {
+                this.$store.dispatch('loadItems', {
+                    page,
+                    perPage: this.perPage,
+                });
+            },
         },
         computed: {
             items() {
                 return this.$store.getters.items;
             },
+            itemsMaxLength() {
+                return this.$store.getters.itemsCount;
+            },
         },
+        // watch: {
+        //     page(val) {
+        //         this.takeItemsOnPage(val);
+        //     },
+        // },
     };
 </script>
 

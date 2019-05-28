@@ -581,21 +581,21 @@
             showDetails: true,
 
             chip: {
-                value: false
+                value: false,
             },
 
             rules: {
                 title: {
                     required: v => !!v || 'Titlul anuntului este obligatoriu.',
-                    length: v => (v && v.length < 61) || 'Titlul este prea lung.'
+                    length: v => (v && v.length < 61) || 'Titlul este prea lung.',
                 },
                 description: {
                     required: v => !!v || 'Descrierea anuntului este obligatorie.',
-                    length: v => (v.length < 5000) || 'Descrierea este prea lunga.'
+                    length: v => (v.length < 5000) || 'Descrierea este prea lunga.',
                 },
                 price: {
-                    required: v => !!v || 'Pretul este obligatoriu.'
-                }
+                    required: v => !!v || 'Pretul este obligatoriu.',
+                },
             },
 
             title: '',
@@ -603,14 +603,14 @@
             price: {
                 value: null,
                 negotiable: false,
-                change: false
+                change: false,
             },
             currency: {
                 value: 0,
                 types: [
                     {name: 'Lei', value: 0},
-                    {name: 'Euro', value: 1}
-                ]
+                    {name: 'Euro', value: 1},
+                ],
             },
             location: {
                 name: '',
@@ -618,30 +618,30 @@
                 city: '',
                 cities: '',
                 chip: false,
-                dialog: false
+                dialog: false,
             },
             category: {
                 name: '',
                 id: null,
                 dialog: false,
-                categories: []
+                categories: [],
             },
             subcategory: {
                 name: '',
                 id: null,
                 chip: false,
-                subcategories: []
+                subcategories: [],
             },
             type: {
                 name: '',
                 id: null,
                 chip: false,
                 isCar: false,
-                types: []
+                types: [],
             },
             images: {
                 data: [],
-                number: 8
+                number: 8,
             },
             manufacturer: '',
             model: '',
@@ -650,8 +650,8 @@
                 value: 1,
                 status: [
                     {name: 'Nou', value: 0},
-                    {name: 'Utilizat', value: 1}
-                ]
+                    {name: 'Utilizat', value: 1},
+                ],
             },
 
             engine: null,
@@ -663,8 +663,8 @@
                     {name: 'Semi-automată'},
                     {name: 'Automată'},
                     {name: 'Automată (CVT)'},
-                    {name: 'Automată (dublu ambreaj'}
-                ]
+                    {name: 'Automată (dublu ambreaj'},
+                ],
 
             },
             body: {
@@ -680,8 +680,8 @@
                     {name: 'Monovolum'},
                     {name: 'Pick-up'},
                     {name: 'Off-road'},
-                    {name: 'SUV'}
-                ]
+                    {name: 'SUV'},
+                ],
             },
             fuelType: {
                 value: '',
@@ -690,8 +690,8 @@
                     {name: 'Diesel'},
                     {name: 'GPL'},
                     {name: 'Hibrid'},
-                    {name: 'Electric'}
-                ]
+                    {name: 'Electric'},
+                ],
             },
             mileage: null,
 
@@ -700,13 +700,13 @@
                 car: [
                     {name: 'Fată'},
                     {name: 'Spate'},
-                    {name: 'Integrală'}
+                    {name: 'Integrală'},
                 ],
                 bikes: [
                     {name: 'Cardan'},
                     {name: 'Curea'},
-                    {name: 'Lanț'}
-                ]
+                    {name: 'Lanț'},
+                ],
             },
             emissionClass: {
                 value: '',
@@ -717,8 +717,8 @@
                     {name: 'Euro III'},
                     {name: 'Euro IV'},
                     {name: 'Euro V'},
-                    {name: 'Euro VI'}
-                ]
+                    {name: 'Euro VI'},
+                ],
             },
             color: {
                 value: '',
@@ -731,8 +731,8 @@
                     {name: 'Negru'},
                     {name: 'Rosu'},
                     {name: 'Verde'},
-                    {name: 'Altă culoare'}
-                ]
+                    {name: 'Altă culoare'},
+                ],
             },
             origin: '',
             VIN: '',
@@ -743,10 +743,10 @@
             firstOwner: false,
             rightHandDrive: false,
 
-            message: ''
+            message: '',
         }),
         components: {
-            appRomanianMap: RomanianMap
+            appRomanianMap: RomanianMap,
         },
         methods: {
             clearForm() {
@@ -781,7 +781,7 @@
                 images.forEach((i) => {
                     const newImg = {
                         image: i,
-                        url: URL.createObjectURL(i)
+                        url: URL.createObjectURL(i),
                     };
 
                     if (this.images.data.length < this.images.number)
@@ -791,7 +791,7 @@
                 if (this.images.data.length >= this.images.number) {
                     this.$store.commit('setSnack', {
                         message: 'Ați atins limita de fotografii posibile',
-                        color: this.$store.getters.colors.info
+                        color: this.$store.getters.colors.info,
                     });
                     return;
                 }
@@ -901,7 +901,7 @@
                     damaged: this.damaged,
                     registered: this.registered,
                     first_owner: this.firstOwner,
-                    right_hand_drive: this.rightHandDrive
+                    right_hand_drive: this.rightHandDrive,
                 };
 
                 let form = new FormData;
@@ -917,8 +917,8 @@
 
                 console.log(item);
 
-                // this.$store.dispatch('addItem', form);
-            }
+                this.$store.dispatch('addItem', form);
+            },
         },
         created() {
             this.$store.dispatch('loadCategories');
@@ -1019,32 +1019,32 @@
 
                 for (let i = start; i >= stop; i--) {
                     const year = {
-                        value: i.toString()
+                        value: i.toString(),
                     };
                     options.push(year);
                 }
 
                 options.push('Mai vechi de ' + stop);
                 return options;
-            }
+            },
         },
         validations: {
             location: {
                 name: {
-                    required
-                }
+                    required,
+                },
             },
             subcategory: {
                 name: {
-                    required
-                }
+                    required,
+                },
             },
             type: {
                 name: {
-                    required
-                }
-            }
-        }
+                    required,
+                },
+            },
+        },
     };
 </script>
 

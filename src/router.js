@@ -45,7 +45,8 @@ export default new Router({
             name: 'Profile',
             component: Profile,
             beforeEnter: authGuard
-        }
+        },
+        { path: '*', redirect: '/' }
     ],
     mode: 'history'
 });

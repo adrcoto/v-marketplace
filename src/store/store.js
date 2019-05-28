@@ -18,13 +18,12 @@ export default new Vuex.Store({
         user: {
             id: null,
             name: null,
-            email: null
+            email: null,
         },
-        loading: false,
-        error: null,
         verify: false,
 
         items: [],
+        itemsCount: 0,
         months: ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec'],
         categories: [],
         subcategories: [],
@@ -33,8 +32,8 @@ export default new Vuex.Store({
         colors: {
             error: 'rgba(1213,0,0, .9)',
             warning: 'rgba(245,127,23, .9)',
-            info: 'rgba(1,87,155, .9)'
-        }
+            info: 'rgba(1,87,155, .9)',
+        },
     },
     mutations: {
         authUser(state, userData) {
@@ -54,20 +53,14 @@ export default new Vuex.Store({
 
             localStorage.removeItem('token');
         },
-        setLoading(state, payload) {
-            state.loading = payload;
-        },
-        setError(state, payload) {
-            state.error = payload;
-        },
-        clearError(state) {
-            state.error = null;
-        },
         setVerify(state) {
             state.verify = true;
         },
         setItems(state, payload) {
             state.items = payload;
+        },
+        setItemsCount(state, payload) {
+            state.itemsCount = payload;
         },
         setCategories(state, payload) {
             state.categories = payload;
@@ -77,6 +70,12 @@ export default new Vuex.Store({
         },
         setTypes(state, payload) {
             state.types = payload;
+        },
+        setPage(state, payload) {
+            state.page = payload;
+        },
+        setPerPage(state, payload) {
+            state.perPage = payload;
         },
     },
     getters: {
@@ -92,17 +91,17 @@ export default new Vuex.Store({
         loading: state => {
             return state.loading;
         },
-        error: state => {
-            return state.error;
-        },
         verify: state => {
             return state.verify;
         },
         items: state => {
             return state.items;
         },
-        item: state => title => {
-            return state.items.find(item => item.slug === title);
+        itemsCount: state => {
+            return state.itemsCount;
+        },
+        item: state => id => {
+            return state.items.find(item => item.item_id === id);
         },
         categories: state => {
             return state.categories;
@@ -115,7 +114,13 @@ export default new Vuex.Store({
         },
         colors: state => {
             return state.colors;
-        }
+        },
+        page: state => {
+            return state.page;
+        },
+        perPAge: state => {
+            return state.perPage;
+        },
     },
     /**
      * Actions
@@ -127,25 +132,19 @@ export default new Vuex.Store({
          * @param authData
          */
         register({commit}, authData) {
-            commit('setLoading', true);
-            commit('clearError');
-
             axios.post('/register', {
                 name: authData.name,
                 email: authData.email,
                 password: authData.password,
-                url: process.env.VUE_APP_URL + '/verificare-cont'
+                url: process.env.VUE_APP_URL + '/verificare-cont',
             }).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
-                    commit('setLoading', false);
                     console.log('Register -> Success');
                     commit('closeRegister');
                     router.push('/verificare-cont/0');
                 } else {
                     console.log('Register -> Error');
                     console.log('Register -> Error -> Message: ' + response.data.errorMessage);
-                    commit('setLoading', false);
-                    commit('setError', response.data.errorMessage);
                 }
             });
         },
@@ -156,14 +155,10 @@ export default new Vuex.Store({
          * @param authData
          */
         login({commit}, authData) {
-            commit('setLoading', true);
-            commit('clearError');
             axios.post('/login', {
                 email: authData.email,
-                password: authData.password
+                password: authData.password,
             }).then(response => {
-                commit('setLoading', false);
-
                 if (response && response.data && response.data.responseType === 'success') {
                     commit('closeLogin');
                     console.log('Login -> Success');
@@ -171,7 +166,7 @@ export default new Vuex.Store({
                         token: response.data.data.jwt,
                         id: response.data.data.user.id,
                         name: response.data.data.user.name,
-                        email: response.data.data.user.email
+                        email: response.data.data.user.email,
                     };
 
                     localStorage.setItem('token', authData.token);
@@ -180,8 +175,6 @@ export default new Vuex.Store({
                 } else {
                     console.log('Login -> Error');
                     console.log('Login -> Error -> Message: ' + response.data.errorMessage);
-                    commit('setLoading', false);
-                    commit('setError', response.data.errorMessage);
                 }
             });
         },
@@ -200,7 +193,7 @@ export default new Vuex.Store({
                     token,
                     id: res.data.data.id,
                     name: res.data.data.name,
-                    email: res.data.data.email
+                    email: res.data.data.email,
                 };
                 commit('authUser', authData);
             });
@@ -224,7 +217,7 @@ export default new Vuex.Store({
             if (state.token)
                 return 0;
             axios.post('verify', {
-                code: authData.code
+                code: authData.code,
             }).then(response => {
                 console.log(response);
                 if (response && response.data && response.data.responseType === 'success') {
@@ -239,14 +232,35 @@ export default new Vuex.Store({
          * @param state
          * @param query
          */
-        loadItems({commit, state}, query) {
-            if (query === undefined)
-                query = '';
-            axios.get('/search?q=' + query).then(response => {
-                if (response && response.data && response.data.responseType === 'success') {
-                    console.log('Get -> Success');
+        loadItems({commit, state}, payload) {
+            let query = '';
+            let page = 0;
+            let perPage = 24;
 
-                    let items = response.data.data;
+            if (payload !== undefined) {
+                if (payload.query !== undefined)
+                    query = payload.query;
+
+                if (payload.page !== undefined)
+                    page = payload.page;
+
+                if (payload.perPage !== undefined)
+                    perPage = payload.perPage;
+            }
+
+            axios.get('/search?q=' + query, {
+                params: {
+                    page,
+                    perPage,
+                },
+            }).then(response => {
+
+                if (response && response.data && response.data.responseType === 'success') {
+                    console.log('Get Items-> Success');
+
+                    let items = response.data.data.items;
+                    commit('setItemsCount', response.data.data.maxLength);
+
                     let created = null;
 
                     let createdYear = null;
@@ -261,9 +275,8 @@ export default new Vuex.Store({
 
                     let date = '';
 
-
                     items.forEach((item) => {
-                        created = new Date(item.created_at);
+                        created = new Date(item.created_at.date);
 
                         createdYear = created.getFullYear();
                         createdMonth = created.getMonth() + 1;
@@ -282,19 +295,14 @@ export default new Vuex.Store({
                             date = createdDay + ' ' + state.months[createdMonth - 1] + ' ' + createdYear;
 
                         item.created_at = date;
-                        item.slug = item.title.toString().toLowerCase()
-                            .replace(/\s+/g, '-')           // Replace spaces with -
-                            .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-                            .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-                            .replace(/^-+/, '')             // Trim - from start of text
-                            .replace(/-+$/, '');            //
                     });
+
                     commit('setItems', items);
                 } else {
                     if (response.data.data === null)
                         commit('setSnack', {
                             message: 'Căutarea nu a returnat nici un rezultat',
-                            color: state.colors.warning
+                            color: state.colors.warning,
                         });
                     console.log('Get -> Error');
                 }
@@ -314,7 +322,7 @@ export default new Vuex.Store({
                     res.forEach((cat) => {
                         const category = {
                             id: cat.id,
-                            name: cat.name
+                            name: cat.name,
                         };
                         categories.push(category);
                     });
@@ -338,7 +346,7 @@ export default new Vuex.Store({
                     res.forEach((sub) => {
                         const subcategory = {
                             id: sub.id,
-                            name: sub.name
+                            name: sub.name,
                         };
                         subcategories.push(subcategory);
                     });
@@ -364,7 +372,7 @@ export default new Vuex.Store({
                     res.forEach((t) => {
                         const type = {
                             id: t.id,
-                            name: t.name
+                            name: t.name,
                         };
                         types.push(type);
                     });
@@ -387,7 +395,7 @@ export default new Vuex.Store({
                     console.log('Add item -> Success');
                     const payload = {
                         message: 'Anunțul a fost adăugat cu success.',
-                        color: 'success'
+                        color: 'success',
                     };
 
                     commit('setSnack', payload);
@@ -396,18 +404,18 @@ export default new Vuex.Store({
                     console.log(response.data.errorMessage);
                     const payload = {
                         message: response.data.errorMessage.category.toString(),
-                        color: state.colors.warning
+                        color: state.colors.warning,
                     };
                     commit('setSnack', payload);
                     console.log('Add item -> Error');
                 }
             });
-        }
+        },
     },
     modules: {
         loginModal,
         registerModal,
         darkTheme,
-        notification
-    }
+        notification,
+    },
 });

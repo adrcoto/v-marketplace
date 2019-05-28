@@ -7,7 +7,7 @@
                         solo-inverted
                         hide-details
                         prepend-inner-icon="search"
-                        :label="'Căutare in ' + itemsLength + ' anuțuri disponibile'"
+                        :label="'Căutare in ' + itemsMaxLength + ' anuțuri disponibile'"
                         @keyup.enter="query"
                         v-model="q"
                 ></v-text-field>
@@ -18,19 +18,21 @@
 
 <script>
     export default {
-       data: () => ({
-           q: ''
-       }),
+        data: () => ({
+            q: '',
+        }),
         methods: {
             query() {
-                this.$store.dispatch('loadItems', this.q);
-            }
+                this.$store.dispatch('loadItems', {
+                    query: this.q,
+                });
+            },
         },
         computed: {
-           itemsLength(){
-               return this.$store.getters.items.length
-           }
-        }
+            itemsMaxLength() {
+                return this.$store.getters.itemsCount;
+            },
+        },
     };
 </script>
 
