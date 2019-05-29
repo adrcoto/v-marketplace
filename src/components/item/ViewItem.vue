@@ -1,5 +1,7 @@
 <template>
     <v-layout row justify-center>
+        <v-flex xs2 sm2 md2 ml2 xl2>
+        </v-flex>
         <v-flex lg8 md10 sm10 xl5 xs11 mr-4>
             <div v-if="!item">Loading Please wait...</div>
             <!--Title-->
@@ -349,8 +351,8 @@
                 </v-card-text>
             </v-card>
         </v-flex>
-        <v-flex xs2 sm2 md2 ml2 xl2 class="profile">
-            <v-card>
+        <v-flex xs2 sm2 md2 ml2 xl2>
+            <v-card class="profile">
                 <v-card color="blue-grey darken-2" class="white--text">
                     <v-layout justify-center>
                         <v-card-title primary-title class="mr-3">
@@ -412,11 +414,8 @@
     }
 
     .profile {
-        margin: auto;
         position: fixed;
-        left: 1100px;
-        right: 0;
-        z-index: 9990
+        width: 350px;
     }
 
     .dim {
