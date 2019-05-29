@@ -349,7 +349,7 @@
                 </v-card-text>
             </v-card>
         </v-flex>
-        <v-flex xl2 class="profile">
+        <v-flex xs2 sm2 md2 ml2 xl2 class="profile">
             <v-card>
                 <v-card color="blue-grey darken-2" class="white--text">
                     <v-layout justify-center>
@@ -412,8 +412,11 @@
     }
 
     .profile {
+        margin: auto;
         position: fixed;
-        right: 14%;
+        left: 1100px;
+        right: 0;
+        z-index: 9990
     }
 
     .dim {
