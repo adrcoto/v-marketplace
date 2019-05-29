@@ -1,6 +1,31 @@
 <!--v-bind="{ [`xs${card.flex}`]: true }"-->
 <template>
     <v-layout justify-center row>
+        <v-flex sm2 class="ml-3 mr-3">
+            <v-card>
+                <v-layout column justify-center>
+                    <v-layout row>
+                        <v-card-title>
+                            Filtreaza rezultatele
+                        </v-card-title>
+                    </v-layout>
+                    <v-card-text>
+                        Pret
+                    </v-card-text>
+                    <v-layout row>
+                        <v-card-text>
+
+                            <v-text-field placeholder="Pret minim" type="number">
+                            </v-text-field>
+                        </v-card-text>
+                        <v-card-text>
+                            <v-text-field placeholder="Pret maxim" type="number">
+                            </v-text-field>
+                        </v-card-text>
+                    </v-layout>
+                </v-layout>
+            </v-card>
+        </v-flex>
         <v-flex xs6 sm8 md10 lg11 xl10>
             <v-card>
                 <v-container>
@@ -124,31 +149,6 @@
     };
 </script>
 
-<!--                <v-flex sm2 class="ml-3">
-                    <v-card>
-                        <v-layout column justify-center>
-                            <v-layout row>
-                                <v-card-title>
-                                    Filtreaza rezultatele
-                                </v-card-title>
-                            </v-layout>
-                            <v-card-text>
-                                Pret
-                            </v-card-text>
-                            <v-layout row>
-                                <v-card-text>
-
-                                    <v-text-field placeholder="Pret minim" type="number">
-                                    </v-text-field>
-                                </v-card-text>
-                                <v-card-text>
-                                    <v-text-field placeholder="Pret maxim" type="number">
-                                    </v-text-field>
-                                </v-card-text>
-                            </v-layout>
-                        </v-layout>
-                    </v-card>
-                </v-flex>-->
 
 <style scoped>
     .price {
