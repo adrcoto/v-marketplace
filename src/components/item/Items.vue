@@ -33,7 +33,7 @@
                         <v-flex :key="item.item_id" v-for="item in items" xs12 sm6 md4 lg3 xl2>
                             <v-layout justify-center>
                                 <v-hover>
-                                    <v-card @click="viewItem(item)" style="cursor: pointer"
+                                    <v-card @click.stop="viewItem(item)" style="cursor: pointer"
                                             :class="`elevation-${hover ? 20 : 2}`" class="item-card mb-4"
                                             slot-scope="{ hover }"
                                             width="90%">
@@ -44,15 +44,12 @@
                                                 <div class="d-flex transition-fast-in-fast-out v-card--reveal"
                                                      v-if="hover">
                                                     <v-card-actions>
-                                                        <v-btn :class="{'hover-btn-pressed': like, 'hover-btn': !like}"
-                                                               @click="like = !like"
+                                                        <v-btn :class="{'hover-btn-pressed': isFavorite(item.item_id), 'hover-btn': !like}"
+                                                               @click.stop="addToFavorites(item.item_id)"
                                                                class="hover-btn"
                                                                icon>
                                                             <v-icon>favorite</v-icon>
                                                             <!--                                                            http://dev.shop/storage/images/images/jG1QCFkVHIW4kDqwbCzl30pNhxC38Moehy1961Wn.jpeg-->
-                                                        </v-btn>
-                                                        <v-btn class="hover-btn" icon>
-                                                            <v-icon>bookmark</v-icon>
                                                         </v-btn>
                                                         <v-btn class="hover-btn" icon>
                                                             <v-icon>share</v-icon>
@@ -62,7 +59,6 @@
                                                 </div>
                                             </v-expand-transition>
                                         </v-img>
-
                                         <!--                                        /<v-card-title class="item-card-title subheading font-weight-bold"-->
                                         <!--                                                      primary-title>-->
                                         <v-layout align-start justify-start
@@ -113,7 +109,6 @@
 
 <script>
     export default {
-
         data: () => ({
             API_URL: 'http://dev.shop/storage/',
             like: false,
@@ -132,6 +127,22 @@
                     perPage: this.perPage,
                 });
             },
+            addToFavorites(id) {
+                if (this.$store.getters.isAuthenticated) {
+                    if (this.isFavorite(id)) {
+                        console.log('delete');
+                        this.$store.dispatch('removeFromFavorite', id);
+                    } else {
+                        console.log('add');
+                        this.$store.dispatch('addToFavorite', id);
+                    }
+                }
+            },
+
+            isFavorite(id) {
+                if (this.favorites)
+                    return this.favorites.find(favorite => favorite.item === id);
+            },
         },
         computed: {
             items() {
@@ -140,12 +151,11 @@
             itemsMaxLength() {
                 return this.$store.getters.itemsCount;
             },
+
+            favorites() {
+                return this.$store.getters.favorites;
+            },
         },
-        // watch: {
-        //     page(val) {
-        //         this.takeItemsOnPage(val);
-        //     },
-        // },
     };
 </script>
 

@@ -15,6 +15,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         token: null,
+        date: '',
+        favorites: null,
         user: {
             id: null,
             name: null,
@@ -59,6 +61,9 @@ export default new Vuex.Store({
         setItems(state, payload) {
             state.items = payload;
         },
+        setFavorites(state, payload) {
+            state.favorites = payload;
+        },
         setItemsCount(state, payload) {
             state.itemsCount = payload;
         },
@@ -102,6 +107,9 @@ export default new Vuex.Store({
         },
         item: state => id => {
             return state.items.find(item => item.item_id === id);
+        },
+        favorites: state => {
+            return state.favorites;
         },
         categories: state => {
             return state.categories;
@@ -152,9 +160,10 @@ export default new Vuex.Store({
         /**
          * Login user
          * @param commit
+         * @param dispatch
          * @param authData
          */
-        login({commit}, authData) {
+        login({commit, dispatch}, authData) {
             axios.post('/login', {
                 email: authData.email,
                 password: authData.password,
@@ -171,6 +180,7 @@ export default new Vuex.Store({
 
                     localStorage.setItem('token', authData.token);
                     commit('authUser', authData);
+                    dispatch('loadFavorites');
                     router.push('/profil');
                 } else {
                     console.log('Login -> Error');
@@ -181,9 +191,10 @@ export default new Vuex.Store({
         /**
          * Re-login on refresh
          * @param commit
+         * @param dispatch
          * @returns {number}
          */
-        tryAutoLogin({commit}) {
+        tryAutoLogin({commit, dispatch}) {
             const token = localStorage.getItem('token');
             if (!token)
                 return 0;
@@ -196,6 +207,7 @@ export default new Vuex.Store({
                     email: res.data.data.email,
                 };
                 commit('authUser', authData);
+                dispatch('loadFavorites');
             });
         },
         /**
@@ -389,7 +401,6 @@ export default new Vuex.Store({
          * @param item
          */
         addItem({commit, state, dispatch}, item) {
-            console.log(item);
             axios.post('/user', item).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Add item -> Success');
@@ -408,6 +419,68 @@ export default new Vuex.Store({
                     };
                     commit('setSnack', payload);
                     console.log('Add item -> Error');
+                }
+            });
+        },
+
+        deleteItem({commit, state, dispatch}, id) {
+            const token = state.token;
+            axios.defaults.headers.common.Authorization = 'Bearer ' + token;
+            axios.delete('/user/' + id).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    dispatch('loadItems');
+                    commit('setSnack', {
+                        message: 'Anunțul a fost șters',
+                        color: state.colors.info,
+                    });
+                } else {
+                }
+            });
+        },
+
+        loadFavorites({commit, state}) {
+            const token = state.token;
+            axios.defaults.headers.common.Authorization = 'Bearer ' + token;
+            axios.get('/favorites').then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    commit('setFavorites', response.data.data);
+                } else {
+                }
+            });
+        },
+
+        addToFavorite({commit, state, dispatch}, item) {
+            const token = state.token;
+            axios.defaults.headers.common.Authorization = 'Bearer ' + token;
+            axios.post('/favorites', {
+                item: item,
+            }).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    dispatch('loadFavorites');
+                    commit('setSnack', {
+                        message: 'Anunțul a fost adăugat în lista de favorite',
+                        color: state.colors.info,
+                    });
+                } else {
+                    commit('setSnack', {
+                        message: 'Anunțul există deja in lista dumneavoastră de anunțuri favorite',
+                        color: state.colors.warning,
+                    });
+                }
+            });
+        },
+
+        removeFromFavorite({commit, state, dispatch}, id) {
+            const token = state.token;
+            axios.defaults.headers.common.Authorization = 'Bearer ' + token;
+            axios.delete('/favorites/' + id).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    dispatch('loadFavorites');
+                    commit('setSnack', {
+                        message: 'Anunțul a fost șters din lista de fovorite',
+                        color: state.colors.info,
+                    });
+                } else {
                 }
             });
         },

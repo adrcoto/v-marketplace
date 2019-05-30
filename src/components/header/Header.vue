@@ -46,24 +46,32 @@
             <v-spacer></v-spacer>
             <v-toolbar-items class="hidden-sm-and-down" id="hook">
 
-                <v-menu v-if="auth" offset-y>
-                    <v-btn class="text-none font-weight-regular subheading" flat slot="activator">
-                        <v-avatar size="45px" tile>
-                            <img src="https://cdn.vuetifyjs.com/images/logos/logo.svg" alt="Vuetify">
-                        </v-avatar>
-                        {{user}}
-                        <v-icon>expand_more</v-icon>
-                    </v-btn>
-                    <v-list>
-                        <v-list-tile
-                                v-for="(item, index) in items"
-                                :key="index"
-                                @click=""
-                        >
-                            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                        </v-list-tile>
-                    </v-list>
-                </v-menu>
+                <!--    <v-menu v-if="auth" offset-y>
+                        <v-btn class="text-none font-weight-regular subheading" flat slot="activator">
+                            <v-avatar size="45px" tile>
+                                <img src="https://cdn.vuetifyjs.com/images/logos/logo.svg" alt="Vuetify">
+                            </v-avatar>
+                            {{user}}
+                            <v-icon>expand_more</v-icon>
+                        </v-btn>
+                        <v-list>
+                            <v-list-tile
+                                    v-for="(item, index) in items"
+                                    :key="index"
+                                    @click=""
+                                    :to="item.to"
+                            >
+                                <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                            </v-list-tile>
+                        </v-list>
+                    </v-menu>-->
+
+                <v-btn  v-if="auth" to="/profil/anunturi" class="text-none font-weight-regular subheading" flat slot="activator">
+                    <v-avatar size="45px" tile>
+                        <img src="https://cdn.vuetifyjs.com/images/logos/logo.svg" alt="Vuetify">
+                    </v-avatar>
+                    {{user}}
+                </v-btn>
 
                 <v-btn class="text-none font-weight-regular subheading" flat v-if="!auth" @click.stop="openLoginModal">
                     <v-icon left>lock_open</v-icon>
@@ -103,10 +111,10 @@
             drawer: false,
             dialog: false,
             items: [
-                {title: 'Anunturile mele'},
-                {title: 'Mesaje'},
-                {title: 'Favorite'},
-                {title: 'Setari cont'},
+                // {title: 'Anunturile mele', to: 'profil/anunturi'},
+                // {title: 'Mesaje', to: 'profil/mesaje'},
+                // {title: 'Favorite', to: 'profil/favorite'},
+                // {title: 'Setari cont', to: 'profil/setari'},
             ],
         }),
         methods: {

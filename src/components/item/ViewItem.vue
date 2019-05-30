@@ -1,11 +1,11 @@
 <template>
     <v-layout row justify-center>
-        <v-flex xs2 sm2 md2 ml2 xl2>
+        <v-flex xs1 sm1 md1 ml1 xl1>
         </v-flex>
-        <v-flex lg8 md10 sm10 xl5 xs11 mr-4>
+        <v-flex lg7 md10 sm10 xl5 xs11 mr-4 ml-4>
             <div v-if="!item">Loading Please wait...</div>
             <!--Title-->
-            <v-card v-if="item" class="pa-5">
+            <v-card v-if="item" class="pa-1 mb-3">
                 <v-card-title class="display-1 font-weight-bold">
                     {{item.title}}
                 </v-card-title>
@@ -15,21 +15,21 @@
                     <v-flex>
                         <v-layout column>
                             <v-flex>
-                                <div class="grey--text mb-1 subheading">
+                                <v-label class="mb-1">
                                     <v-icon right class="grey--text">location_on</v-icon>
                                     {{item.location}}
-                                </div>
+                                </v-label>
                             </v-flex>
                             <v-flex>
-                                <div class="grey--text mb-1 subheading">
+                                <v-label class="mb-1">
                                     <v-icon right class="grey--text">query_builder</v-icon>
                                     {{item.created_at}}
-                                </div>
+                                </v-label>
                             </v-flex>
                         </v-layout>
                     </v-flex>
                     <v-flex class="text-xs-right mr-2">
-                        <v-chip class="display-1 price" color="primary">
+                        <v-chip class="price" color="primary">
                             {{item.price}}
                             <span class="ml-2" v-if="item.currency === 0">lei</span>
                             <span class="ml-2" v-else>€</span>
@@ -41,16 +41,18 @@
                 <v-card-text class="mb-1">
                     <v-carousel delimiter-icon="stop"
                                 prev-icon="arrow_back"
-                                next-icon="arrow_forward">
+                                next-icon="arrow_forward"
+                                :cycle="cycle"
+                    >
                         <v-carousel-item
                                 v-for="image in item.images"
                                 :key="image.id"
                                 :src="API_URL + image.filename"
+                                lazy
                         ></v-carousel-item>
                     </v-carousel>
                 </v-card-text>
                 <v-card-text>
-
                     <v-layout justify-space-between row wrap>
                         <!--                        Manufacurer-->
                         <v-flex xs5 v-if="item.manufacturer" class="mb-4">
@@ -87,7 +89,8 @@
                         </v-flex>
 
                         <!--                        Manufacurer Year-->
-                        <v-flex xs5 v-if="item.manufacturer_year && item.manufacturer_year !== 0" class="mb-4">
+                        <v-flex xs5 v-if="item.manufacturer_year !== undefined && item.manufacturer_year != 0"
+                                class="mb-4">
                             <v-layout row align-center>
                                 <v-flex>
                                     <v-label class="grey--text subheading">An fabricație</v-label>
@@ -327,7 +330,9 @@
                         </v-flex>
 
                         <!--                        Damaged-->
-                        <v-flex xs5 v-if="item.damaged !== undefined" class="mb-4">
+                        <v-flex xs5
+                                v-if="item.damaged !== undefined && (item.item_type === 32 || item.item_type === 33 || item.item_type === 34 || item.item_type === 35)"
+                                class="mb-4">
                             <v-icon left :color="item.damaged === 0 ? 'success' : 'warning'">done</v-icon>
                             <v-label v-if="item.damaged === 0">Fară accident</v-label>
                             <v-label v-if="item.damaged === 1"> Avariat</v-label>
@@ -346,28 +351,93 @@
                             <v-label>Volan pe dreapta
                             </v-label>
                         </v-flex>
-
                     </v-layout>
                 </v-card-text>
             </v-card>
+
+            <!-- <v-card @click="viewItem(userItem)" v-for="userItem in userItems" :key="userItem.item_id"
+                     v-if="item.item_id !== userItem.item_id">
+                 <v-card-title>
+                     {{userItem.title}}
+                 </v-card-title>
+                 <v-layout row wrap>
+                     <v-card-text>
+                         {{userItem.price}}
+                     </v-card-text>
+                 </v-layout>
+             </v-card>-->
+
+            <v-card class="pa-1">
+                <!--                <v-card-title class="subheading">-->
+                <!--                    Anuțurile utilizatorului &nbsp; <span class="font-weight-medium"> {{user.name}}</span>-->
+                <!--                </v-card-title>-->
+                <v-divider/>
+                <v-layout column justify-center>
+                    <v-flex :key="userItem.item_id" v-for="userItem in userItems"
+                            v-if="item.item_id !== userItem.item_id">
+                        <v-card-text>
+                            <v-hover>
+                                <v-card @click="viewItem(userItem)" style="cursor: pointer"
+                                        :class="`elevation-${hover ? 20 : 2}`" class="item-card"
+                                        slot-scope="{ hover }">
+                                    <v-layout row>
+                                        <v-flex xs3 md3 lg3 x13>
+                                            <v-img :src="item.images.length > 0 ? API_URL + userItem.images[0].filename : require('../../assets/no-available-image.png')"
+                                                   height="125">
+                                            </v-img>
+                                        </v-flex>
+                                        <v-flex xs7 md7 lg7 x17>
+                                            <div class="ml-3 mt-3">
+                                                <div class="item-card-title title">
+                                                    {{userItem.title}}
+                                                </div>
+                                                <div>
+                                                    <v-icon>location_on</v-icon>
+                                                    {{userItem.location}}
+                                                </div>
+                                                <v-spacer/>
+                                                <div>
+                                                    <v-icon>query_builder</v-icon>
+                                                    {{userItem.created_at}}
+                                                </div>
+                                            </div>
+                                        </v-flex>
+                                        <v-flex xs2 md2 lg2 x12>
+                                            <v-card-text class="text-md-right">
+                                                <v-chip dark color="primary" class="subheading">
+                                                    {{userItem.price}}
+                                                    <span class="ml-2" v-if="item.currency === 0">lei</span>
+                                                    <span class="ml-2" v-else>€</span>
+                                                </v-chip>
+                                            </v-card-text>
+                                        </v-flex>
+                                    </v-layout>
+                                </v-card>
+                            </v-hover>
+                        </v-card-text>
+                    </v-flex>
+                </v-layout>
+            </v-card>
         </v-flex>
-        <v-flex xs2 sm2 md2 ml2 xl2>
-            <v-card class="profile">
+        <v-flex xs1 sm1 md1 ml1 xl1>
+            <v-card class="profile" v-if="user">
                 <v-card color="blue-grey darken-2" class="white--text">
                     <v-layout justify-center>
-                        <v-card-title primary-title class="mr-3">
+                        <v-card-title class="mr-3">
                             <v-avatar size="75px" tile>
                                 <img src="https://cdn.vuetifyjs.com/images/logos/logo.svg" alt="Vuetify">
                             </v-avatar>
-                            <span class="subheading">Coto Adrian</span>
+                            <v-label dark>{{user.name}}</v-label>
                         </v-card-title>
                     </v-layout>
                 </v-card>
 
                 <v-card-title class="mr-3">
-                    <v-btn large color="success" class="text-none font-weight-regular subheading dim">
+                    <v-btn @click="number = true" large color="success"
+                           class="text-none font-weight-regular subheading dim">
                         <v-icon left>phone</v-icon>
-                        0727576572
+                        <span v-if="number">{{user.phone}}</span>
+                        <span v-if="!number">{{user.phone.substring(0, 4) + maskPhone.toString()}}</span>
                     </v-btn>
 
                     <v-btn large color="info" class="text-none font-weight-regular subheading dim">
@@ -392,17 +462,98 @@
         data() {
             return {
                 API_URL: 'http://dev.shop/storage/',
+                number: false,
                 item: null,
+                user: null,
+                userItems: null,
+                itemsLength: 0,
+                cycle: false,
+                months: ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec'],
             };
         },
+        methods: {
+            viewItem(item) {
+                this.item = item;
+                this.$router.replace({path: '/anunt/' + item.slug, query: {id: item.item_id}});
+            },
+            calculateDate(actual, created) {
+                const actualYear = actual.getFullYear();
+                const actualDay = new Date().getDate();
+
+                const createdYear = created.getFullYear();
+                const createdMonth = created.getMonth() + 1;
+                const createdDay = created.getDate();
+                const createdHour = created.getHours();
+                const createdMin = created.getMinutes();
+
+                let date = '';
+
+                if (actualDay - createdDay === 1)
+                    date = 'Ieri ' + createdHour + ':' + createdMin;
+                else if (createdDay - actualDay === 0)
+                    date = 'Azi ' + createdHour + ':' + createdMin;
+                else
+                    date = createdDay + ' ' + this.months[createdMonth - 1];
+
+                if (createdYear !== actualYear)
+                    date = createdDay + ' ' + this.months[createdMonth - 1] + ' ' + createdYear;
+
+                return date;
+            },
+        },
+
         computed: {
             getStatus() {
                 return this.item.used ? 'Utilizat' : 'Nou';
             },
+            maskPhone() {
+                let characters = this.user.phone.length;
+
+                let mask = '';
+                for (let i = 0; i < characters; i++)
+                    mask += 'x';
+                return mask;
+            },
         },
         mounted() {
-            this.item = this.$store.getters.item(this.$route.query.id);
-            console.log(this.item);
+            //this.item = this.$store.getters.item(this.$route.query.id);
+            const actual = new Date();
+            axios.get('/item/' + this.$route.query.id).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+
+                    this.item = response.data.data.item;
+                    this.user = response.data.data.user;
+
+                    const actual = new Date();
+                    const created = new Date(this.item.created_at.date);
+
+                    this.item.created_at = this.calculateDate(actual, created);
+
+                    axios.get('/search', {
+                        params: {
+                            owner: this.user.id,
+                            page: 0,
+                            perPage: 10,
+                        },
+                    }).then(res => {
+                        if (res && res.data && res.data.responseType === 'success') {
+                            this.userItems = res.data.data.items;
+                            this.userItems.forEach((userItem) => {
+                                userItem.created_at = this.calculateDate(actual, new Date(userItem.created_at.date));
+                            });
+
+                            this.itemsLength = res.data.data.maxLength - 1;
+                        } else {
+
+                        }
+                    });
+                } else {
+                    this.$store.commit('setSnack', {
+                        message: 'Error loading item',
+                        color: this.$store.getters.colors.warning,
+                    });
+                }
+            });
         },
     };
 </script>
@@ -411,14 +562,24 @@
     .price {
         opacity: .9;
         color: #fff;
+        font-size: 24px;
     }
 
     .profile {
         position: fixed;
-        width: 350px;
+        width: 275px;
+    }
+
+    .item-card-title {
+        height: 50px;
+        overflow: hidden;
     }
 
     .dim {
         width: 100%;
+    }
+
+    .item-card-title {
+        overflow: hidden;
     }
 </style>
