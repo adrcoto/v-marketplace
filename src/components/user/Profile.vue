@@ -83,8 +83,6 @@
                 this.$router.push('/profil/' + this.setName(this.tab));
             },
         },
-
-
     };
 </script>
 

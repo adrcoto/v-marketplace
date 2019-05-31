@@ -44,13 +44,19 @@
                                                 <div class="d-flex transition-fast-in-fast-out v-card--reveal"
                                                      v-if="hover">
                                                     <v-card-actions>
-                                                        <v-btn :class="{'hover-btn-pressed': isFavorite(item.item_id), 'hover-btn': !like}"
-                                                               @click.stop="addToFavorites(item.item_id)"
-                                                               class="hover-btn"
-                                                               icon>
-                                                            <v-icon>favorite</v-icon>
-                                                            <!--                                                            http://dev.shop/storage/images/images/jG1QCFkVHIW4kDqwbCzl30pNhxC38Moehy1961Wn.jpeg-->
-                                                        </v-btn>
+                                                        <v-tooltip top>
+                                                            <template v-slot:activator="{ on }">
+                                                                <v-btn :class="{'hover-btn-pressed': isFavorite(item.item_id), 'hover-btn': !like}"
+                                                                       @click.stop="addToFavorites(item.item_id)"
+                                                                       class="hover-btn"
+                                                                       icon
+                                                                       v-on="on"
+                                                                >
+                                                                    <v-icon>favorite</v-icon>
+                                                                </v-btn>
+                                                            </template>
+                                                            <span>Adaugă la favorite</span>
+                                                        </v-tooltip>
                                                         <v-btn class="hover-btn" icon>
                                                             <v-icon>share</v-icon>
                                                         </v-btn>

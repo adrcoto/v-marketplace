@@ -14,17 +14,17 @@
                 show: false,
                 message: '',
                 color: '',
-                timeout: 5000
+                timeout: 5000,
             };
         },
         created: function () {
             this.$store.watch(state => state.notification.snack, () => {
+
                 const msg = this.$store.state.notification.snack;
                 if (msg !== '') {
                     this.show = true;
                     this.message = this.$store.state.notification.snack;
                     this.color = this.$store.state.notification.color;
-
                     this.$store.commit('setSnack', {message: '', color: ''});
                 }
             });

@@ -6,6 +6,7 @@ import About from './views/About';
 import Verify from './components/auth/Verify';
 import CreateItem from './components/item/CreateItem';
 import ViewItem from './components/item/ViewItem';
+import EditItem from './components/item/EditItem';
 import Profile from './components/user/Profile';
 
 
@@ -35,6 +36,12 @@ export default new Router({
             path: '/anunt/nou',
             name: 'Create Item',
             component: CreateItem,
+            beforeEnter: authGuard,
+        },
+        {
+          path: '/anunt/modificare/:title',
+            name: 'Edit Item',
+            component: EditItem,
             beforeEnter: authGuard,
         },
         {

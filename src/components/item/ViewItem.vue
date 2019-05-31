@@ -2,10 +2,11 @@
     <v-layout row justify-center>
         <v-flex xs1 sm1 md1 ml1 xl1>
         </v-flex>
+        <!--Item-->
         <v-flex lg7 md10 sm10 xl5 xs11 mr-4 ml-4>
             <div v-if="!item">Loading Please wait...</div>
-            <!--Title-->
             <v-card v-if="item" class="pa-1 mb-3">
+                <!--Title-->
                 <v-card-title class="display-1 font-weight-bold">
                     {{item.title}}
                 </v-card-title>
@@ -49,7 +50,13 @@
                                 :key="image.id"
                                 :src="API_URL + image.filename"
                                 lazy
-                        ></v-carousel-item>
+                                v-if="item.images.length > 0"></v-carousel-item>
+
+                        <v-carousel-item
+                                v-if="item.images.length <= 0"
+                                :src="require('../../assets/no-available-image.png')"
+                        >
+                        </v-carousel-item>
                     </v-carousel>
                 </v-card-text>
                 <v-card-text>
@@ -352,25 +359,19 @@
                             </v-label>
                         </v-flex>
                     </v-layout>
+
+                    <v-layout row>
+                        <article class="desc">
+                            <br/>{{item.description}}
+                        </article>
+                    </v-layout>
                 </v-card-text>
             </v-card>
 
-            <!-- <v-card @click="viewItem(userItem)" v-for="userItem in userItems" :key="userItem.item_id"
-                     v-if="item.item_id !== userItem.item_id">
-                 <v-card-title>
-                     {{userItem.title}}
-                 </v-card-title>
-                 <v-layout row wrap>
-                     <v-card-text>
-                         {{userItem.price}}
-                     </v-card-text>
-                 </v-layout>
-             </v-card>-->
-
-            <v-card class="pa-1">
-                <!--                <v-card-title class="subheading">-->
-                <!--                    Anuțurile utilizatorului &nbsp; <span class="font-weight-medium"> {{user.name}}</span>-->
-                <!--                </v-card-title>-->
+            <v-card class="pa-1" v-if="userItems !== undefined && userItems !== null && userItems.length > 1">
+                <v-card-title class="subheading">
+                    Anuțurile utilizatorului &nbsp; <span class="font-weight-medium"> {{user.name}}</span>
+                </v-card-title>
                 <v-divider/>
                 <v-layout column justify-center>
                     <v-flex :key="userItem.item_id" v-for="userItem in userItems"
@@ -382,7 +383,7 @@
                                         slot-scope="{ hover }">
                                     <v-layout row>
                                         <v-flex xs3 md3 lg3 x13>
-                                            <v-img :src="item.images.length > 0 ? API_URL + userItem.images[0].filename : require('../../assets/no-available-image.png')"
+                                            <v-img :src="userItem.images.length > 0 ? API_URL + userItem.images[0].filename : require('../../assets/no-available-image.png')"
                                                    height="125">
                                             </v-img>
                                         </v-flex>
@@ -403,13 +404,11 @@
                                             </div>
                                         </v-flex>
                                         <v-flex xs2 md2 lg2 x12>
-                                            <v-card-text class="text-md-right">
-                                                <v-chip dark color="primary" class="subheading">
-                                                    {{userItem.price}}
-                                                    <span class="ml-2" v-if="item.currency === 0">lei</span>
-                                                    <span class="ml-2" v-else>€</span>
-                                                </v-chip>
-                                            </v-card-text>
+                                            <v-chip dark color="primary" class="subheading">
+                                                {{userItem.price}}
+                                                <span class="ml-2" v-if="item.currency === 0">lei</span>
+                                                <span class="ml-2" v-else>€</span>
+                                            </v-chip>
                                         </v-flex>
                                     </v-layout>
                                 </v-card>
@@ -419,6 +418,7 @@
                 </v-layout>
             </v-card>
         </v-flex>
+        <!--Owner-->
         <v-flex xs1 sm1 md1 ml1 xl1>
             <v-card class="profile" v-if="user">
                 <v-card color="blue-grey darken-2" class="white--text">
@@ -433,7 +433,7 @@
                 </v-card>
 
                 <v-card-title class="mr-3">
-                    <v-btn @click="number = true" large color="success"
+                    <v-btn v-if="user.phone" @click="number = true" large color="success"
                            class="text-none font-weight-regular subheading dim">
                         <v-icon left>phone</v-icon>
                         <span v-if="number">{{user.phone}}</span>
@@ -445,9 +445,10 @@
                         Trimite mesaj
                     </v-btn>
 
-                    <v-btn large color="teal" dark class="text-none font-weight-regular subheading dim">
+                    <v-btn @click="addToFavorites(item.item_id)" large color="teal" dark
+                           class="text-none font-weight-regular subheading dim">
                         <v-icon left>star_border</v-icon>
-                        Salvează Anunțul
+                        <span>Salvează Anunțul</span>
                     </v-btn>
                 </v-card-title>
             </v-card>
@@ -500,6 +501,28 @@
 
                 return date;
             },
+            isFavorite(id) {
+                if (this.favorites)
+                    if (this.favorites.find(favorite => favorite.item === id))
+                        return true;
+
+                return false;
+            },
+            addToFavorites(id) {
+                if (this.$store.getters.isAuthenticated) {
+                    if (this.item) {
+                        if (!this.isFavorite(id))
+                            this.$store.dispatch('addToFavorite', id);
+                        else
+                            this.$store.commit('setSnack', {
+                                message: 'Anunțul există deja in lista dumneavoastră de anunțuri favorite',
+                                color: this.$store.getters.colors.warning
+                            });
+                    }
+                } else {
+                    this.$store.dispatch('showLogin')
+                }
+            },
         },
 
         computed: {
@@ -514,6 +537,9 @@
                     mask += 'x';
                 return mask;
             },
+            favorites() {
+                return this.$store.getters.favorites;
+            },
         },
         mounted() {
             //this.item = this.$store.getters.item(this.$route.query.id);
@@ -523,6 +549,7 @@
 
                     this.item = response.data.data.item;
                     this.user = response.data.data.user;
+
 
                     const actual = new Date();
                     const created = new Date(this.item.created_at.date);
@@ -554,6 +581,7 @@
                     });
                 }
             });
+
         },
     };
 </script>
@@ -581,5 +609,9 @@
 
     .item-card-title {
         overflow: hidden;
+    }
+
+    .desc {
+        white-space: pre-wrap;
     }
 </style>

@@ -10,12 +10,12 @@
                             :class="`elevation-${hover ? 10 : 2}`" class="item-card"
                             slot-scope="{ hover }">
                         <v-layout row>
-                            <v-flex x13>
+                            <v-flex xs3 sm3 lg3 x13>
                                 <v-img :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
                                        height="125">
                                 </v-img>
                             </v-flex>
-                            <v-flex xl6>
+                            <v-flex xs6 sm6 md6 lg6 xl6>
                                 <v-layout>
                                     <v-flex>
                                         <div class="ml-3 mt-3">
@@ -34,7 +34,7 @@
                                     </v-flex>
                                 </v-layout>
                             </v-flex>
-                            <v-flex xl3>
+                            <v-flex xs3 sm3 md3 lg3 xl3>
                                 <v-card-text class="text-md-right">
                                     <v-chip dark color="primary" class="subheading">
                                         {{item.price}}
@@ -71,7 +71,6 @@
 </template>
 
 <script>
-    import axios from '../../axios-auth';
 
     export default {
         data: () => ({
@@ -83,8 +82,9 @@
                 this.$router.push({path: '/anunt/' + item.slug, query: {id: item.item_id}});
             },
             deleteItem(id) {
-              if(confirm('Ești sigur că vrei să ștergi anunțul selectat ?'))
-                  this.$store.dispatch('deleteItem')
+                if(confirm('Ești sigur că vrei să ștergi anunțul selectat ?')) {
+                    this.$store.dispatch('deleteItem', id);
+                }
             },
             editItem(item){
 

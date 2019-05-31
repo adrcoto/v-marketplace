@@ -16,6 +16,7 @@
                                           label="Titlu"
                                           prepend-icon="title"
                                           v-model="title"
+
                             >
                             </v-text-field>
                         </v-flex>
@@ -25,10 +26,11 @@
                     <v-layout class="mb-4">
                         <v-flex>
                             <v-textarea :counter="5000"
-                                        :rules="[rules.description.length, rules.description.required]"
-                                        label="Descriere"
-                                        prepend-icon="description"
-                                        v-model="description"
+                                          :rules="[rules.description.length, rules.description.required]"
+                                          label="Descriere"
+                                          prepend-icon="description"
+                                          v-model="description"
+                                          class="text-md-justify"
                             >
                             </v-textarea>
                         </v-flex>
@@ -517,6 +519,8 @@
                                                     color="success"
                                                     hide-details
                                             ></v-checkbox>
+
+                                            {{pollutionTax}}
                                         </v-flex>
                                         <!--Damage-->
                                         <v-flex xs5 sm5 md5 lg5>
@@ -753,28 +757,6 @@
                 this.$v.$reset();
             },
             addPic(e) {
-
-                // if (this.images.data.length >= this.images.number) {
-                //     this.$store.commit('setSnack', {
-                //         message: 'Ați atins limita de fotografii posibile',
-                //         color: this.$store.getters.colors.error
-                //     });
-                //     return;
-                // }
-                // const image = e.target.files[0];
-                // const url = URL.createObjectURL(image);
-                //
-                //
-                // const newImg = {
-                //     image,
-                //     url
-                // };
-                //
-                // this.images.data.push(newImg);
-                //
-                // this.$refs.inputUpload.value = null;
-
-
                 const images = Array.from(e.target.files);
                 console.log(images);
 
@@ -897,11 +879,11 @@
                     origin: this.origin,
                     VIN: this.VIN,
 
-                    pollution_tax: this.pollution_tax,
-                    damaged: this.damaged,
-                    registered: this.registered,
-                    first_owner: this.firstOwner,
-                    right_hand_drive: this.rightHandDrive,
+                    pollution_tax: this.boolToInt(this.pollutionTax),
+                    damaged: this.boolToInt(this.damaged),
+                    registered: this.boolToInt(this.registered),
+                    first_owner: this.boolToInt(this.firstOwner),
+                    right_hand_drive: this.boolToInt(this.rightHandDrive),
                 };
 
                 let form = new FormData;
@@ -918,6 +900,10 @@
                 console.log(item);
 
                 this.$store.dispatch('addItem', form);
+            },
+
+            boolToInt(data) {
+                return data ? 1 : 0;
             },
         },
         created() {
@@ -1011,7 +997,6 @@
                 return this.type.id === 32 ? this.drive.car : this.drive.bikes;
             },
             setManufacturerYear() {
-
                 let options = [];
                 const now = new Date();
                 const start = now.getFullYear();

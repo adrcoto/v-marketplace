@@ -1,6 +1,9 @@
 <template>
     <v-layout column justify-center>
         <v-layout column justify-center>
+            <v-flex>
+                <div class="text-md-center" v-if="favorites.length <= 0"> Nu aveți anuțuri favorite</div>
+            </v-flex>
             <v-flex :key="favorite.item_id" v-for="favorite in favorites">
                 <v-card-text>
                     <v-hover>
@@ -18,7 +21,7 @@
                                         <div class="item-card-title title">
                                             {{favorite.title}}
                                         </div>
-                                        <div>
+                                        <div class="mt-3">
                                             <v-icon>location_on</v-icon>
                                             {{favorite.location}}
                                         </div>
@@ -30,23 +33,26 @@
                                     </div>
                                 </v-flex>
                                 <v-flex xs2 md2 lg2 x12>
-                                    <v-card-text class="text-md-right">
-                                        <v-chip dark color="primary" class="subheading">
-                                            {{favorite.price}}
-                                            <span class="ml-2" v-if="favorite.currency === 0">lei</span>
-                                            <span class="ml-2" v-else>€</span>
-                                        </v-chip>
-                                    </v-card-text>
-                                    <v-card-text>
-                                        <v-tooltip left>
-                                            <template v-slot:activator="{ on }">
-                                                <v-btn @click.stop="removeFromFavorites(favorite.item_id)" icon color="error" v-on="on">
-                                                    <v-icon>star</v-icon>
-                                                </v-btn>
-                                            </template>
-                                            <span>Șterge anunțul din lista de favorite</span>
-                                        </v-tooltip>
-                                    </v-card-text>
+                                    <v-layout column>
+                                        <div class="mt-2 mb-3">
+                                            <v-chip dark color="primary" class="subheading">
+                                                {{favorite.price}}
+                                                <span class="ml-2" v-if="favorite.currency === 0">lei</span>
+                                                <span class="ml-2" v-else>€</span>
+                                            </v-chip>
+                                        </div>
+                                        <div class="ml-4">
+                                            <v-tooltip left>
+                                                <template v-slot:activator="{ on }">
+                                                    <v-btn @click.stop="removeFromFavorites(favorite.item_id)" icon
+                                                           color="warning" v-on="on">
+                                                        <v-icon>star_half</v-icon>
+                                                    </v-btn>
+                                                </template>
+                                                <span>Șterge anunțul din lista de favorite</span>
+                                            </v-tooltip>
+                                        </div>
+                                    </v-layout>
                                 </v-flex>
                             </v-layout>
                         </v-card>
@@ -66,7 +72,7 @@
             viewItem(item) {
                 this.$router.push({path: '/anunt/' + item.slug, query: {id: item.item_id}});
             },
-            removeFromFavorites(id){
+            removeFromFavorites(id) {
                 this.$store.dispatch('removeFromFavorite', id);
             }
         },
