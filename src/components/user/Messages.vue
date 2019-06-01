@@ -1,6 +1,6 @@
 <template>
     <v-layout>
-        <v-flex>
+        <v-flex class="text-md-center">
             Mesaje
         </v-flex>
     </v-layout>

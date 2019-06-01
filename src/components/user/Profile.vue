@@ -3,7 +3,7 @@
         <v-flex lg8 md10 sm10 xl6 xs11>
             <v-tabs v-model="tab" class="mb-3" color="transparent" lider-color="white" grow
             >
-                <v-tab v-for="tabItem in tabItems" class="mr-3">{{tabItem.name}}</v-tab>
+                <v-tab v-for="tabItem in tabItems" :key="tabItem.name" class="mr-3">{{tabItem.name}}</v-tab>
             </v-tabs>
             <v-tabs-items>
                 <v-tab-item v-for="n in tabItems.length" :key="n">

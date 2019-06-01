@@ -39,7 +39,7 @@ export default new Router({
             beforeEnter: authGuard,
         },
         {
-          path: '/anunt/modificare/:title',
+            path: '/anunt/modificare/:title',
             name: 'Edit Item',
             component: EditItem,
             beforeEnter: authGuard,

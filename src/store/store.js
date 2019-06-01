@@ -21,6 +21,8 @@ export default new Vuex.Store({
             id: null,
             name: null,
             email: null,
+            location: null,
+            phone: null,
         },
         verify: false,
 
@@ -43,6 +45,8 @@ export default new Vuex.Store({
             state.user.id = userData.id;
             state.user.name = userData.name;
             state.user.email = userData.email;
+            state.user.location = userData.location;
+            state.user.phone = userData.phone;
         },
         setUser(state, user) {
             state.user = user;
@@ -51,7 +55,9 @@ export default new Vuex.Store({
             state.token = null;
             state.user.id = null;
             state.user.name = null;
-            state.email = null;
+            state.user.email = null;
+            state.user.location = null;
+            state.user.phone = null;
 
             localStorage.removeItem('token');
         },
@@ -176,6 +182,8 @@ export default new Vuex.Store({
                         id: response.data.data.user.id,
                         name: response.data.data.user.name,
                         email: response.data.data.user.email,
+                        location: response.data.data.user.location,
+                        phone: response.data.data.user.phone,
                     };
 
                     localStorage.setItem('token', authData.token);
@@ -205,6 +213,8 @@ export default new Vuex.Store({
                     id: res.data.data.id,
                     name: res.data.data.name,
                     email: res.data.data.email,
+                    location: res.data.data.location,
+                    phone: res.data.data.phone,
                 };
                 commit('authUser', authData);
                 dispatch('loadFavorites');
@@ -238,11 +248,12 @@ export default new Vuex.Store({
                 }
             });
         },
+
         /**
          * Gets all items from server
          * @param commit
          * @param state
-         * @param query
+         * @param payload
          */
         loadItems({commit, state}, payload) {
             let query = '';
@@ -320,6 +331,32 @@ export default new Vuex.Store({
                 }
             });
         },
+
+        /**
+         * Load one item
+         * @param commit
+         * @param payload
+         * @returns {Promise<AxiosResponse<T>>}
+         */
+        loadItem({commit}, payload) {
+            return axios.get('/item/' + payload);
+        },
+
+        /**
+         * Load owner items
+         * @param commit
+         * @param payload
+         * @returns {Promise<AxiosResponse<T>>}
+         */
+        loadOwnerItems({commit}, payload) {
+            return axios.get('/search', {
+                params: {
+                    owner: payload,
+                    page: 0,
+                    perPage: 10,
+                },
+            });
+        },
         /**
          * Gets all available categories
          * @param commit
@@ -347,9 +384,10 @@ export default new Vuex.Store({
         /**
          * Gets all available subcategories for a given category
          * @param commit
+         * @param category
          */
         loadSubcategories({commit}, category) {
-            axios.get('/subcategories/' + category).then(response => {
+            return axios.get('/subcategories/' + category).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Get Subcategories -> Success');
                     let res = response.data.data;
@@ -398,6 +436,8 @@ export default new Vuex.Store({
         /**
          * Add new item
          * @param commit
+         * @param state
+         * @param dispatch
          * @param item
          */
         addItem({commit, state, dispatch}, item) {
@@ -423,6 +463,13 @@ export default new Vuex.Store({
             });
         },
 
+        /**
+         * Delete item
+         * @param commit
+         * @param state
+         * @param dispatch
+         * @param id
+         */
         deleteItem({commit, state, dispatch}, id) {
             const token = state.token;
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
@@ -438,6 +485,34 @@ export default new Vuex.Store({
             });
         },
 
+        /**
+         * Update item
+         * @param commit
+         * @param state
+         * @param dispatch
+         * @param payload
+         */
+        updateItem({commit, state, dispatch}, payload) {
+            const token = state.token;
+            axios.defaults.headers.common.Authorization = 'Bearer ' + token;
+            axios.post('/user/' + payload.id, payload.form
+            ).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    dispatch('loadItems');
+                    commit('setSnack', {
+                        message: 'Anunțul a fost actualizat',
+                        color: state.colors.info,
+                    });
+                } else {
+                }
+            });
+        },
+
+        /**
+         * Looad favorite items
+         * @param commit
+         * @param state
+         */
         loadFavorites({commit, state}) {
             const token = state.token;
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
@@ -449,6 +524,13 @@ export default new Vuex.Store({
             });
         },
 
+        /**
+         * Add to favorite
+         * @param commit
+         * @param state
+         * @param dispatch
+         * @param item
+         */
         addToFavorite({commit, state, dispatch}, item) {
             const token = state.token;
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
@@ -470,6 +552,13 @@ export default new Vuex.Store({
             });
         },
 
+        /**
+         * Remove from favorite
+         * @param commit
+         * @param state
+         * @param dispatch
+         * @param id
+         */
         removeFromFavorite({commit, state, dispatch}, id) {
             const token = state.token;
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;

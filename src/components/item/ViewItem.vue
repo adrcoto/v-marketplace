@@ -96,7 +96,7 @@
                         </v-flex>
 
                         <!--                        Manufacurer Year-->
-                        <v-flex xs5 v-if="item.manufacturer_year !== undefined && item.manufacturer_year != 0"
+                        <v-flex xs5 v-if="item.manufacturer_year !== undefined && item.manufacturer_year !== 0 && item.manufacturer_year !== 'null'"
                                 class="mb-4">
                             <v-layout row align-center>
                                 <v-flex>
@@ -358,6 +358,24 @@
                             <v-label>Volan pe dreapta
                             </v-label>
                         </v-flex>
+
+                        <!--                       Negotiable -->
+                        <v-flex xs5 v-if="item.negotiable !== null" class="mb-4">
+                            <div v-if="item.negotiable">
+                                <v-icon left color="success">done</v-icon>
+                                <v-label>Negociabil</v-label>
+                            </div>
+                        </v-flex>
+
+                        <!--                       change-->
+                        <v-flex xs5 v-if="item.change !== null" class="mb-4">
+                            <div v-if="item.change">
+                                <v-icon left color="success">done</v-icon>
+                                <v-label>Se acceptă schimburi</v-label>
+                            </div>
+                        </v-flex>
+
+
                     </v-layout>
 
                     <v-layout row>
@@ -550,9 +568,10 @@
                     this.item = response.data.data.item;
                     this.user = response.data.data.user;
 
-
                     const actual = new Date();
                     const created = new Date(this.item.created_at.date);
+
+                    console.log(this.item.negotiable);
 
                     this.item.created_at = this.calculateDate(actual, created);
 

@@ -1,31 +1,30 @@
-<!--v-bind="{ [`xs${card.flex}`]: true }"-->
 <template>
     <v-layout justify-center row>
-        <v-flex sm2 class="ml-3 mr-3">
-            <v-card>
-                <v-layout column justify-center>
-                    <v-layout row>
-                        <v-card-title>
-                            Filtreaza rezultatele
-                        </v-card-title>
-                    </v-layout>
-                    <v-card-text>
-                        Pret
-                    </v-card-text>
-                    <v-layout row>
-                        <v-card-text>
+<!--        <v-flex sm2 class="ml-3 mr-3">-->
+<!--            <v-card>-->
+<!--                <v-layout column justify-center>-->
+<!--                    <v-layout row>-->
+<!--                        <v-card-title>-->
+<!--                            Filtreaza rezultatele-->
+<!--                        </v-card-title>-->
+<!--                    </v-layout>-->
+<!--                    <v-card-text>-->
+<!--                        Pret-->
+<!--                    </v-card-text>-->
+<!--                    <v-layout row>-->
+<!--                        <v-card-text>-->
 
-                            <v-text-field placeholder="Pret minim" type="number">
-                            </v-text-field>
-                        </v-card-text>
-                        <v-card-text>
-                            <v-text-field placeholder="Pret maxim" type="number">
-                            </v-text-field>
-                        </v-card-text>
-                    </v-layout>
-                </v-layout>
-            </v-card>
-        </v-flex>
+<!--                            <v-text-field placeholder="Pret minim" type="number">-->
+<!--                            </v-text-field>-->
+<!--                        </v-card-text>-->
+<!--                        <v-card-text>-->
+<!--                            <v-text-field placeholder="Pret maxim" type="number">-->
+<!--                            </v-text-field>-->
+<!--                        </v-card-text>-->
+<!--                    </v-layout>-->
+<!--                </v-layout>-->
+<!--            </v-card>-->
+<!--        </v-flex>-->
         <v-flex xs6 sm8 md10 lg11 xl10>
             <v-card>
                 <v-container>
@@ -44,19 +43,12 @@
                                                 <div class="d-flex transition-fast-in-fast-out v-card--reveal"
                                                      v-if="hover">
                                                     <v-card-actions>
-                                                        <v-tooltip top>
-                                                            <template v-slot:activator="{ on }">
-                                                                <v-btn :class="{'hover-btn-pressed': isFavorite(item.item_id), 'hover-btn': !like}"
-                                                                       @click.stop="addToFavorites(item.item_id)"
-                                                                       class="hover-btn"
-                                                                       icon
-                                                                       v-on="on"
-                                                                >
-                                                                    <v-icon>favorite</v-icon>
-                                                                </v-btn>
-                                                            </template>
-                                                            <span>Adaugă la favorite</span>
-                                                        </v-tooltip>
+                                                        <v-btn :class="{'hover-btn-pressed': isFavorite(item.item_id), 'hover-btn': !like}"
+                                                               @click.stop="addToFavorites(item.item_id)"
+                                                               class="hover-btn"
+                                                               icon>
+                                                            <v-icon>favorite</v-icon>
+                                                        </v-btn>
                                                         <v-btn class="hover-btn" icon>
                                                             <v-icon>share</v-icon>
                                                         </v-btn>
@@ -65,8 +57,6 @@
                                                 </div>
                                             </v-expand-transition>
                                         </v-img>
-                                        <!--                                        /<v-card-title class="item-card-title subheading font-weight-bold"-->
-                                        <!--                                                      primary-title>-->
                                         <v-layout align-start justify-start
                                                   class="ml-3 mt-4 mr-2 item-card-title subheading font-weight-bold">
                                             {{item.title}}
@@ -144,7 +134,6 @@
                     }
                 }
             },
-
             isFavorite(id) {
                 if (this.favorites)
                     return this.favorites.find(favorite => favorite.item === id);
@@ -157,7 +146,6 @@
             itemsMaxLength() {
                 return this.$store.getters.itemsCount;
             },
-
             favorites() {
                 return this.$store.getters.favorites;
             },
@@ -179,23 +167,18 @@
         font-size: 18px;
         opacity: .9;
     }
-
     .item-card-title {
         height: 80px;
         overflow: hidden;
     }
-
     .hover-btn {
         color: orange;
         opacity: .9;
     }
-
     .hover-btn:hover {
         color: orangered;
     }
-
     .hover-btn-pressed {
         color: orangered;
     }
-
 </style>

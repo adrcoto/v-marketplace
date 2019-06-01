@@ -1,6 +1,6 @@
 <template>
     <v-layout column justify-center>
-        <div v-if="userItems.length <= 0">
+        <div class="text-md-center" v-if="userItems.length <= 0">
             Nu există anuțuri
         </div>
         <v-flex v-if="userItems.length > 0" :key="item.item_id" v-for="item in userItems">
@@ -87,7 +87,7 @@
                 }
             },
             editItem(item){
-
+                this.$router.push({path: '/anunt/modificare/' + item.slug, query: {id: item.item_id}});
             },
         },
         computed: {

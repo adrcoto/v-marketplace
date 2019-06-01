@@ -3,7 +3,8 @@
         <v-flex lg8 md10 sm10 xl6 xs11>
             <v-card class="pa-5">
                 <v-card-title>
-                    <h2>Adaugare anunt nou</h2>
+                    <h2 v-if="edit">Actualizare anunț</h2>
+                    <h2 v-if="!edit">Adaugare anunț nou</h2>
                 </v-card-title>
                 <v-form ref="form"
                         v-model="valid"
@@ -16,7 +17,6 @@
                                           label="Titlu"
                                           prepend-icon="title"
                                           v-model="title"
-
                             >
                             </v-text-field>
                         </v-flex>
@@ -26,18 +26,18 @@
                     <v-layout class="mb-4">
                         <v-flex>
                             <v-textarea :counter="5000"
-                                          :rules="[rules.description.length, rules.description.required]"
-                                          label="Descriere"
-                                          prepend-icon="description"
-                                          v-model="description"
-                                          class="text-md-justify"
+                                        :rules="[rules.description.length, rules.description.required]"
+                                        label="Descriere"
+                                        prepend-icon="description"
+                                        v-model="description"
+                                        class="text-md-justify"
                             >
                             </v-textarea>
                         </v-flex>
                     </v-layout>
 
                     <!--Price-->
-                    <v-layout row justify-space-between class="mb-3" wrap>
+                    <v-layout row justify-space-between class="mb-4" wrap>
                         <v-flex xs5 sm5 md5 lg4 xl4>
                             <v-text-field
                                     :rules="[rules.price.required]"
@@ -82,7 +82,7 @@
                     </v-layout>
 
                     <!-- Location -->
-                    <div class="mb-3 space">
+                    <div class="space">
                         <v-chip close v-model="location.chip"
                                 class="subheading"
                                 @input="clearLocation"
@@ -93,7 +93,8 @@
                             {{location.name}}
                         </v-chip>
 
-                        <v-btn @click="location.dialog = true" class="text-none font-weight-regular subheading"
+                        <v-btn @click="location.dialog = true"
+                               class="text-none font-weight-regular subheading"
                                flat
                                v-if="!location.chip"
                                required
@@ -146,11 +147,12 @@
                         </v-card>
                     </v-dialog>
 
+
                     <!-- Category -->
                     <v-layout align-center justify-space-between row class="mb-4 space">
                         <v-flex xs5 sm5 md5 lg5 xl5>
                             <!-- Chip -->
-                            <v-chip close v-model="subcategory.chip" @input="resetCategory" class="subheading">
+                            <v-chip :close="!edit" v-model="subcategory.chip" @input="resetCategory" class="subheading">
                                 <v-avatar>
                                     <v-icon>view_module</v-icon>
                                 </v-avatar>
@@ -175,7 +177,7 @@
                         <!-- Type -->
                         <v-flex xs5 sm5 md5 lg5 xl5>
                             <!-- Chip -->
-                            <v-chip close v-model="chip.value"
+                            <v-chip :close="!edit" v-model="chip.value"
                                     @input="resetType"
                                     class="subheading">
                                 <v-avatar>
@@ -247,24 +249,11 @@
                             </v-card-text>
                         </v-card>
                     </v-dialog>
-                    <!-- Debug -->
-                    <!-- <v-layout align-center justify-space-between row class="mb-4 space">
-                         <v-flex xs4 sm4 md4 lg4 xl4>
-                             <p class="text-md-center">{{category.id}}</p>
-                         </v-flex>
-                         <v-flex xs4 sm4 md4 lg4 xl4>
-                             <p class="text-md-center">{{subcategory.id}}</p>
-                         </v-flex>
-                         <v-flex xs4 sm4 md4 lg4 xl4>
-                             <p class="text-md-center">{{type.id}}</p>
-                         </v-flex>
-                     </v-layout>-->
-
                     <!--images-->
-                    <label class="subheading">
+                    <v-label class="subheading">
                         <v-icon>photo</v-icon>
                         Fotografii
-                    </label>
+                    </v-label>
                     <v-layout align-center justify-center class="pa-2 mb-3 ml-1">
                         <v-flex class="mr-1 mt-2">
                             <v-layout align-center column>
@@ -303,21 +292,30 @@
                             <v-layout row wrap>
                                 <v-flex :key="image.url" lg3 md3 sm4 v-for="(image, index) in images.data" xl3 xs6>
                                     <v-hover>
-                                        <v-card :class="`elevation-${hover ? 12 : 2}`" class="pa-1 ma-1"
+                                        <v-card @click.stop="selectPreview(index)"
+                                                :class="`elevation-${hover ? 12 : 2}`"
+                                                class="pa-1 ma-1"
                                                 slot-scope="{ hover }"
-                                                width="90%">
+                                                width="90%"
+                                                :color="image.preview ? 'success': ''"
+                                        >
                                             <v-img :src="image.url" height="80">
                                                 <v-expand-transition>
                                                     <div class="d-flex transition-fast-in-fast-out v-card--reveal"
                                                          v-if="hover">
                                                         <v-card-actions>
                                                             <v-spacer></v-spacer>
-                                                            <v-btn icon>
-                                                                <v-icon @click.native="deleteImg(index)"
-                                                                        color="red">
-                                                                    clear
-                                                                </v-icon>
-                                                            </v-btn>
+                                                            <v-tooltip top>
+                                                                <template v-slot:activator="{ on }">
+                                                                    <v-btn icon>
+                                                                        <v-icon @click.native="deleteImg(index)"
+                                                                                color="red" v-on="on">
+                                                                            clear
+                                                                        </v-icon>
+                                                                    </v-btn>
+                                                                </template>
+                                                                <span>Șterge fotografia</span>
+                                                            </v-tooltip>
                                                         </v-card-actions>
                                                     </div>
                                                 </v-expand-transition>
@@ -326,6 +324,8 @@
                                     </v-hover>
                                 </v-flex>
                             </v-layout>
+                            current:{{images.current}}
+                            last:{{images.last}}
                         </v-flex>
                     </v-layout>
 
@@ -519,8 +519,6 @@
                                                     color="success"
                                                     hide-details
                                             ></v-checkbox>
-
-                                            {{pollutionTax}}
                                         </v-flex>
                                         <!--Damage-->
                                         <v-flex xs5 sm5 md5 lg5>
@@ -565,10 +563,58 @@
                             </v-layout>
                         </v-card-text>
                     </v-scale-transition>
+
+                    <!-- Contact Data-->
+                    <v-divider class="mb-3"></v-divider>
+
+
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn flat @click="showContactData = !showContactData">
+                            Date de contact
+                            <v-icon>{{ showContactData ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
+                        </v-btn>
+                    </v-card-actions>
+
+                    <v-scale-transition>
+                        <v-card-text v-if="showContactData">
+                            <v-layout class="mb-3" column>
+                                <v-layout class="mb-4" align-center justify-space-between row wrap>
+                                    <!-- Name  -->
+                                    <v-flex xs12 sm5 md5 lg5>
+                                        <v-text-field
+                                                v-model="user.name"
+                                                label="Persoana de contact"
+                                                prepend-icon="face">
+                                        </v-text-field>
+                                    </v-flex>
+
+                                    <!-- Email  -->
+                                    <v-flex xs12 sm5 md5 lg5>
+                                        <v-text-field
+                                                v-model="user.email"
+                                                prepend-icon="mail"
+                                                label="E-mail"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <!-- Phone  -->
+                                    <v-flex xs12 sm5 md5 lg5>
+                                        <v-text-field
+                                                v-model="user.phone"
+                                                prepend-icon="phone"
+                                                label="Numar de telefon"
+                                        ></v-text-field>
+                                    </v-flex>
+                                </v-layout>
+                            </v-layout>
+                        </v-card-text>
+                    </v-scale-transition>
                 </v-form>
-                <v-btn @click="addNewItem" class="subheading text-none" color="success" :disabled="!valid || $v.$error">
+                <v-btn @click="addOrDelete" class="subheading text-none" color="success"
+                       :disabled="!valid || $v.$error">
                     <v-icon left>add_to_queue</v-icon>
-                    Adaugă anunț
+                    <span v-if="edit">Actualizează anunț</span>
+                    <span v-if="!edit">Adaugă anunț</span>
                 </v-btn>
             </v-card>
         </v-flex>
@@ -580,9 +626,18 @@
     import {required} from 'vuelidate/lib/validators';
 
     export default {
+        props: {
+            edit: {
+                type: Boolean,
+                default: false
+            },
+        },
         data: () => ({
+            itemCopy: null,
+            API_URL: 'http://dev.shop/storage/',
             valid: false,
             showDetails: true,
+            showContactData: true,
 
             chip: {
                 value: false,
@@ -601,6 +656,8 @@
                     required: v => !!v || 'Pretul este obligatoriu.',
                 },
             },
+
+            user: null,
 
             title: '',
             description: '',
@@ -645,7 +702,10 @@
             },
             images: {
                 data: [],
+                toDelete: [],
                 number: 8,
+                current: 0,
+                last: 0,
             },
             manufacturer: '',
             model: '',
@@ -753,21 +813,27 @@
             appRomanianMap: RomanianMap,
         },
         methods: {
+            loadUser() {
+                this.user = this.$store.getters.user;
+            },
             clearForm() {
                 this.$v.$reset();
             },
             addPic(e) {
                 const images = Array.from(e.target.files);
-                console.log(images);
 
                 images.forEach((i) => {
                     const newImg = {
                         image: i,
                         url: URL.createObjectURL(i),
+                        preview: false,
                     };
 
                     if (this.images.data.length < this.images.number)
                         this.images.data.push(newImg);
+
+                    if (!this.images.data[this.images.current].preview)
+                        this.images.data[0].preview = true;
                 });
 
                 if (this.images.data.length >= this.images.number) {
@@ -780,8 +846,39 @@
 
                 this.$refs.inputUpload.value = null;
             },
+            selectPreview(index) {
+                if (index === this.images.current)
+                    return;
+
+                this.images.last = this.images.current;
+                this.images.current = index;
+
+                this.images.data[this.images.last].preview = false;
+                this.images.data[this.images.current].preview = true;
+            },
+            addPicFromServer(images) {
+                images.forEach((img) => {
+                    const wt = {
+                        id: img.id,
+                        url: this.API_URL + img.filename,
+                    };
+
+                    this.images.data.push(wt);
+                });
+            },
             deleteImg(index) {
+                if (this.edit) {
+                    const img = {
+                        id: this.images.data[index].id,
+                        filename: this.images.data[index].url.substring(this.API_URL.length, this.images.data[index].url.length)
+                    };
+
+                    this.images.toDelete.push(img);
+                }
+
+
                 this.images.data.splice(index, 1);
+
             },
             retryGetCategories() {
                 if (this.categories.length === 0)
@@ -847,16 +944,25 @@
                 this.location.name = '';
                 this.location.cities = [];
             },
-            addNewItem() {
+            addOrDelete() {
                 this.$v.$touch();
                 if (!this.$refs.form.validate())
                     return;
 
+                if (this.edit)
+                    this.editItem();
+                else
+                    this.addNewItem();
+            },
+
+            addNewItem() {
                 const item = {
                     title: this.title,
                     description: this.description,
                     price: this.price.value,
                     currency: this.currency.value,
+                    negotiable: this.boolToInt(this.price.negotiable),
+                    change: this.boolToInt(this.price.change),
                     location: this.location.city + ', ' + this.location.district,
                     category: this.category.id,
                     sub_category: this.subcategory.id,
@@ -896,23 +1002,165 @@
                     form.append('images[]', img.image);
                 });
 
-
-                console.log(item);
-
                 this.$store.dispatch('addItem', form);
+            },
+
+            editItem() {
+
+                const updatedItem = {
+                    title: this.compareValues(this.title, this.itemCopy.title),
+                    description: this.compareValues(this.description, this.itemCopy.description),
+                    price: this.compareValues(this.price.value, this.itemCopy.price),
+                    negotiable: this.boolToInt(this.compareValues(this.price.negotiable, this.itemCopy.negotiable)),
+                    change: this.boolToInt(this.compareValues(this.price.change, this.itemCopy.change)),
+                    currency: this.compareValues(this.currency.value, this.itemCopy.currency),
+
+                    location: this.compareValues(this.location.city + ', ' + this.location.district, this.itemCopy.location),
+
+                    manufacturer: this.compareValues(this.manufacturer, this.itemCopy.manufacturer),
+                    model: this.compareValues(this.model, this.itemCopy.model),
+                    manufacturer_year: this.compareValues(this.manufacturerYear, this.itemCopy.manufacturer_year),
+                    used: this.compareValues(this.used.value, this.itemCopy.used),
+
+                    engine: this.compareValues(this.engine, this.itemCopy.engine),
+                    power: this.compareValues(this.power, this.itemCopy.power),
+                    gearbox: this.compareValues(this.gearbox.value, this.itemCopy.gearbox),
+                    body: this.compareValues(this.body.value, this.itemCopy.body),
+                    fuel_type: this.compareValues(this.fuelType.value, this.itemCopy.fuel_type),
+                    mileage: this.compareValues(this.mileage, this.itemCopy.mileage),
+
+                    drive: this.compareValues(this.drive.value, this.itemCopy.drive),
+                    emission_class: this.compareValues(this.emissionClass.value, this.itemCopy.emission_class),
+                    color: this.compareValues(this.color.value, this.itemCopy.color),
+                    origin: this.compareValues(this.origin, this.itemCopy.origin),
+                    VIN: this.compareValues(this.VIN, this.itemCopy.VIN),
+
+                    pollution_tax: this.boolToInt(this.compareValues(this.pollutionTax, this.itemCopy.pollution_tax)),
+                    damaged: this.boolToInt(this.compareValues(this.damaged, this.itemCopy.damaged)),
+                    registered: this.boolToInt(this.compareValues(this.registered, this.itemCopy.registered)),
+                    first_owner: this.boolToInt(this.compareValues(this.first_owner, this.itemCopy.first_owner)),
+                    right_hand_drive: this.boolToInt(this.compareValues(this.right_hand_drive, this.itemCopy.right_hand_drive)),
+                };
+
+
+                let form = new FormData;
+
+                for (let key in updatedItem)
+                    if (updatedItem[key] !== null && updatedItem[key] !== undefined) {
+                        console.log(updatedItem[key]);
+                        form.append(key, updatedItem[key]);
+                    }
+
+                let images = this.images.data.filter(img => img.id === undefined);
+
+
+                images.forEach((img) => {
+                    form.append('images[]', img.image);
+                });
+
+                this.images.toDelete.forEach((image) => {
+                    form.append('imageFilenames[]', image.filename,),
+                        form.append('imageIds[]', image.id,)
+                });
+
+                form.append('_method', 'patch');
+
+
+                this.$store.dispatch('updateItem', {
+                    id: this.$route.query.id,
+                    form
+                });
+
+                this.images.toDelete = [];
+
             },
 
             boolToInt(data) {
                 return data ? 1 : 0;
             },
+
+            compareValues(first, second) {
+                if (first != second)
+                    if (first !== ', ')
+                        return first;
+
+                return null;
+            },
+
+            buildEditItem() {
+
+            },
+
         },
         created() {
             this.$store.dispatch('loadCategories');
+            this.loadUser();
+
+            if (this.user.location !== '') {
+                this.location.name = this.user.location;
+                this.location.chip = true;
+            }
+
+            if (this.edit) {
+                this.$store.dispatch('loadItem', this.$route.query.id).then(response => {
+                    if (response && response.data && response.data.responseType === 'success') {
+
+                        this.itemCopy = response.data.data.item;
+
+                        this.title = response.data.data.item.title;
+                        this.description = response.data.data.item.description;
+                        this.price.value = response.data.data.item.price;
+                        this.price.negotiable = response.data.data.item.negotiable;
+                        this.price.change = response.data.data.item.change;
+                        this.currency.value = response.data.data.item.currency;
+
+                        this.location.name = response.data.data.item.location;
+                        this.location.chip = true;
+
+                        this.category.id = response.data.data.item.category;
+
+                        this.subcategory.id = response.data.data.item.sub_category;
+                        this.subcategory.name = response.data.data.item.sub_category_name;
+                        this.subcategory.chip = true;
+
+                        this.type.id = response.data.data.item.item_type;
+                        this.type.name = response.data.data.item.item_type_name;
+                        this.chip.value = true;
+
+                        this.addPicFromServer(response.data.data.item.images);
+                        this.manufacturer = response.data.data.item.manufacturer;
+                        this.model = response.data.data.item.model;
+                        this.manufacturerYear = response.data.data.item.manufacturer_year.toString();
+                        this.used.value = response.data.data.item.used;
+                        this.engine = response.data.data.item.engine;
+                        this.power = response.data.data.item.power;
+
+                        this.gearbox.value = response.data.data.item.gearbox;
+
+                        this.body.value = response.data.data.item.body;
+                        this.fuelType.value = response.data.data.item.fuel_type;
+                        this.mileage = response.data.data.item.mileage;
+                        this.drive.value = response.data.data.item.drive;
+                        this.emissionClass.value = response.data.data.item.emission_class;
+                        this.color.value = response.data.data.item.color;
+                        this.origin = response.data.data.item.origin;
+                        this.VIN = response.data.data.item.VIN;
+
+                        this.pollutionTax = response.data.data.item.pollution_tax;
+                        this.damaged = response.data.data.item.damaged;
+                        this.registered = response.data.data.item.registered;
+                        this.firstOwner = response.data.data.item.first_owner;
+                        this.rightHandDrive = response.data.data.item.right_hand_drive;
+
+                    } else {
+
+                    }
+                });
+            }
         },
         destroyed() {
             this.clearForm();
         },
-
         computed: {
             setSize() {
                 switch (this.$vuetify.breakpoint.name) {
@@ -1012,6 +1260,8 @@
                 options.push('Mai vechi de ' + stop);
                 return options;
             },
+
+
         },
         validations: {
             location: {
@@ -1052,6 +1302,10 @@
 
     .icon-error {
         color: red;
+    }
+
+    .preview {
+        border: 2px solid green;
     }
 
 
