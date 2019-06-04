@@ -55,13 +55,7 @@ export default new Router({
             component: Profile,
             beforeEnter: authGuard,
         },
-        {
-            path: '/profil/:tab',
-            name: 'Dynamic Profile',
-            component: Profile,
-            beforeEnter: authGuard,
-        },
-        // {path: '*', redirect: '/'},
+        {path: '*', redirect: '/'},
     ],
     mode: 'history',
 });

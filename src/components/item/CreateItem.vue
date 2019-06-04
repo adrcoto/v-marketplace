@@ -147,7 +147,6 @@
                         </v-card>
                     </v-dialog>
 
-
                     <!-- Category -->
                     <v-layout align-center justify-space-between row class="mb-4 space">
                         <v-flex xs5 sm5 md5 lg5 xl5>
@@ -254,6 +253,7 @@
                         <v-icon>photo</v-icon>
                         Fotografii
                     </v-label>
+
                     <v-layout align-center justify-center class="pa-2 mb-3 ml-1">
                         <v-flex class="mr-1 mt-2">
                             <v-layout align-center column>
@@ -324,8 +324,6 @@
                                     </v-hover>
                                 </v-flex>
                             </v-layout>
-                            current:{{images.current}}
-                            last:{{images.last}}
                         </v-flex>
                     </v-layout>
 
@@ -581,29 +579,26 @@
                             <v-layout class="mb-3" column>
                                 <v-layout class="mb-4" align-center justify-space-between row wrap>
                                     <!-- Name  -->
-                                    <v-flex xs12 sm5 md5 lg5>
-                                        <v-text-field
-                                                v-model="user.name"
-                                                label="Persoana de contact"
-                                                prepend-icon="face">
-                                        </v-text-field>
+                                    <v-flex xs12 sm5 md4 lg3>
+                                        <v-chip>
+                                            <v-icon left>face</v-icon>
+                                            {{user.name}}
+                                        </v-chip>
                                     </v-flex>
 
                                     <!-- Email  -->
-                                    <v-flex xs12 sm5 md5 lg5>
-                                        <v-text-field
-                                                v-model="user.email"
-                                                prepend-icon="mail"
-                                                label="E-mail"
-                                        ></v-text-field>
+                                    <v-flex xs12 sm5 md4 lg3>
+                                        <v-chip>
+                                            <v-icon left>email</v-icon>
+                                            {{user.email}}
+                                        </v-chip>
                                     </v-flex>
                                     <!-- Phone  -->
-                                    <v-flex xs12 sm5 md5 lg5>
-                                        <v-text-field
-                                                v-model="user.phone"
-                                                prepend-icon="phone"
-                                                label="Numar de telefon"
-                                        ></v-text-field>
+                                    <v-flex xs12 sm5 md4 lg3>
+                                        <v-chip>
+                                            <v-icon left>phone</v-icon>
+                                            {{user.phone}}
+                                        </v-chip>
                                     </v-flex>
                                 </v-layout>
                             </v-layout>
@@ -949,6 +944,9 @@
                 if (!this.$refs.form.validate())
                     return;
 
+                if (this.category.id === null || this.subcategory.id === null || this.location.name === '')
+                    return;
+
                 if (this.edit)
                     this.editItem();
                 else
@@ -1008,6 +1006,10 @@
             editItem() {
 
                 const updatedItem = {
+                    category: this.category.id,
+                    sub_category: this.subcategory.id,
+                    type: this.type.id,
+
                     title: this.compareValues(this.title, this.itemCopy.title),
                     description: this.compareValues(this.description, this.itemCopy.description),
                     price: this.compareValues(this.price.value, this.itemCopy.price),
@@ -1043,11 +1045,11 @@
                 };
 
 
+
                 let form = new FormData;
 
                 for (let key in updatedItem)
                     if (updatedItem[key] !== null && updatedItem[key] !== undefined) {
-                        console.log(updatedItem[key]);
                         form.append(key, updatedItem[key]);
                     }
 
@@ -1096,7 +1098,7 @@
             this.$store.dispatch('loadCategories');
             this.loadUser();
 
-            if (this.user.location !== '') {
+            if (this.user.location) {
                 this.location.name = this.user.location;
                 this.location.chip = true;
             }
@@ -1151,7 +1153,6 @@
                         this.registered = response.data.data.item.registered;
                         this.firstOwner = response.data.data.item.first_owner;
                         this.rightHandDrive = response.data.data.item.right_hand_drive;
-
                     } else {
 
                     }

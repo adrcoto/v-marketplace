@@ -3,7 +3,7 @@
         <v-flex xs1 sm1 md1 ml1 xl1>
         </v-flex>
         <!--Item-->
-        <v-flex lg7 md10 sm10 xl5 xs11 mr-4 ml-4>
+        <v-flex lg7 md10 sm10 xl5 xs11 mr-4>
             <div v-if="!item">Loading Please wait...</div>
             <v-card v-if="item" class="pa-1 mb-3">
                 <!--Title-->
@@ -466,8 +466,15 @@
                     <v-btn @click="addToFavorites(item.item_id)" large color="teal" dark
                            class="text-none font-weight-regular subheading dim">
                         <v-icon left>star_border</v-icon>
-                        <span>Salvează Anunțul</span>
+                        <span>Salvează anunțul</span>
                     </v-btn>
+
+                    <v-btn v-if="isMine" @click.stop="editItem(item)" large color="primary" dark
+                           class="text-none font-weight-regular subheading dim">
+                        <v-icon left>edit</v-icon>
+                        <span>Actualizeaă anunțul</span>
+                    </v-btn>
+
                 </v-card-title>
             </v-card>
         </v-flex>
@@ -494,6 +501,9 @@
             viewItem(item) {
                 this.item = item;
                 this.$router.replace({path: '/anunt/' + item.slug, query: {id: item.item_id}});
+            },
+            editItem(item){
+                this.$router.push({path: '/anunt/modificare/' + item.slug, query: {id: item.item_id}});
             },
             calculateDate(actual, created) {
                 const actualYear = actual.getFullYear();
@@ -558,6 +568,9 @@
             favorites() {
                 return this.$store.getters.favorites;
             },
+            isMine(){
+                return this.item.owner === this.$store.getters.user.id;
+            }
         },
         mounted() {
             //this.item = this.$store.getters.item(this.$route.query.id);

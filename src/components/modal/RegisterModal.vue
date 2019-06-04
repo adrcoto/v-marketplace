@@ -14,6 +14,8 @@
                                   label="Nume"
                                   placeholder="Nume si prenume"
                                   :rules="[rules.name.required, rules.name.length]"
+                                  :counter="25"
+                                  hint="Numele de familie și un prenume"
                     ></v-text-field>
                     <v-text-field v-model="email"
                                   prepend-icon="mail"
@@ -29,11 +31,11 @@
                             :type="showPassword ? 'text' : 'password'"
                             :append-icon="showPassword ? 'visibility' : 'visibility_off'"
                             :rules="[rules.password.required, rules.password.min]"
-                            hint="Cel putin 6 caractere"
+                            :hint="'Cel putin ' + this.passwordLength + ' caractere'"
                             @click:append="showPassword = !showPassword"
                     ></v-text-field>
                     <v-text-field
-                            v-if="password.length >= 6"
+                            v-if="password.length >= passwordLength"
                             v-model="confirmPassword"
                             prepend-icon="lock_open"
                             label="Confirmare parola"
@@ -66,6 +68,7 @@
 
     export default {
         data: () => ({
+            passwordLength: 6,
             valid: false,
             showPassword: false,
             showRePassword: false,
@@ -76,11 +79,11 @@
             rules: {
                 name: {
                     required: v => !!v || 'Numele este obligatoriu.',
-                    length: v => (v && v.length < 25) || 'Introduceti doar numele si un prenume.',
+                    length: v => (v && v.length < 26) || 'Numele este prea mare',
                 },
                 email: {
                     required: v => !!v || 'Adresa de email este obligatorie.',
-                    valid: v => /.+@.+/.test(v) || 'Introduceti o adresa de e-mail valida.',
+                    valid: v => /.+@.+/.test(v) || 'Introduceți o adresă de e-mail validă.',
                 },
                 password: {
                     required: value => !!value || 'Parola este obligatorie.',

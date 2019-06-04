@@ -34,9 +34,9 @@ export default new Vuex.Store({
         types: [],
 
         colors: {
-            error: 'rgba(1213,0,0, .9)',
-            warning: 'rgba(245,127,23, .9)',
-            info: 'rgba(1,87,155, .9)',
+            error: 'error',
+            warning: 'warning',
+            info: 'info',
         },
     },
     mutations: {
@@ -143,9 +143,10 @@ export default new Vuex.Store({
         /**
          * Register user
          * @param commit
+         * @param state
          * @param authData
          */
-        register({commit}, authData) {
+        register({commit, state}, authData) {
             axios.post('/register', {
                 name: authData.name,
                 email: authData.email,
@@ -158,7 +159,10 @@ export default new Vuex.Store({
                     router.push('/verificare-cont/0');
                 } else {
                     console.log('Register -> Error');
-                    console.log('Register -> Error -> Message: ' + response.data.errorMessage);
+                    commit('setSnack', {
+                        message: response.data.errorMessage,
+                        color: state.colors.error,
+                    });
                 }
             });
         },
@@ -166,15 +170,20 @@ export default new Vuex.Store({
         /**
          * Login user
          * @param commit
+         * @param state
          * @param dispatch
          * @param authData
          */
-        login({commit, dispatch}, authData) {
+        login({commit, state, dispatch}, authData) {
             axios.post('/login', {
                 email: authData.email,
                 password: authData.password,
             }).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
+                    commit('setSnack', {
+                        message: 'Bun venit ' + response.data.data.user.name,
+                        color: state.colors.info,
+                    });
                     commit('closeLogin');
                     console.log('Login -> Success');
                     const authData = {
@@ -192,7 +201,10 @@ export default new Vuex.Store({
                     router.push('/profil');
                 } else {
                     console.log('Login -> Error');
-                    console.log('Login -> Error -> Message: ' + response.data.errorMessage);
+                    commit('setSnack', {
+                        message: response.data.errorMessage,
+                        color: state.colors.error,
+                    });
                 }
             });
         },
@@ -224,9 +236,13 @@ export default new Vuex.Store({
          * Logout
          * @param commit
          */
-        logout({commit}) {
+        logout({commit, state}) {
             router.push('/');
             commit('clearAuthData');
+            commit('setSnack', {
+                message: 'La revedere',
+                color: state.colors.info,
+            });
         },
         /**
          * Verify account
@@ -243,8 +259,12 @@ export default new Vuex.Store({
             }).then(response => {
                 console.log(response);
                 if (response && response.data && response.data.responseType === 'success') {
-                    console.log('intru');
                     state.verify = true;
+                } else {
+                    commit('setSnack', {
+                        message: response.data.errorMessage,
+                        color: state.colors.error
+                    });
                 }
             });
         },
@@ -254,8 +274,9 @@ export default new Vuex.Store({
          * @param commit
          * @param state
          * @param payload
+         * @param dispatch
          */
-        loadItems({commit, state}, payload) {
+        loadItems({commit, state, dispatch}, payload) {
             let query = '';
             let page = 0;
             let perPage = 24;
@@ -323,10 +344,7 @@ export default new Vuex.Store({
                     commit('setItems', items);
                 } else {
                     if (response.data.data === null)
-                        commit('setSnack', {
-                            message: 'Căutarea nu a returnat nici un rezultat',
-                            color: state.colors.warning,
-                        });
+                        dispatch('loadItems');
                     console.log('Get -> Error');
                 }
             });
@@ -360,8 +378,9 @@ export default new Vuex.Store({
         /**
          * Gets all available categories
          * @param commit
+         * @param dispatch
          */
-        loadCategories({commit}) {
+        loadCategories({commit, dispatch}) {
             axios.get('/categories').then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Get Categories-> Success');
@@ -378,6 +397,7 @@ export default new Vuex.Store({
                     commit('setCategories', categories);
                 } else {
                     console.log('Get Categories-> Error');
+                    dispatch('ladCategories');
                 }
             });
         },
@@ -441,24 +461,25 @@ export default new Vuex.Store({
          * @param item
          */
         addItem({commit, state, dispatch}, item) {
-            axios.post('/user', item).then(response => {
+            axios.post('/item', item).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Add item -> Success');
-                    const payload = {
-                        message: 'Anunțul a fost adăugat cu success.',
-                        color: 'success',
-                    };
 
-                    commit('setSnack', payload);
+                    commit('setSnack', {
+                        message: 'Anunțul a fost adăugat cu success.',
+                        color: state.colors.info,
+                    });
                     dispatch('loadItems');
+
+                    setTimeout(() => {
+                        router.push({path: '/profil'});
+                    }, 1000);
                 } else {
-                    console.log(response.data.errorMessage);
-                    const payload = {
-                        message: response.data.errorMessage.category.toString(),
-                        color: state.colors.warning,
-                    };
-                    commit('setSnack', payload);
                     console.log('Add item -> Error');
+                    commit('setSnack', {
+                        message: response.data.errorMessage,
+                        color: state.colors.error,
+                    });
                 }
             });
         },
@@ -473,7 +494,7 @@ export default new Vuex.Store({
         deleteItem({commit, state, dispatch}, id) {
             const token = state.token;
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
-            axios.delete('/user/' + id).then(response => {
+            axios.delete('/item/' + id).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     dispatch('loadItems');
                     commit('setSnack', {
@@ -481,6 +502,10 @@ export default new Vuex.Store({
                         color: state.colors.info,
                     });
                 } else {
+                    commit('setSnack', {
+                        message: response.data.errorMessage,
+                        color: state.colors.error,
+                    });
                 }
             });
         },
@@ -495,7 +520,7 @@ export default new Vuex.Store({
         updateItem({commit, state, dispatch}, payload) {
             const token = state.token;
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
-            axios.post('/user/' + payload.id, payload.form
+            axios.post('/item/' + payload.id, payload.form
             ).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     dispatch('loadItems');
@@ -503,7 +528,39 @@ export default new Vuex.Store({
                         message: 'Anunțul a fost actualizat',
                         color: state.colors.info,
                     });
+                    setTimeout(() => {
+                        router.push({path: '/profil'});
+                    }, 1000);
                 } else {
+                    commit('setSnack', {
+                        message: response.data.errorMessage,
+                        color: state.colors.error,
+                    });
+                }
+            });
+        },
+        /**
+         * Update user
+         * @param commit
+         * @param state
+         * @param dispatch
+         * @param payload
+         */
+        updateUser({commit, state, dispatch}, payload) {
+            const token = state.token;
+            axios.defaults.headers.common.Authorization = 'Bearer ' + token;
+            axios.post('/user', payload.form).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+
+                    commit('setSnack', {
+                        message: 'Profilul a fost actualizat',
+                        color: state.colors.info,
+                    });
+                } else {
+                    commit('setSnack', {
+                        message: response.data.errorMessage,
+                        color: state.colors.error,
+                    });
                 }
             });
         },
@@ -511,6 +568,7 @@ export default new Vuex.Store({
         /**
          * Looad favorite items
          * @param commit
+         * @param dispatch
          * @param state
          */
         loadFavorites({commit, state}) {
@@ -520,6 +578,7 @@ export default new Vuex.Store({
                 if (response && response.data && response.data.responseType === 'success') {
                     commit('setFavorites', response.data.data);
                 } else {
+                    dispatch('loadFavorites');
                 }
             });
         },
@@ -570,6 +629,10 @@ export default new Vuex.Store({
                         color: state.colors.info,
                     });
                 } else {
+                    commit('setSnack', {
+                        message: 'Anunțul nu a putut fi șters din lista de fovorite',
+                        color: state.colors.warning,
+                    });
                 }
             });
         },

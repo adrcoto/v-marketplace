@@ -53,17 +53,13 @@
                 email: '',
                 password: '',
                 rules: {
-                    name: {
-                        required: v => !!v || 'Numele este obligatoriu.',
-                        length: v => (v && v.length < 25) || 'Introduceti doar numele si un prenume.',
-                    },
                     email: {
                         required: v => !!v || 'Adresa de email este obligatorie.',
                         valid: v => /.+@.+/.test(v) || 'Introduceti o adresa de e-mail valida.',
                     },
                     password: {
                         required: value => !!value || 'Parola este obligatorie.',
-                        min: v => v.length >= 3 || 'Cel putin 6 caractere.',
+                        min: v => v.length >= 6 || 'Cel putin 6 caractere.',
                     },
                 },
             };

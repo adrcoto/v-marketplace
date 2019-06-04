@@ -50,39 +50,6 @@
             appFavorites: Favorites,
             appSettings: Settings,
         },
-
-        methods: {
-            setTab(name) {
-                switch (name) {
-                    case 'anunturi':
-                        return 0;
-                    case ' ':
-                        return 1;
-                    case 'favorite':
-                        return 2;
-                    case 'setari':
-                        return 3;
-                }
-            },
-            setName(index) {
-                switch (index) {
-                    case 0:
-                        return 'anunturi';
-                    case 1:
-                        return 'mesaje';
-                    case 2:
-                        return 'favorite';
-                    case 3:
-                        return 'setari';
-                }
-            },
-        },
-
-        watch: {
-            tab() {
-                this.$router.push('/profil/' + this.setName(this.tab));
-            },
-        },
     };
 </script>
 

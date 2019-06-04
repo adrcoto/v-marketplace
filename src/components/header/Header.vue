@@ -66,7 +66,7 @@
                         </v-list>
                     </v-menu>-->
 
-                <v-btn  v-if="auth" to="/profil/anunturi" class="text-none font-weight-regular subheading" flat slot="activator">
+                <v-btn  v-if="auth" to="/profil" class="text-none font-weight-regular subheading" flat slot="activator">
                     <v-avatar size="45px" tile>
                         <img src="https://cdn.vuetifyjs.com/images/logos/logo.svg" alt="Vuetify">
                     </v-avatar>
