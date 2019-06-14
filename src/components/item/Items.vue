@@ -110,7 +110,7 @@
             like: false,
             show: false,
             pagesVisible: 10,
-            page: 0,
+            page: 1,
             perPage: 24,
         }),
         methods: {
