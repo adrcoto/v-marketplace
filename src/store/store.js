@@ -16,7 +16,7 @@ export default new Vuex.Store({
     state: {
         token: null,
         date: '',
-        favorites: null,
+        favorites: [],
         user: {
             id: null,
             name: null,
@@ -59,7 +59,7 @@ export default new Vuex.Store({
             state.user.location = null;
             state.user.phone = null;
 
-            localStorage.removeItem('token');
+            sessionStorage.removeItem('token');
         },
         setVerify(state) {
             state.verify = true;
@@ -195,7 +195,7 @@ export default new Vuex.Store({
                         phone: response.data.data.user.phone,
                     };
 
-                    localStorage.setItem('token', authData.token);
+                    sessionStorage.setItem('token', authData.token);
                     commit('authUser', authData);
                     dispatch('loadFavorites');
                     router.push('/profil');
@@ -215,7 +215,7 @@ export default new Vuex.Store({
          * @returns {number}
          */
         tryAutoLogin({commit, dispatch}) {
-            const token = localStorage.getItem('token');
+            const token = sessionStorage.getItem('token');
             if (!token)
                 return 0;
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
@@ -263,7 +263,7 @@ export default new Vuex.Store({
                 } else {
                     commit('setSnack', {
                         message: response.data.errorMessage,
-                        color: state.colors.error
+                        color: state.colors.error,
                     });
                 }
             });
@@ -279,7 +279,7 @@ export default new Vuex.Store({
         loadItems({commit, state, dispatch}, payload) {
             let query = '';
             let page = 0;
-            let perPage = 24;
+            let perPage = 15;
 
             if (payload !== undefined) {
                 if (payload.query !== undefined)
@@ -292,8 +292,9 @@ export default new Vuex.Store({
                     perPage = payload.perPage;
             }
 
-            axios.get('/search?q=' + query, {
+            axios.get('/search', {
                 params: {
+                    q: query,
                     page,
                     perPage,
                 },
@@ -302,8 +303,9 @@ export default new Vuex.Store({
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Get Items-> Success');
 
+
                     let items = response.data.data.items;
-                    commit('setItemsCount', response.data.data.maxLength);
+                    commit('setItemsCount', response.data.data.total);
 
                     let created = null;
 
@@ -375,6 +377,7 @@ export default new Vuex.Store({
                 },
             });
         },
+
         /**
          * Gets all available categories
          * @param commit
@@ -520,7 +523,7 @@ export default new Vuex.Store({
         updateItem({commit, state, dispatch}, payload) {
             const token = state.token;
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
-            axios.post('/item/' + payload.id, payload.form
+            axios.post('/item/' + payload.id, payload.form,
             ).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     dispatch('loadItems');
@@ -547,9 +550,23 @@ export default new Vuex.Store({
          * @param payload
          */
         updateUser({commit, state, dispatch}, payload) {
+            const config = {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            };
+
+            console.log(payload);
+            const form = new FormData();
+            form.append('name', payload.name);
+            form.append('phone', payload.phone);
+
             const token = state.token;
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
-            axios.post('/user', payload.form).then(response => {
+            axios.post('/user', {
+                form,
+                _method: 'POST',
+            }).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
 
                     commit('setSnack', {
@@ -571,10 +588,10 @@ export default new Vuex.Store({
          * @param dispatch
          * @param state
          */
-        loadFavorites({commit, state}) {
-            const token = state.token;
+        loadFavorites({commit, dispatch, state}) {
+            const token = sessionStorage.getItem('token');
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
-            axios.get('/favorites').then(response => {
+            return axios.get('/favorites').then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     commit('setFavorites', response.data.data);
                 } else {
@@ -582,6 +599,7 @@ export default new Vuex.Store({
                 }
             });
         },
+
 
         /**
          * Add to favorite

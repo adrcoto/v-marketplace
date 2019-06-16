@@ -2,9 +2,9 @@
     <v-layout column justify-center>
         <v-layout column justify-center>
             <v-flex>
-                <div class="text-md-center" v-if="favorites.length <= 0"> Nu aveți anuțuri favorite</div>
+                <div class="text-md-center" v-if="favorites === null"> Nu aveți anuțuri favorite</div>
             </v-flex>
-            <v-flex :key="favorite.item_id" v-for="favorite in favorites">
+            <v-flex v-if="favorites !== null" :key="favorite.item_id" v-for="favorite in favorites">
                 <v-card-text>
                     <v-hover>
                         <v-card @click.stop="viewItem(favorite)" style="cursor: pointer"
@@ -78,14 +78,10 @@
         },
         computed: {
             favorites() {
-                let wtf = [];
-                this.$store.getters.favorites.forEach((favorite) => {
-                    wtf.push(this.$store.getters.items.find(item => item.item_id === favorite.item));
-                });
-
-                return wtf;
+              return this.$store.getters.favorites;
             },
         },
+
     };
 </script>
 

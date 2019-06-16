@@ -1,8 +1,12 @@
 <template>
-    <section>
-        <app-search class="mb-3 mt-3"/>
-        <app-items/>
-    </section>
+    <v-layout row justify-center>
+        <v-flex xl10>
+            <section>
+                <app-search class="mb-3 mt-3"/>
+                <app-items/>
+            </section>
+        </v-flex>
+    </v-layout>
 </template>
 
 <script>
@@ -15,8 +19,6 @@
             appSearch: Search,
         },
         methods: {},
-        computed: {
-
-        }
+        computed: {},
     };
 </script>

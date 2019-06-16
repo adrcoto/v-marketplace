@@ -96,7 +96,8 @@
                         </v-flex>
 
                         <!--                        Manufacurer Year-->
-                        <v-flex xs5 v-if="item.manufacturer_year !== undefined && item.manufacturer_year !== 0 && item.manufacturer_year !== 'null'"
+                        <v-flex xs5
+                                v-if="item.manufacturer_year !== undefined && item.manufacturer_year !== '0' && item.manufacturer_year !== 'null'"
                                 class="mb-4">
                             <v-layout row align-center>
                                 <v-flex>
@@ -422,7 +423,7 @@
                                             </div>
                                         </v-flex>
                                         <v-flex xs2 md2 lg2 x12>
-                                            <v-chip dark color="primary" class="subheading">
+                                            <v-chip dark color="primary mt-2" class="subheading">
                                                 {{userItem.price}}
                                                 <span class="ml-2" v-if="item.currency === 0">lei</span>
                                                 <span class="ml-2" v-else>€</span>
@@ -502,7 +503,7 @@
                 this.item = item;
                 this.$router.replace({path: '/anunt/' + item.slug, query: {id: item.item_id}});
             },
-            editItem(item){
+            editItem(item) {
                 this.$router.push({path: '/anunt/modificare/' + item.slug, query: {id: item.item_id}});
             },
             calculateDate(actual, created) {
@@ -544,11 +545,11 @@
                         else
                             this.$store.commit('setSnack', {
                                 message: 'Anunțul există deja in lista dumneavoastră de anunțuri favorite',
-                                color: this.$store.getters.colors.warning
+                                color: this.$store.getters.colors.warning,
                             });
                     }
                 } else {
-                    this.$store.dispatch('showLogin')
+                    this.$store.dispatch('showLogin');
                 }
             },
         },
@@ -568,9 +569,9 @@
             favorites() {
                 return this.$store.getters.favorites;
             },
-            isMine(){
+            isMine() {
                 return this.item.owner === this.$store.getters.user.id;
-            }
+            },
         },
         mounted() {
             //this.item = this.$store.getters.item(this.$route.query.id);
@@ -584,19 +585,11 @@
                     const actual = new Date();
                     const created = new Date(this.item.created_at.date);
 
-                    console.log(this.item.negotiable);
-
                     this.item.created_at = this.calculateDate(actual, created);
 
-                    axios.get('/search', {
-                        params: {
-                            owner: this.user.id,
-                            page: 0,
-                            perPage: 10,
-                        },
-                    }).then(res => {
+                    axios.get('/items/' + this.user.id ).then(res => {
                         if (res && res.data && res.data.responseType === 'success') {
-                            this.userItems = res.data.data.items;
+                            this.userItems = res.data.data;
                             this.userItems.forEach((userItem) => {
                                 userItem.created_at = this.calculateDate(actual, new Date(userItem.created_at.date));
                             });

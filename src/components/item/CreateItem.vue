@@ -82,7 +82,7 @@
                     </v-layout>
 
                     <!-- Location -->
-                    <div class="space">
+                    <div class="space mb-3">
                         <v-chip close v-model="location.chip"
                                 class="subheading"
                                 @input="clearLocation"

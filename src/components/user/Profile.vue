@@ -50,6 +50,17 @@
             appFavorites: Favorites,
             appSettings: Settings,
         },
+
+
+        created() {
+            this.$store.dispatch('loadFavorites').then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    this.$store.commit('setFavorites', response.data.data);
+                } else {
+                    this.$store.dispatch('loadFavorites');
+                }
+            });
+        },
     };
 </script>
 

@@ -9,12 +9,12 @@
                                v-show="false"
                         >
 
-
                         <v-tooltip top>
                             <template v-slot:activator="{ on }">
                                 <v-avatar style="cursor: pointer" @click="$refs.inputUpload.click()" size="75px"
                                           v-on="on">
-                                    <img :src="avatar.url !== '' ? avatar.url : require('../../assets/no-avatar.png')" alt="Avatar">
+                                    <img :src="avatar.url !== '' ? avatar.url : require('../../assets/no-avatar.png')"
+                                         alt="Avatar">
                                 </v-avatar>
                             </template>
                             <span>Alege o fotografie de profil</span>
@@ -122,7 +122,7 @@
 </template>
 
 <script>
-    import RomanianMap from '../item/RomanianMap'
+    import RomanianMap from '../item/RomanianMap';
 
     export default {
         data: () => ({
@@ -130,10 +130,6 @@
             name: {
                 value: null,
                 active: true,
-            },
-            password: {
-                value: null,
-                length: 6
             },
             phone: {
                 value: null,
@@ -150,8 +146,8 @@
             },
             avatar: {
                 file: null,
-                url: ''
-            }
+                url: '',
+            },
         }),
         methods: {
             updateUser(field) {
@@ -161,25 +157,18 @@
                 } else
                     field.active = true;
 
-
                 const user = {
-                    name: this.compareValues(this.name.value, this.user.name),
-                    phone: this.compareValues(this.phone.value, this.user.phone),
-                    password: this.password.value,
-                    location: this.compareValues(this.location.value, this.user.location),
+                    name: this.name.value,
+                    phone: this.phone.value,
+                    location: this.location.name,
                 };
 
                 let form = new FormData;
 
-
                 for (let key in user)
-                    if (user[key] !== null && user[key] !== undefined)
-                        form.append(key, user[key]);
+                    form.append(key, user[key]);
 
-                form.append('avatar', this.avatar.file);
-                form.append('_method', 'patch');
-
-                this.$store.dispatch('updateUser', form);
+                this.$store.dispatch('updateUser', user);
             },
             setLocation(name) {
                 this.location.value = name + ', ' + this.location.district;
@@ -202,7 +191,7 @@
 
 
                 this.$refs.inputUpload.value = null;
-            }
+            },
         },
         created() {
             const user = this.$store.getters.user;
@@ -213,8 +202,8 @@
             this.location.value = user.location;
         },
         components: {
-            appRomanianMap: RomanianMap
-        }
+            appRomanianMap: RomanianMap,
+        },
     };
 </script>
 
