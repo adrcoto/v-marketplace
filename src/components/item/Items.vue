@@ -107,7 +107,11 @@
             show: false,
             pagesVisible: 10,
             page: 1,
+<<<<<<< HEAD
             perPage: 20,
+=======
+            perPage: 24,
+>>>>>>> 5dcd1961cef038064d8be347607c00e86bbf2566
         }),
         methods: {
             viewItem(item) {
