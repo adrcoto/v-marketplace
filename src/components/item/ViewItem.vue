@@ -459,7 +459,7 @@
                         <span v-if="!number">{{user.phone.substring(0, 4) + maskPhone.toString()}}</span>
                     </v-btn>
 
-                    <v-btn large color="info" class="text-none font-weight-regular subheading dim">
+                    <v-btn v-if="!isMine" large color="info" class="text-none font-weight-regular subheading dim">
                         <v-icon left>message</v-icon>
                         Trimite mesaj
                     </v-btn>

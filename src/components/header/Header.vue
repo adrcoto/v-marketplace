@@ -39,12 +39,11 @@
         <!--   Toolbar     -->
         <v-toolbar prominent fixed app dark clipped-left color="blue darken-3">
             <v-toolbar-side-icon @click.stop="drawer = !drawer" class="hidden-md-and-up"></v-toolbar-side-icon>
-
             <v-toolbar-title>
                 <router-link to="/" tag="span" style="cursor: pointer">V-Marketplace</router-link>
             </v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-toolbar-items class="hidden-sm-and-down" id="hook">
+            <v-toolbar-items class="hidden-xs-only" id="hook">
 
                 <!--    <v-menu v-if="auth" offset-y>
                         <v-btn class="text-none font-weight-regular subheading" flat slot="activator">
@@ -66,14 +65,16 @@
                         </v-list>
                     </v-menu>-->
 
-                <v-btn  v-if="auth" to="/profil" class="text-none font-weight-regular subheading" flat slot="activator">
+                <v-btn v-if="auth" to="/profil" class="text-none font-weight-regular subheading" flat
+                       slot="activator">
                     <v-avatar size="45px" tile>
                         <img src="https://cdn.vuetifyjs.com/images/logos/logo.svg" alt="Vuetify">
                     </v-avatar>
                     {{user}}
                 </v-btn>
 
-                <v-btn class="text-none font-weight-regular subheading" flat v-if="!auth" @click.stop="openLoginModal">
+                <v-btn class="text-none font-weight-regular subheading" flat v-if="!auth"
+                       @click.stop="openLoginModal">
                     <v-icon left>lock_open</v-icon>
                     Autentificare
                 </v-btn>
@@ -84,7 +85,8 @@
                     Creare cont
                 </v-btn>
 
-                <v-btn class="text-none font-weight-regular subheading" flat v-for="item in menuItems" :key="item.title"
+                <v-btn class="text-none font-weight-regular subheading" flat v-for="item in menuItems"
+                       :key="item.title"
                        :to="item.link">
                     <v-icon left>{{item.icon}}</v-icon>
                     {{item.title}}

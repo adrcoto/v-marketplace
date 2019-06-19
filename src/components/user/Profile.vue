@@ -9,9 +9,9 @@
                 <v-tab-item v-for="n in tabItems.length" :key="n">
                     <!--                    <v-layout justify-center>-->
                     <!--                        <v-flex lg8 md10 sm10 xl6 xs11>-->
-                    <v-card class="pa-4">
+                    <div class="pa-4">
                         <component :is="'app-' + components[tab]"></component>
-                    </v-card>
+                    </div>
                     <!--                        </v-flex>-->
                     <!--                    </v-layout>-->
                 </v-tab-item>
@@ -31,14 +31,12 @@
             return {
                 tabItems: [
                     {name: 'Anuțurile mele'},
-                    {name: 'Mesaje'},
                     {name: 'Favorite'},
                     {name: 'Setări cont'},
                 ],
                 tab: 0,
                 components: [
                     'my-items',
-                    'messages',
                     'favorites',
                     'settings',
                 ],

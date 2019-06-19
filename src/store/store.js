@@ -278,7 +278,7 @@ export default new Vuex.Store({
          */
         loadItems({commit, state, dispatch}, payload) {
             let query = '';
-            let page = 0;
+            let page = 1;
             let perPage = 15;
 
             if (payload !== undefined) {
@@ -372,7 +372,7 @@ export default new Vuex.Store({
             return axios.get('/search', {
                 params: {
                     owner: payload,
-                    page: 0,
+                    page: 1,
                     perPage: 10,
                 },
             });

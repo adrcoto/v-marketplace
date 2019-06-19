@@ -579,7 +579,7 @@
                             <v-layout class="mb-3" column>
                                 <v-layout class="mb-4" align-center justify-space-between row wrap>
                                     <!-- Name  -->
-                                    <v-flex xs12 sm5 md4 lg3>
+                                    <v-flex xs12 sm3 md3 lg3>
                                         <v-chip>
                                             <v-icon left>face</v-icon>
                                             {{user.name}}
@@ -587,14 +587,14 @@
                                     </v-flex>
 
                                     <!-- Email  -->
-                                    <v-flex xs12 sm5 md4 lg3>
+                                    <v-flex xs12 sm3 md3 lg3>
                                         <v-chip>
                                             <v-icon left>email</v-icon>
                                             {{user.email}}
                                         </v-chip>
                                     </v-flex>
                                     <!-- Phone  -->
-                                    <v-flex xs12 sm5 md4 lg3>
+                                    <v-flex xs12 sm3 md3 lg3>
                                         <v-chip>
                                             <v-icon left>phone</v-icon>
                                             {{user.phone}}
