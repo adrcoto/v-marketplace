@@ -33,5 +33,7 @@ new Vue({
     created() {
         this.$store.dispatch('tryAutoLogin');
         this.$store.dispatch('loadItems');
+        this.$store.dispatch('loadCategories');
+        this.$store.dispatch('setDark');
     },
 });

@@ -2,7 +2,7 @@ const state = {
     darkTheme: false,
 };
 const getters = {
-    dark: state => {
+    darkTheme: state => {
         return state.darkTheme;
     },
 };
@@ -10,16 +10,25 @@ const getters = {
 const mutations = {
     toggleDark: state => {
         state.darkTheme = !state.darkTheme;
+    },
+    setDark(state, dark) {
+        state.darkTheme = dark;
     }
 };
 
 const actions = {
-    toggleDark: ({commit}) => {
+    toggleDark: ({commit, state}) => {
         commit('toggleDark');
+        localStorage.setItem('dark', state.darkTheme);
+    },
+    setDark({commit}) {
+        if (localStorage.getItem('dark'))
+            if (localStorage.getItem('dark') === 'true')
+                commit('setDark', true);
     }
 };
 
-export default{
+export default {
     state,
     getters,
     mutations,

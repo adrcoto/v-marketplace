@@ -25,76 +25,77 @@
         <!--                </v-layout>-->
         <!--            </v-card>-->
         <!--        </v-flex>-->
-        <v-flex xs6 sm8 md10 lg11 xl10>
-                <v-layout row wrap>
-                    <v-flex :key="item.item_id" v-for="item in items" xs12 sm6 md4 lg3 class="xl5-custom">
-                        <v-layout justify-center>
-                            <v-hover>
-                                <v-card @click.stop="viewItem(item)" style="cursor: pointer"
-                                        :class="`elevation-${hover ? 20 : 2}`" class="item-card mb-4"
-                                        slot-scope="{ hover }"
-                                        width="92%">
-                                    <v-img :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
-                                           height="165">
+        <v-label v-if="items.length === 0">Nici un rezultat!</v-label>
+        <v-flex>
+            <v-layout row wrap>
+                <v-flex :key="item.item_id" v-for="item in items" xs12 sm6 md4 lg3 class="xl5-custom">
+                    <v-layout justify-center>
+                        <v-hover>
+                            <v-card @click.stop="viewItem(item)" style="cursor: pointer"
+                                    :class="`elevation-${hover ? 20 : 2}`" class="item-card mb-4"
+                                    slot-scope="{ hover }"
+                                    width="92%">
+                                <v-img :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
+                                       height="165">
 
-                                        <v-expand-transition>
-                                            <div class="d-flex transition-fast-in-fast-out v-card--reveal"
-                                                 v-if="hover">
-                                                <v-card-actions>
-                                                    <v-btn :class="{'hover-btn-pressed': isFavorite(item.item_id), 'hover-btn': !like}"
-                                                           @click.stop="addToFavorites(item.item_id)"
-                                                           class="hover-btn"
-                                                           icon>
-                                                        <v-icon>favorite</v-icon>
-                                                    </v-btn>
-                                                    <v-btn class="hover-btn" icon>
-                                                        <v-icon>share</v-icon>
-                                                    </v-btn>
-                                                    <v-spacer></v-spacer>
-                                                </v-card-actions>
-                                            </div>
-                                        </v-expand-transition>
-                                    </v-img>
-                                    <v-layout align-start justify-start style="font-size: 15px"
-                                              class="ml-3 mt-4 mr-2 item-card-title font-weight-bold">
-                                        {{item.title}}
-                                    </v-layout>
-                                    <!--                                        </v-card-title>-->
-                                    <!---->
-                                    <v-chip app class="price" color="primary">
-                                        {{item.price}}
-                                        <span class="ml-2" v-if="item.currency === 0">lei</span>
-                                        <span class="ml-2" v-else>€</span>
-                                    </v-chip>
-                                    <v-card-actions class="item-card-action">
-                                        <div class="d-flex transition-fast-in-fast-out" v-if="hover">
+                                    <v-expand-transition>
+                                        <div class="d-flex transition-fast-in-fast-out v-card--reveal"
+                                             v-if="hover">
+                                            <v-card-actions>
+                                                <v-btn :class="{'hover-btn-pressed': isFavorite(item.item_id), 'hover-btn': !like}"
+                                                       @click.stop="addToFavorites(item.item_id)"
+                                                       class="hover-btn"
+                                                       icon>
+                                                    <v-icon>favorite</v-icon>
+                                                </v-btn>
+                                                <v-btn class="hover-btn" icon>
+                                                    <v-icon>share</v-icon>
+                                                </v-btn>
+                                                <v-spacer></v-spacer>
+                                            </v-card-actions>
+                                        </div>
+                                    </v-expand-transition>
+                                </v-img>
+                                <v-layout align-start justify-start style="font-size: 15px"
+                                          class="ml-3 mt-4 mr-2 item-card-title font-weight-bold">
+                                    {{item.title}}
+                                </v-layout>
+                                <!--                                        </v-card-title>-->
+                                <!---->
+                                <v-chip app class="price" color="primary">
+                                    {{item.price}}
+                                    <span class="ml-2" v-if="item.currency === 0">lei</span>
+                                    <span class="ml-2" v-else>€</span>
+                                </v-chip>
+                                <v-card-actions class="item-card-action">
+                                    <div class="d-flex transition-fast-in-fast-out" v-if="hover">
                                                     <span class="caption grey--text">
                                                         <v-icon class="grey--text">location_on</v-icon>
-                                                        {{item.location}}
+                                                        {{item.city}}, {{item.district}}
                                                     </span>
-                                        </div>
-                                        <div v-else>
+                                    </div>
+                                    <div v-else>
                                                  <span class="caption grey--text">
                                                     <v-icon class="grey--text">query_builder</v-icon>
                                                     {{item.created_at}}
                                                 </span>
-                                        </div>
-                                        <v-spacer/>
-                                    </v-card-actions>
-                                </v-card>
-                            </v-hover>
-                        </v-layout>
-                    </v-flex>
-                </v-layout>
-                <div class="text-xs-center">
-                    <v-pagination
-                            v-model="page"
-                            :length="Math.ceil(itemsMaxLength / perPage)"
-                            circle
-                            :total-visible="pagesVisible"
-                            @input="changePage"
-                    ></v-pagination>
-                </div>
+                                    </div>
+                                    <v-spacer/>
+                                </v-card-actions>
+                            </v-card>
+                        </v-hover>
+                    </v-layout>
+                </v-flex>
+            </v-layout>
+            <div class="text-xs-center" v-if="items.length > 0">
+                <v-pagination
+                        v-model="page"
+                        :length="Math.ceil(itemsMaxLength / perPage)"
+                        circle
+                        :total-visible="pagesVisible"
+                        @input="changePage"
+                ></v-pagination>
+            </div>
         </v-flex>
     </v-layout>
 </template>
@@ -106,22 +107,14 @@
             like: false,
             show: false,
             pagesVisible: 10,
-            page: 1,
-<<<<<<< HEAD
-            perPage: 20,
-=======
-            perPage: 24,
->>>>>>> 5dcd1961cef038064d8be347607c00e86bbf2566
         }),
         methods: {
             viewItem(item) {
                 this.$router.push({path: '/anunt/' + item.slug, query: {id: item.item_id}});
             },
             changePage(page) {
-                this.$store.dispatch('loadItems', {
-                    page,
-                    perPage: this.perPage,
-                });
+                this.$store.commit('setPage', page);
+                this.$store.dispatch('loadItems')
             },
             addToFavorites(id) {
                 if (this.$store.getters.isAuthenticated) {
@@ -149,6 +142,12 @@
             favorites() {
                 return this.$store.getters.favorites;
             },
+            perPage(){
+                return this.$store.getters.perPage;
+            },
+            page(){
+                return this.$store.getters.page;
+            }
         },
     };
 </script>
@@ -172,7 +171,7 @@
         }
     }
 
-    @media(min-width: 1904px) {
+    @media (min-width: 1904px) {
         .flex.xl5-custom {
             width: 20%;
             max-width: 20%;

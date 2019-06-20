@@ -24,7 +24,7 @@
                                             </div>
                                             <div>
                                                 <v-icon>location_on</v-icon>
-                                                {{item.location}}
+                                                {{item.city}}, {{item.district}}
                                             </div>
                                             <div>
                                                 <v-icon>query_builder</v-icon>

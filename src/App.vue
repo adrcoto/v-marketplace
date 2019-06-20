@@ -1,5 +1,6 @@
 <template>
-    <v-app>
+    <v-app :dark="dark">
+
         <app-header/>
         <app-notification/>
         <app-login-modal/>
@@ -18,15 +19,16 @@
     import RegisterModal from './components/modal/RegisterModal';
 
     export default {
-        data: () => ({}),
         components: {
             appHeader: Header,
             appLoginModal: LoginModal,
             appRegisterModal: RegisterModal,
         },
-        // created() {
-        //     this.$store.dispatch('tryAutoLogin');
-        // },
+        computed: {
+            dark() {
+                return this.$store.getters.darkTheme;
+            }
+        }
     };
 </script>
 

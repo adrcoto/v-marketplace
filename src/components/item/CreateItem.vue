@@ -3,8 +3,7 @@
         <v-flex lg8 md10 sm10 xl6 xs11>
             <v-card class="pa-5">
                 <v-card-title>
-                    <h2 v-if="edit">Actualizare anunț</h2>
-                    <h2 v-if="!edit">Adaugare anunț nou</h2>
+                    <h2>{{edit ? 'Actualizare anunț' : 'Adaugare anunț nou'}}</h2>
                 </v-card-title>
                 <v-form ref="form"
                         v-model="valid"
@@ -201,53 +200,54 @@
                                       :error-messages="typeErrors"
                             ></v-select>
                         </v-flex>
-                    </v-layout>
-                    <v-dialog max-width="550" v-model="category.dialog">
-                        <v-card>
-                            <!-- Toolbar -->
-                            <v-toolbar dark color="blue darken-3">
-                                <v-toolbar-title>
-                                    <v-card-title class="subheading">Categorie</v-card-title>
-                                </v-toolbar-title>
-                                <v-spacer></v-spacer>
-                                <v-toolbar-title>
-                                    <v-card-title class="subheading" v-model="category.name">
-                                        {{category.name}}
-                                    </v-card-title>
-                                </v-toolbar-title>
-                            </v-toolbar>
-                            <!-- Category - Subcategory List Container-->
-                            <v-card-text>
-                                <v-layout class="category-container" row>
-                                    <!-- Category List -->
-                                    <v-flex class="scroll-y" xs6>
-                                        <v-list class="mr-3" dense>
-                                            <v-list-tile :key="category.id" @click="loadSubcategories(category)"
-                                                         v-for="category in categories">
-                                                <v-list-tile-content>
+                        <v-dialog max-width="550" v-model="category.dialog">
+                            <v-card>
+                                <!-- Toolbar -->
+                                <v-toolbar dark color="blue darken-3">
+                                    <v-toolbar-title>
+                                        <v-card-title class="subheading">Categorie</v-card-title>
+                                    </v-toolbar-title>
+                                    <v-spacer></v-spacer>
+                                    <v-toolbar-title>
+                                        <v-card-title class="subheading" v-model="category.name">
+                                            {{category.name}}
+                                        </v-card-title>
+                                    </v-toolbar-title>
+                                </v-toolbar>
+                                <!-- Category - Subcategory List Container-->
+                                <v-card-text>
+                                    <v-layout class="category-container" row>
+                                        <!-- Category List -->
+                                        <v-flex class="scroll-y" xs6>
+                                            <v-list class="mr-3" dense>
+                                                <v-list-tile :key="category.id" @click="loadSubcategories(category)"
+                                                             v-for="category in categories">
+                                                    <v-list-tile-content>
+                                                        <v-list-tile-title>
+                                                            {{category.name}}
+                                                        </v-list-tile-title>
+                                                    </v-list-tile-content>
+                                                </v-list-tile>
+                                            </v-list>
+                                        </v-flex>
+                                        <v-divider vertical></v-divider>
+                                        <!-- Subcategory List-->
+                                        <v-flex class="scroll-y" xs6>
+                                            <v-list class="ml-3" dense>
+                                                <v-list-tile :key="subcategory.id" @click="loadTypes(subcategory)"
+                                                             v-for="subcategory in subcategories">
                                                     <v-list-tile-title>
-                                                        {{category.name}}
+                                                        {{subcategory.name}}
                                                     </v-list-tile-title>
-                                                </v-list-tile-content>
-                                            </v-list-tile>
-                                        </v-list>
-                                    </v-flex>
-                                    <v-divider vertical></v-divider>
-                                    <!-- Subcategory List-->
-                                    <v-flex class="scroll-y" xs6>
-                                        <v-list class="ml-3" dense>
-                                            <v-list-tile :key="subcategory.id" @click="loadTypes(subcategory)"
-                                                         v-for="subcategory in subcategories">
-                                                <v-list-tile-title>
-                                                    {{subcategory.name}}
-                                                </v-list-tile-title>
-                                            </v-list-tile>
-                                        </v-list>
-                                    </v-flex>
-                                </v-layout>
-                            </v-card-text>
-                        </v-card>
-                    </v-dialog>
+                                                </v-list-tile>
+                                            </v-list>
+                                        </v-flex>
+                                    </v-layout>
+                                </v-card-text>
+                            </v-card>
+                        </v-dialog>
+                    </v-layout>
+
                     <!--images-->
                     <v-label class="subheading">
                         <v-icon>photo</v-icon>
@@ -328,6 +328,7 @@
                     </v-layout>
 
                     <v-divider class="mb-3"></v-divider>
+
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn flat @click="showDetails = !showDetails">
@@ -939,6 +940,7 @@
                 this.location.name = '';
                 this.location.cities = [];
             },
+
             addOrDelete() {
                 this.$v.$touch();
                 if (!this.$refs.form.validate())
@@ -961,7 +963,8 @@
                     currency: this.currency.value,
                     negotiable: this.boolToInt(this.price.negotiable),
                     change: this.boolToInt(this.price.change),
-                    location: this.location.city + ', ' + this.location.district,
+                    city: this.location.city,
+                    district: this.location.district,
                     category: this.category.id,
                     sub_category: this.subcategory.id,
                     type: this.type.id,
@@ -1000,6 +1003,7 @@
                     form.append('images[]', img.image);
                 });
 
+
                 this.$store.dispatch('addItem', form);
             },
 
@@ -1017,7 +1021,9 @@
                     change: this.boolToInt(this.compareValues(this.price.change, this.itemCopy.change)),
                     currency: this.compareValues(this.currency.value, this.itemCopy.currency),
 
-                    location: this.compareValues(this.location.city + ', ' + this.location.district, this.itemCopy.location),
+                    city: this.compareValues(this.location.city, this.itemCopy.city),
+                    district: this.compareValues(this.location.district, this.itemCopy.district),
+
 
                     manufacturer: this.compareValues(this.manufacturer, this.itemCopy.manufacturer),
                     model: this.compareValues(this.model, this.itemCopy.model),
@@ -1043,7 +1049,6 @@
                     first_owner: this.boolToInt(this.compareValues(this.first_owner, this.itemCopy.first_owner)),
                     right_hand_drive: this.boolToInt(this.compareValues(this.right_hand_drive, this.itemCopy.right_hand_drive)),
                 };
-
 
 
                 let form = new FormData;
@@ -1089,10 +1094,6 @@
                 return null;
             },
 
-            buildEditItem() {
-
-            },
-
         },
         created() {
             this.$store.dispatch('loadCategories');
@@ -1100,9 +1101,11 @@
 
             if (this.user.location) {
                 this.location.name = this.user.location;
+                const temp = this.user.location.split(', ');
+                this.location.city = temp[0];
+                this.location.district = temp[1];
                 this.location.chip = true;
             }
-
             if (this.edit) {
                 this.$store.dispatch('loadItem', this.$route.query.id).then(response => {
                     if (response && response.data && response.data.responseType === 'success') {
@@ -1116,7 +1119,9 @@
                         this.price.change = response.data.data.item.change;
                         this.currency.value = response.data.data.item.currency;
 
-                        this.location.name = response.data.data.item.location;
+                        this.location.city = response.data.data.item.city;
+                        this.location.district = response.data.data.item.district;
+                        this.location.name = this.location.city + ', ' + this.location.district;
                         this.location.chip = true;
 
                         this.category.id = response.data.data.item.category;

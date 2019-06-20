@@ -1,8 +1,6 @@
 <template>
     <v-layout row justify-center>
-        <v-flex xs1 sm1 md1 ml1 xl1>
-        </v-flex>
-        <!--Item-->
+        <!--Item && OwnerItems-->
         <v-flex lg7 md10 sm10 xl5 xs11 mr-4>
             <div v-if="!item">Loading Please wait...</div>
             <v-card v-if="item" class="pa-1 mb-3">
@@ -16,13 +14,15 @@
                     <v-flex>
                         <v-layout column>
                             <v-flex>
-                                <v-label class="mb-1">
-                                    <v-icon right class="grey--text">location_on</v-icon>
-                                    {{item.location}}
-                                </v-label>
+                                <div class="mb-1">
+                                    <v-label>
+                                        <v-icon right class="grey--text">location_on</v-icon>
+                                        {{item.city}}, {{item.district}}
+                                    </v-label>
+                                </div>
                             </v-flex>
                             <v-flex>
-                                <v-label class="mb-1">
+                                <v-label>
                                     <v-icon right class="grey--text">query_builder</v-icon>
                                     {{item.created_at}}
                                 </v-label>
@@ -386,7 +386,7 @@
                     </v-layout>
                 </v-card-text>
             </v-card>
-
+            <!-- Owner Items -->
             <v-card class="pa-1" v-if="userItems !== undefined && userItems !== null && userItems.length > 1">
                 <v-card-title class="subheading">
                     Anuțurile utilizatorului &nbsp; <span class="font-weight-medium"> {{user.name}}</span>
@@ -398,7 +398,7 @@
                         <v-card-text>
                             <v-hover>
                                 <v-card @click="viewItem(userItem)" style="cursor: pointer"
-                                        :class="`elevation-${hover ? 20 : 2}`" class="item-card"
+                                        :class="`elevation-${hover ? 12 : 2}`" class="item-card"
                                         slot-scope="{ hover }">
                                     <v-layout row>
                                         <v-flex xs3 md3 lg3 x13>
@@ -413,7 +413,7 @@
                                                 </div>
                                                 <div>
                                                     <v-icon>location_on</v-icon>
-                                                    {{userItem.location}}
+                                                    {{userItem.city}}, {{userItem.district}}
                                                 </div>
                                                 <v-spacer/>
                                                 <div>
@@ -441,14 +441,18 @@
         <v-flex xs1 sm1 md1 ml1 xl1>
             <v-card class="profile" v-if="user">
                 <v-card color="blue-grey darken-2" class="white--text">
-                    <v-layout justify-center>
-                        <v-card-title class="mr-3">
-                            <v-avatar size="75px" tile>
-                                <img src="https://cdn.vuetifyjs.com/images/logos/logo.svg" alt="Vuetify">
+                    <div>
+                        <v-card-title class="justify-center">
+                            <v-avatar class="mr-2" size="85px">
+                                <v-img :src="user.avatar === '' ? require('../../assets/no-avatar-view-item.png') : AVATAR_API_URL + user.avatar"
+                                       alt="Vuetify"></v-img>
                             </v-avatar>
+                        </v-card-title>
+                        <v-card-title class="justify-center wrap">
                             <v-label dark>{{user.name}}</v-label>
                         </v-card-title>
-                    </v-layout>
+
+                    </div>
                 </v-card>
 
                 <v-card-title class="mr-3">
@@ -489,6 +493,7 @@
         data() {
             return {
                 API_URL: 'http://dev.shop/storage/',
+                AVATAR_API_URL: process.env.VUE_APP_AVATAR_URL,
                 number: false,
                 item: null,
                 user: null,
@@ -502,6 +507,7 @@
             viewItem(item) {
                 this.item = item;
                 this.$router.replace({path: '/anunt/' + item.slug, query: {id: item.item_id}});
+                window.scrollTo(0,0);
             },
             editItem(item) {
                 this.$router.push({path: '/anunt/modificare/' + item.slug, query: {id: item.item_id}});
@@ -587,7 +593,7 @@
 
                     this.item.created_at = this.calculateDate(actual, created);
 
-                    axios.get('/items/' + this.user.id ).then(res => {
+                    axios.get('/items/' + this.user.id).then(res => {
                         if (res && res.data && res.data.responseType === 'success') {
                             this.userItems = res.data.data;
                             this.userItems.forEach((userItem) => {

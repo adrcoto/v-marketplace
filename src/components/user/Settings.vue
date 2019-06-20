@@ -1,36 +1,45 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <v-layout justify-center>
         <v-flex xs6 sm6 md6 lg6 xl6>
             <v-card color="blue-grey darken-2" class="white--text">
                 <v-layout justify-center>
-                    <v-card-title class="mr-3">
-                        <input @change="addPic" accept="image/*" ref="inputUpload"
-                               type="file"
-                               v-show="false"
-                        >
-
-                        <v-tooltip top>
-                            <template v-slot:activator="{ on }">
-                                <v-avatar style="cursor: pointer" @click="$refs.inputUpload.click()" size="75px"
-                                          v-on="on">
-                                    <img :src="avatar.url !== '' ? avatar.url : require('../../assets/no-avatar.png')"
-                                         alt="Avatar">
-                                </v-avatar>
-                            </template>
-                            <span>Alege o fotografie de profil</span>
-                        </v-tooltip>
-                        <v-text-field dark class="ml-3"
-                                      v-model="name.value"
-                                      :readonly="name.active"
-                        >
-                            <v-tooltip slot="append" right>
-                                <v-icon @click="updateUser(name)" slot="activator">{{name.active ? 'edit' :
-                                    'done'}}
-                                </v-icon>
-                                <span>Modifică</span>
+                    <v-form ref="form" v-model="valid" lazy-validation>
+                        <v-card-title class="mr-3">
+                            <input @change="addPic" accept="image/*" ref="inputUpload"
+                                   type="file"
+                                   v-show="false"
+                            >
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on }">
+                                    <v-hover>
+                                        <v-avatar style="cursor: pointer" @click="$refs.inputUpload.click()"
+                                                  size="75px"
+                                                  :class="`elevation-${hover ? 12 : 2}`"
+                                                  slot-scope="{ hover }"
+                                                  v-on="on">
+                                            <v-img :src="avatar.url === '' ? require('../../assets/no-avatar.png') : avatar.url"
+                                                   alt="Avatar">
+                                            </v-img>
+                                        </v-avatar>
+                                    </v-hover>
+                                </template>
+                                <span>Alege o fotografie de profil</span>
                             </v-tooltip>
-                        </v-text-field>
-                    </v-card-title>
+                            <v-text-field dark class="ml-3"
+                                          v-model="name.value"
+                                          :rules="[rules.name.required, rules.name.length]"
+                                          :counter="25"
+                                          :readonly="name.active"
+                            >
+                                <v-tooltip slot="append" right>
+                                    <v-icon @click="editField(name)" slot="activator">{{name.active ? 'edit' :
+                                        'done'}}
+                                    </v-icon>
+                                    <span>Modifică</span>
+                                </v-tooltip>
+                            </v-text-field>
+                        </v-card-title>
+                    </v-form>
                 </v-layout>
             </v-card>
             <v-card>
@@ -43,18 +52,22 @@
                                 prepend-icon="email"
                                 readonly
                         >
-
                         </v-text-field>
 
 
                         <v-text-field
                                 v-model="phone.value"
                                 prepend-icon="phone"
+                                type="number"
+                                min="0"
+                                onkeypress="return event.charCode >= 48"
                                 label="Număr de telefon"
                                 :readonly="phone.active"
                         >
                             <v-tooltip slot="append" right>
-                                <v-icon @click="phone.active = !phone.active" slot="activator">edit</v-icon>
+                                <v-icon @click="editField(phone)" slot="activator">{{phone.active ? 'edit' :
+                                    'done'}}
+                                </v-icon>
                                 <span>Modifică</span>
                             </v-tooltip>
                         </v-text-field>
@@ -63,6 +76,7 @@
                                 v-model="location.value"
                                 prepend-icon="location_on"
                                 label="Locație"
+                                readonly
                         >
                             <v-tooltip slot="append" right>
                                 <v-icon @click="location.dialog = true" slot="activator">edit</v-icon>
@@ -111,7 +125,7 @@
                         </v-dialog>
                     </v-card-text>
                     <v-card-actions class="justify-center">
-                        <v-btn @click="updateUser" class="success font-weight-regular text-none subheading">
+                        <v-btn @click="updateUser" :disabled="!valid" class="success font-weight-regular text-none subheading">
                             Actualizează
                         </v-btn>
                     </v-card-actions>
@@ -126,6 +140,19 @@
 
     export default {
         data: () => ({
+            valid: false,
+            rules: {
+                name: {
+                    required: v => !!v || 'Numele este obligatoriu.',
+                    length: v => (v && v.length < 26) || 'Numele este prea mare',
+                },
+                password: {
+                    required: value => !!value || 'Parola este obligatorie.',
+                    min: v => v.length >= 6 || 'Cel putin 6 caractere.',
+                },
+            },
+
+
             user: null,
             name: {
                 value: null,
@@ -150,25 +177,30 @@
             },
         }),
         methods: {
-            updateUser(field) {
-                if (field.active) {
-                    field.active = false;
-                    return;
-                } else
-                    field.active = true;
+            editField(field) {
+                field.active = !field.active;
+            },
+            updateUser() {
 
-                const user = {
-                    name: this.name.value,
-                    phone: this.phone.value,
-                    location: this.location.name,
-                };
+                let user = {};
 
-                let form = new FormData;
+                if (this.compareValues(this.name.value, this.user.name))
+                    user['name'] = this.name.value;
 
-                for (let key in user)
-                    form.append(key, user[key]);
+                if (this.compareValues(this.phone.value, this.user.phone))
+                    user['phone'] = this.phone.value;
 
-                this.$store.dispatch('updateUser', user);
+                if (this.compareValues(this.location.value, this.user.location))
+                    user['location'] = this.location.value;
+
+                if (Object.entries(user).length !== 0 && user.constructor === Object)
+                    this.$store.dispatch('updateUser', user);
+
+                let avatar = new FormData();
+                avatar.append('avatar', this.avatar.file);
+
+                if (this.avatar.file !== null)
+                    this.$store.dispatch('updateAvatar', avatar);
             },
             setLocation(name) {
                 this.location.value = name + ', ' + this.location.district;
@@ -181,9 +213,10 @@
             compareValues(first, second) {
                 if (first !== second)
                     if (first !== ', ')
-                        return first;
+                        return true;
 
-                return null;
+
+                return false
             },
             addPic(e) {
                 this.avatar.file = e.target.files[0];
@@ -200,10 +233,14 @@
             this.name.value = user.name;
             this.phone.value = user.phone;
             this.location.value = user.location;
+            if (user.avatar !== '')
+            this.avatar.url = process.env.VUE_APP_AVATAR_URL + user.avatar;
         },
         components: {
             appRomanianMap: RomanianMap,
         },
+
+
     };
 </script>
 

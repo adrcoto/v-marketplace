@@ -6,6 +6,7 @@ import router from '../router';
 import loginModal from './modules/loginModal';
 import registerModal from './modules/registerModal';
 import darkTheme from './modules/darkTheme';
+import filter from './modules/filtres'
 
 import notification from './modules/notification';
 // axios.defaults.headers.common.Authorization = 'Bearer ' + token
@@ -17,13 +18,7 @@ export default new Vuex.Store({
         token: null,
         date: '',
         favorites: [],
-        user: {
-            id: null,
-            name: null,
-            email: null,
-            location: null,
-            phone: null,
-        },
+        user: {},
         verify: false,
 
         items: [],
@@ -32,6 +27,7 @@ export default new Vuex.Store({
         categories: [],
         subcategories: [],
         types: [],
+
 
         colors: {
             error: 'error',
@@ -42,22 +38,14 @@ export default new Vuex.Store({
     mutations: {
         authUser(state, userData) {
             state.token = userData.token;
-            state.user.id = userData.id;
-            state.user.name = userData.name;
-            state.user.email = userData.email;
-            state.user.location = userData.location;
-            state.user.phone = userData.phone;
+            state.user = userData.user;
         },
         setUser(state, user) {
             state.user = user;
         },
         clearAuthData(state) {
             state.token = null;
-            state.user.id = null;
-            state.user.name = null;
-            state.user.email = null;
-            state.user.location = null;
-            state.user.phone = null;
+            state.user = {};
 
             sessionStorage.removeItem('token');
         },
@@ -82,12 +70,6 @@ export default new Vuex.Store({
         setTypes(state, payload) {
             state.types = payload;
         },
-        setPage(state, payload) {
-            state.page = payload;
-        },
-        setPerPage(state, payload) {
-            state.perPage = payload;
-        },
     },
     getters: {
         token: state => {
@@ -98,9 +80,6 @@ export default new Vuex.Store({
         },
         user: state => {
             return state.user;
-        },
-        loading: state => {
-            return state.loading;
         },
         verify: state => {
             return state.verify;
@@ -129,17 +108,13 @@ export default new Vuex.Store({
         colors: state => {
             return state.colors;
         },
-        page: state => {
-            return state.page;
-        },
-        perPAge: state => {
-            return state.perPage;
-        },
     },
+
     /**
      * Actions
      */
     actions: {
+
         /**
          * Register user
          * @param commit
@@ -188,11 +163,14 @@ export default new Vuex.Store({
                     console.log('Login -> Success');
                     const authData = {
                         token: response.data.data.jwt,
-                        id: response.data.data.user.id,
-                        name: response.data.data.user.name,
-                        email: response.data.data.user.email,
-                        location: response.data.data.user.location,
-                        phone: response.data.data.user.phone,
+                        user: {
+                            id: response.data.data.user.id,
+                            name: response.data.data.user.name,
+                            email: response.data.data.user.email,
+                            location: response.data.data.user.location,
+                            phone: response.data.data.user.phone,
+                            avatar: response.data.data.user.avatar,
+                        }
                     };
 
                     sessionStorage.setItem('token', authData.token);
@@ -208,6 +186,7 @@ export default new Vuex.Store({
                 }
             });
         },
+
         /**
          * Re-login on refresh
          * @param commit
@@ -222,19 +201,24 @@ export default new Vuex.Store({
             axios.get('/user').then(res => {
                 const authData = {
                     token,
-                    id: res.data.data.id,
-                    name: res.data.data.name,
-                    email: res.data.data.email,
-                    location: res.data.data.location,
-                    phone: res.data.data.phone,
+                    user: {
+                        id: res.data.data.id,
+                        name: res.data.data.name,
+                        email: res.data.data.email,
+                        location: res.data.data.location,
+                        phone: res.data.data.phone,
+                        avatar: res.data.data.avatar,
+                    },
                 };
                 commit('authUser', authData);
                 dispatch('loadFavorites');
             });
         },
+
         /**
          * Logout
          * @param commit
+         * @param state
          */
         logout({commit, state}) {
             router.push('/');
@@ -244,6 +228,7 @@ export default new Vuex.Store({
                 color: state.colors.info,
             });
         },
+
         /**
          * Verify account
          * @param commit
@@ -277,28 +262,24 @@ export default new Vuex.Store({
          * @param dispatch
          */
         loadItems({commit, state, dispatch}, payload) {
-            let query = '';
-            let page = 1;
-            let perPage = 15;
 
-            if (payload !== undefined) {
-                if (payload.query !== undefined)
-                    query = payload.query;
+            let params = {};
 
-                if (payload.page !== undefined)
-                    page = payload.page;
+            const filters = {
+                q: filter.state.q,
+                city: filter.state.location.city,
+                district: filter.state.location.district,
+                category: filter.state.category.value,
+                sub_category: filter.state.sub_category.value,
+                page: filter.state.page,
+                perPage: filter.state.perPage,
+            };
 
-                if (payload.perPage !== undefined)
-                    perPage = payload.perPage;
-            }
+            for (let key in filters)
+                if (filters[key])
+                    params[key] = filters[key];
 
-            axios.get('/search', {
-                params: {
-                    q: query,
-                    page,
-                    perPage,
-                },
-            }).then(response => {
+            axios.get('/search', {params}).then(response => {
 
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Get Items-> Success');
@@ -350,7 +331,8 @@ export default new Vuex.Store({
                     console.log('Get -> Error');
                 }
             });
-        },
+        }
+        ,
 
         /**
          * Load one item
@@ -360,7 +342,8 @@ export default new Vuex.Store({
          */
         loadItem({commit}, payload) {
             return axios.get('/item/' + payload);
-        },
+        }
+        ,
 
         /**
          * Load owner items
@@ -376,7 +359,8 @@ export default new Vuex.Store({
                     perPage: 10,
                 },
             });
-        },
+        }
+        ,
 
         /**
          * Gets all available categories
@@ -403,7 +387,8 @@ export default new Vuex.Store({
                     dispatch('ladCategories');
                 }
             });
-        },
+        }
+        ,
         /**
          * Gets all available subcategories for a given category
          * @param commit
@@ -431,6 +416,14 @@ export default new Vuex.Store({
         },
 
         /**
+         * Clear subcategories
+         * @param commit
+         */
+        clearLoadedSubcategories({commit}) {
+            commit('setSubcategories', {});
+        },
+
+        /**
          * Gets all avaible types for a given subcategory
          * @param commit
          * @param subcategory
@@ -454,7 +447,8 @@ export default new Vuex.Store({
                     console.log('Get Types -> Error');
                 }
             });
-        },
+        }
+        ,
 
         /**
          * Add new item
@@ -485,7 +479,8 @@ export default new Vuex.Store({
                     });
                 }
             });
-        },
+        }
+        ,
 
         /**
          * Delete item
@@ -511,7 +506,8 @@ export default new Vuex.Store({
                     });
                 }
             });
-        },
+        }
+        ,
 
         /**
          * Update item
@@ -541,7 +537,9 @@ export default new Vuex.Store({
                     });
                 }
             });
-        },
+        }
+        ,
+
         /**
          * Update user
          * @param commit
@@ -556,19 +554,12 @@ export default new Vuex.Store({
                 },
             };
 
-            console.log(payload);
-            const form = new FormData();
-            form.append('name', payload.name);
-            form.append('phone', payload.phone);
-
             const token = state.token;
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
-            axios.post('/user', {
-                form,
-                _method: 'POST',
-            }).then(response => {
-                if (response && response.data && response.data.responseType === 'success') {
 
+            axios.patch('/user', payload).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    dispatch('tryAutoLogin');
                     commit('setSnack', {
                         message: 'Profilul a fost actualizat',
                         color: state.colors.info,
@@ -580,7 +571,36 @@ export default new Vuex.Store({
                     });
                 }
             });
-        },
+        }
+        ,
+
+        /**
+         *
+         * @param commit
+         * @param state
+         * @param dispatch
+         * @param payload
+         */
+        updateAvatar({commit, state, dispatch}, payload) {
+            const token = state.token;
+            axios.defaults.headers.common.Authorization = 'Bearer ' + token;
+
+            axios.post('/user', payload).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    dispatch('tryAutoLogin');
+                    commit('setSnack', {
+                        message: 'Profilul a fost actualizat',
+                        color: state.colors.info,
+                    });
+                } else {
+                    commit('setSnack', {
+                        message: response.data.errorMessage,
+                        color: state.colors.error,
+                    });
+                }
+            });
+        }
+        ,
 
         /**
          * Looad favorite items
@@ -598,8 +618,8 @@ export default new Vuex.Store({
                     dispatch('loadFavorites');
                 }
             });
-        },
-
+        }
+        ,
 
         /**
          * Add to favorite
@@ -627,7 +647,8 @@ export default new Vuex.Store({
                     });
                 }
             });
-        },
+        }
+        ,
 
         /**
          * Remove from favorite
@@ -653,12 +674,14 @@ export default new Vuex.Store({
                     });
                 }
             });
-        },
+        }
+        ,
     },
     modules: {
         loginModal,
         registerModal,
         darkTheme,
         notification,
+        filter,
     },
 });

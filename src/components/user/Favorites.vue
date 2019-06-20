@@ -23,7 +23,7 @@
                                         </div>
                                         <div class="mt-3">
                                             <v-icon>location_on</v-icon>
-                                            {{favorite.location}}
+                                            {{favorite.city}}, {{favorite.district}}
                                         </div>
                                         <v-spacer/>
                                         <div>
