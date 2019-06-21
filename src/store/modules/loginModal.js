@@ -1,11 +1,6 @@
 const state = {
     login: false,
-};
-
-const getters = {
-    showLogin: state => {
-        return state.login;
-    },
+    forgot: false,
 };
 
 const mutations = {
@@ -15,7 +10,25 @@ const mutations = {
     closeLogin: state => {
         state.login = false;
     },
+    showForgot: state => {
+        state.forgot = true;
+    },
+    closeForgot: state =>{
+        state.forgot = false;
+    }
 };
+
+const getters = {
+    showLogin: state => {
+        return state.login;
+    },
+
+    showForgot: state => {
+        return state.forgot;
+    }
+};
+
+
 
 const actions = {
     showLogin: ({commit}) => {
@@ -23,6 +36,13 @@ const actions = {
     },
     closeLogin: ({commit}) => {
         commit('closeLogin');
+    },
+
+    showForgot: ({commit}) => {
+        commit('showForgot');
+    },
+    closeForgot: ({commit}) => {
+        commit('closeForgot');
     },
 };
 

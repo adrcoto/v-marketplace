@@ -168,24 +168,23 @@ export default new Vuex.Store({
          * Generate code for change / forgot password
          * @param commit
          * @param state
+         * @param payload
          */
-        generateCode({commit, state}) {
-            axios.post('forgot-password', {
-                email: state.user.email,
-                change: 1,
-            }).then(response => {
-                if (response && response.data && response.data.responseType === 'success') {
-                    commit('setSnack', {
-                        message: 'Codul a fost trimis',
-                        color: state.colors.info,
-                    });
-                } else {
-                    commit('setSnack', {
-                        message: 'Codul nu a putut fi trimis',
-                        color: state.colors.error,
-                    });
-                }
-            });
+        generateCode({commit, state}, payload) {
+
+            let params = {};
+
+            const filters = {
+                email: payload.email,
+                change: payload.change,
+            };
+
+            for (let key in filters)
+                if (filters[key])
+                    params[key] = filters[key];
+
+                console.log(params);
+            return axios.post('forgot-password', params);
         },
 
         /**
@@ -197,7 +196,7 @@ export default new Vuex.Store({
          */
         changePassword({commit, state}, payload) {
             return axios.post('change-password', {
-                email: state.user.email,
+                email: payload.email,
                 code: payload.code,
                 password: payload.password
             });

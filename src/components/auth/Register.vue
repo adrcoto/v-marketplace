@@ -42,7 +42,10 @@
                             @click:append="showRePassword = !showRePassword"
                             :rules="[comparePasswords]"
                     ></v-text-field>
-
+                    <v-layout class="ml-4" justfify-center>
+                            <span @click="openLogin" class="font-weight-light.font-italic caption custom"
+                                  :class="{'forgot-password': dark, 'forgot-password-white': !dark }">Am deja un cont</span>
+                    </v-layout>
                 </v-form>
                 <v-card-text>
                     <v-layout align-center justify-space-around row fill-height>
@@ -109,17 +112,21 @@
                 this.confirmPassword = '';
                 this.$refs.form.resetValidation();
             },
+            openLogin(){
+                this.$store.dispatch('closeRegister');
+                this.$store.dispatch('showLogin');
+            }
         },
         computed: {
             showRegister() {
                 return this.$store.getters.showRegister;
             },
-            error() {
-                return this.$store.getters.error;
-            },
             comparePasswords() {
                 return this.confirmPassword !== this.password ? 'Password don\'t match' : true;
             },
+            dark() {
+                return this.$store.getters.darkTheme;
+            }
         },
         destroyed() {
             this.clearForm();
@@ -128,5 +135,20 @@
 </script>
 
 <style scoped>
+    .forgot-password:hover {
+        cursor: pointer;
+        color: white;
+        text-decoration: underline;
+    }
 
+    .forgot-password-white:hover {
+        cursor: pointer;
+        color: black;
+        text-decoration: underline;
+    }
+
+    .custom {
+        color: #9E9E9E;
+        margin-left: 9px;
+    }
 </style>

@@ -73,7 +73,6 @@
                                                 <v-stepper-step color="success" :complete="e1 > 4" step="4">Rezultat
                                                 </v-stepper-step>
                                             </v-stepper-header>
-
                                             <v-stepper-items>
                                                 <v-stepper-content step="1">
                                                     <v-card>
@@ -88,7 +87,8 @@
                                                             label="Am deja un cod"
                                                             color="success"
                                                             hide-details
-                                                            class="mb-4"></v-checkbox>
+                                                            class="mb-4">
+                                                    </v-checkbox>
                                                     <v-btn color="primary"
                                                            class="font-weight-regular text-none subheading"
                                                            @click="step1">{{stepIButton}}
@@ -115,7 +115,8 @@
                                                                     >
                                                                     </v-text-field>
                                                                     <v-label>Nu ați primit codul? <span
-                                                                            @click="generateCode" class="generate-code">Generați altul</span>
+                                                                            @click="generateCode"
+                                                                            :class="{'generate-code': dark, 'generate-code-white': !dark }">Generați altul</span>
                                                                     </v-label>
                                                                 </v-form>
                                                             </v-flex>
@@ -399,23 +400,20 @@
             },
 
             generateCode() {
-                this.$store.dispatch('generateCode');
-            },
-
-            changePassword() {
-                this.$store.dispatch('changePassword').then(response => {
+                this.$store.dispatch('generateCode', {
+                    email: this.$store.getters.user.email,
+                    change: 1,
+                }).then(response => {
                     if (response && response.data && response.data.responseType === 'success') {
-                        // commit('setSnack', {
-                        //     message: 'Parola a fost actualizată',
-                        //     color: state.colors.info,
-                        // });
-                        this.result = 'Parola a fost actualizată cu success';
+                        this.$store.commit('setSnack', {
+                            message: 'Codul a fost trimis',
+                            color: this.$store.getters.colors.info,
+                        });
                     } else {
-                        // commit('setSnack', {
-                        //     message: 'Parola nu a putut fi actualizată',
-                        //     color: state.colors.error,
-                        // });
-                        this.result = 'Parola nu a fost actualizată';
+                        this.$store.commit('setSnack', {
+                            message: 'Codul nu a putut fi trimis',
+                            color: this.$store.getters.colors.error,
+                        });
                     }
                 });
             },
@@ -426,6 +424,9 @@
                 this.e1 = 2;
             },
             step2() {
+                if (!this.$refs.codeForm.validate())
+                    return;
+
                 this.e1 = 3;
             },
             step3() {
@@ -436,7 +437,8 @@
                 if (!this.comparePasswords)
                     return;
 
-                this.$store.dispatch('changePassword',{
+                this.$store.dispatch('changePassword', {
+                    email: this.$store.getters.user.email,
                     code: this.code,
                     password: this.password
                 }).then(response => {
@@ -452,6 +454,7 @@
                             message: response.data.errorMessage,
                             color: this.$store.getters.colors.error,
                         });
+                        this.e1 = 2;
                     }
                 });
             },
@@ -468,6 +471,9 @@
             comparePasswords() {
                 return this.confirmPassword !== this.password ? 'Password don\'t match' : true;
             },
+            dark() {
+                return this.$store.getters.darkTheme;
+            }
         },
         created() {
             const user = this.$store.getters.user;
@@ -491,8 +497,6 @@
                     this.stepIButton = 'Generează cod';
             }
         }
-
-
     };
 </script>
 
@@ -504,5 +508,10 @@
     .generate-code:hover {
         cursor: pointer;
         color: white;
+    }
+
+    .generate-code-white:hover {
+        cursor: pointer;
+        color: black;
     }
 </style>
