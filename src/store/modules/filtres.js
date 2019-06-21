@@ -15,6 +15,12 @@ const state = {
     },
     page: 1,
     perPage: 15,
+
+    ownerItemsPage: 1,
+    ownerItemsPerPage: 10,
+
+    favoritesItemsPage: 1,
+    favoritesItemsPerPage: 10,
 };
 
 const mutations = {
@@ -43,7 +49,21 @@ const mutations = {
     },
     setPerPage(state, perPage) {
         state.perPage = perPage;
-    }
+    },
+
+    setOwnerItemsPage(state, page) {
+        state.ownerItemsPage = page;
+    },
+    setOwnerItemsPerPage(state, perPage) {
+        state.ownerItemsPerPage = perPage;
+    },
+
+    setFavoritesItemsPage(state, page) {
+        state.favoritesItemsPage = page;
+    },
+    setFavoritesItemsPerPage(state, perPage) {
+        state.favoritesItemsPerPage = perPage;
+    },
 };
 
 
@@ -65,6 +85,18 @@ const getters = {
     },
     perPage: state => {
         return state.perPage;
+    },
+    ownerItemsPage: state => {
+        return state.ownerItemsPage;
+    },
+    ownerItemsPerPage: state => {
+        return state.ownerItemsPerPage;
+    },
+    favoritesItemsPage: state => {
+        return state.favoritesItemsPage;
+    },
+    favoritesItemsPerPage: state => {
+        return state.favoritesItemsPerPage;
     }
 };
 

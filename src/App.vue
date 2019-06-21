@@ -15,14 +15,14 @@
 
 <script>
     import Header from './components/header/Header';
-    import LoginModal from './components/modal/LoginModal';
-    import RegisterModal from './components/modal/RegisterModal';
+    import Login from './components/auth/Login';
+    import Registe from './components/auth/Register';
 
     export default {
         components: {
             appHeader: Header,
-            appLoginModal: LoginModal,
-            appRegisterModal: RegisterModal,
+            appLoginModal: Login,
+            appRegisterModal: Registe,
         },
         computed: {
             dark() {

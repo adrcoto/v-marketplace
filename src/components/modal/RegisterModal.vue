@@ -4,9 +4,6 @@
             <v-card-title>
                 <h2>Creare cont</h2>
             </v-card-title>
-            <!--             <v-card-text class="px-3" v-if="error">
-                             <app-alert @dismissed="onDismissed" :text="error" r></app-alert>
-                         </v-card-text>-->
             <v-card-text>
                 <v-form ref="form" v-model="valid" lazy-validation>
                     <v-text-field v-model="name"
@@ -64,8 +61,6 @@
 </template>
 
 <script>
-    import VerifyModal from './VerifyModal';
-
     export default {
         data: () => ({
             passwordLength: 6,
@@ -125,9 +120,6 @@
             comparePasswords() {
                 return this.confirmPassword !== this.password ? 'Password don\'t match' : true;
             },
-        },
-        components: {
-            appVerifyModal: VerifyModal,
         },
         destroyed() {
             this.clearForm();

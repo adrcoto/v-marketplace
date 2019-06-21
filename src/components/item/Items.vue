@@ -89,7 +89,7 @@
             </v-layout>
             <div class="text-xs-center" v-if="items.length > 0">
                 <v-pagination
-                        v-model="page"
+                        :value="page"
                         :length="Math.ceil(itemsMaxLength / perPage)"
                         circle
                         :total-visible="pagesVisible"
@@ -136,11 +136,11 @@
             items() {
                 return this.$store.getters.items;
             },
-            itemsMaxLength() {
-                return this.$store.getters.itemsCount;
-            },
             favorites() {
                 return this.$store.getters.favorites;
+            },
+            itemsMaxLength() {
+                return this.$store.getters.itemsCount;
             },
             perPage(){
                 return this.$store.getters.perPage;

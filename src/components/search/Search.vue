@@ -16,7 +16,7 @@
                                 :value="qFilter"
                                 @input="setQFilter"
                                 @keyup.enter="sendRequest"
-                                @blur="sendRequest"
+                                @blur="sendQRequest"
                         ></v-text-field>
                     </v-flex>
 
@@ -190,7 +190,6 @@
                 value: 0,
                 name: '',
             },
-            s: false,
             perPage: [
                 15, 20, 30
             ],
@@ -208,6 +207,8 @@
                 chip: false,
                 dialog: false,
             },
+            currentQ: '',
+            prevQ: '',
         }),
         methods: {
             setQFilter(q) {
@@ -239,6 +240,14 @@
             sendRequest() {
                 this.$store.dispatch('loadItems');
             },
+            sendQRequest() {
+                this.prevQ = this.currentQ;
+                this.currentQ = this.qFilter;
+                if (this.qFilter) {
+                    if (this.prevQ !== this.currentQ)
+                        this.sendRequest();
+                }
+            },
             setLocation(name) {
                 this.location.dialog = false;
 
@@ -263,7 +272,7 @@
 
                 this.sendRequest();
             },
-            setPerPageFilter(perPage){
+            setPerPageFilter(perPage) {
                 this.$store.commit('setPage', 1);
                 this.$store.commit('setPerPage', perPage);
                 this.sendRequest();
@@ -290,12 +299,17 @@
             },
 
             clearFilters() {
+                let needToSendRequest = false;
+                if (this.qFilter || this.locationFilter.city || this.locationFilter.district || this.categoryFilter.value)
+                    needToSendRequest = true;
                 this.$store.dispatch('clearQ');
                 this.$store.dispatch('clearLocation');
                 this.$store.dispatch('clearCategory');
                 this.$store.dispatch('clearSubcategory');
                 this.$store.dispatch('clearLoadedSubcategories');
-                this.sendRequest();
+
+                if (needToSendRequest)
+                    this.sendRequest();
             }
         },
         computed: {
@@ -323,7 +337,7 @@
             subcategoryFilter() {
                 return this.$store.getters.sub_category;
             },
-            perPageFilter(){
+            perPageFilter() {
                 return this.$store.getters.perPage;
             }
         },

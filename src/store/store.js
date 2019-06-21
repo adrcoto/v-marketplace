@@ -17,17 +17,21 @@ export default new Vuex.Store({
     state: {
         token: null,
         date: '',
-        favorites: [],
+
         user: {},
         verify: false,
 
         items: [],
         itemsCount: 0,
+        ownerItems: [],
+        ownerItemsCount: 0,
+        favorites: [],
+        favoritesItemsCount: 0,
+
         months: ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec'],
         categories: [],
         subcategories: [],
         types: [],
-
 
         colors: {
             error: 'error',
@@ -55,8 +59,17 @@ export default new Vuex.Store({
         setItems(state, payload) {
             state.items = payload;
         },
+        setOwnerItems(state, payload) {
+            state.ownerItems = payload;
+        },
         setFavorites(state, payload) {
             state.favorites = payload;
+        },
+        setOwnerItemsCount(state, payload) {
+            state.ownerItemsCount = payload;
+        },
+        setFavoritesItemsCount(state, payload) {
+            state.favoritesItemsCount = payload;
         },
         setItemsCount(state, payload) {
             state.itemsCount = payload;
@@ -92,6 +105,15 @@ export default new Vuex.Store({
         },
         item: state => id => {
             return state.items.find(item => item.item_id === id);
+        },
+        ownerItems: state => {
+            return state.ownerItems;
+        },
+        ownerItemsCount: state => {
+            return state.ownerItemsCount;
+        },
+        favoritesItemsCount: state => {
+            return state.favoritesItemsCount;
         },
         favorites: state => {
             return state.favorites;
@@ -143,6 +165,45 @@ export default new Vuex.Store({
         },
 
         /**
+         * Generate code for change / forgot password
+         * @param commit
+         * @param state
+         */
+        generateCode({commit, state}) {
+            axios.post('forgot-password', {
+                email: state.user.email,
+                change: 1,
+            }).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    commit('setSnack', {
+                        message: 'Codul a fost trimis',
+                        color: state.colors.info,
+                    });
+                } else {
+                    commit('setSnack', {
+                        message: 'Codul nu a putut fi trimis',
+                        color: state.colors.error,
+                    });
+                }
+            });
+        },
+
+        /**
+         * Change password
+         * @param commit
+         * @param state
+         * @param payload
+         * @returns {Promise<AxiosResponse<T>>}
+         */
+        changePassword({commit, state}, payload) {
+            return axios.post('change-password', {
+                email: state.user.email,
+                code: payload.code,
+                password: payload.password
+            });
+        },
+
+        /**
          * Login user
          * @param commit
          * @param state
@@ -175,7 +236,6 @@ export default new Vuex.Store({
 
                     sessionStorage.setItem('token', authData.token);
                     commit('authUser', authData);
-                    dispatch('loadFavorites');
                     router.push('/profil');
                 } else {
                     console.log('Login -> Error');
@@ -211,7 +271,6 @@ export default new Vuex.Store({
                     },
                 };
                 commit('authUser', authData);
-                dispatch('loadFavorites');
             });
         },
 
@@ -312,14 +371,14 @@ export default new Vuex.Store({
                         createdMin = created.getMinutes();
 
                         if (actualDay - createdDay === 1)
-                            date = 'Ieri ' + createdHour + ':' + createdMin;
+                            date = 'Ieri ' + (createdHour < 10 ? '0' : '') + createdHour + ':' + (createdMin < 10 ? '0' : '') + createdMin;
                         else if (createdDay - actualDay === 0)
-                            date = 'Azi ' + createdHour + ':' + createdMin;
+                            date = 'Azi ' + (createdHour < 10 ? '0' : '') + createdHour + ':' + (createdMin < 10 ? '0' : '') + createdMin;
                         else
-                            date = createdDay + ' ' + state.months[createdMonth - 1];
+                            date = (createdDay < 10 ? '0' : '') + createdDay + ' ' + state.months[createdMonth - 1];
 
                         if (createdYear !== actualYear)
-                            date = createdDay + ' ' + state.months[createdMonth - 1] + ' ' + createdYear;
+                            date = (createdDay < 10 ? '0' : '') + createdDay + ' ' + state.months[createdMonth - 1] + ' ' + createdYear;
 
                         item.created_at = date;
                     });
@@ -348,16 +407,68 @@ export default new Vuex.Store({
         /**
          * Load owner items
          * @param commit
-         * @param payload
+         * @param state
+         * @param dispatch
          * @returns {Promise<AxiosResponse<T>>}
          */
-        loadOwnerItems({commit}, payload) {
-            return axios.get('/search', {
+        loadOwnerItems({commit, state, dispatch}) {
+            const token = sessionStorage.getItem('token');
+            axios.defaults.headers.common.Authorization = 'Bearer ' + token;
+            return axios.get('/item', {
                 params: {
-                    owner: payload,
-                    page: 1,
-                    perPage: 10,
+                    page: filter.state.ownerItemsPage,
+                    perPage: filter.state.ownerItemsPerPage,
                 },
+            }).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    console.log('Get Owner Items-> Success');
+
+
+                    let items = response.data.data.items;
+                    commit('setOwnerItemsCount', response.data.data.total);
+
+                    let created = null;
+
+                    let createdYear = null;
+                    let createdMonth = null;
+                    let createdDay = null;
+                    let createdHour = null;
+                    let createdMin = null;
+
+                    const actual = new Date();
+                    const actualYear = actual.getFullYear();
+                    const actualDay = new Date().getDate();
+
+                    let date = '';
+
+                    items.forEach((item) => {
+                        created = new Date(item.created_at.date);
+
+                        createdYear = created.getFullYear();
+                        createdMonth = created.getMonth() + 1;
+                        createdDay = created.getDate();
+                        createdHour = created.getHours();
+                        createdMin = created.getMinutes();
+
+                        if (actualDay - createdDay === 1)
+                            date = 'Ieri ' + (createdHour < 10 ? '0' : '') + createdHour + ':' + (createdMin < 10 ? '0' : '') + createdMin;
+                        else if (createdDay - actualDay === 0)
+                            date = 'Azi ' + (createdHour < 10 ? '0' : '') + createdHour + ':' + (createdMin < 10 ? '0' : '') + createdMin;
+                        else
+                            date = (createdDay < 10 ? '0' : '') + createdDay + ' ' + state.months[createdMonth - 1];
+
+                        if (createdYear !== actualYear)
+                            date = (createdDay < 10 ? '0' : '') + createdDay + ' ' + state.months[createdMonth - 1] + ' ' + createdYear;
+
+                        item.created_at = date;
+                    });
+
+                    commit('setOwnerItems', items);
+                } else {
+                    if (response.data.data === null)
+                        dispatch('loadOwnerItems');
+                    console.log('Get OwnerItems -> Error');
+                }
             });
         }
         ,
@@ -384,7 +495,7 @@ export default new Vuex.Store({
                     commit('setCategories', categories);
                 } else {
                     console.log('Get Categories-> Error');
-                    dispatch('ladCategories');
+                    dispatch('loadCategories');
                 }
             });
         }
@@ -494,11 +605,11 @@ export default new Vuex.Store({
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
             axios.delete('/item/' + id).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
-                    dispatch('loadItems');
                     commit('setSnack', {
                         message: 'Anunțul a fost șters',
                         color: state.colors.info,
                     });
+                    dispatch('loadOwnerItems');
                 } else {
                     commit('setSnack', {
                         message: response.data.errorMessage,
@@ -611,11 +722,60 @@ export default new Vuex.Store({
         loadFavorites({commit, dispatch, state}) {
             const token = sessionStorage.getItem('token');
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
-            return axios.get('/favorites').then(response => {
+            return axios.get('/favorites', {
+                params: {
+                    page: filter.state.favoritesItemsPage,
+                    perPage: filter.state.favoritesItemsPerPage,
+                }
+            }).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
-                    commit('setFavorites', response.data.data);
+                    console.log('Get Favorites Items-> Success');
+
+
+                    let items = response.data.data.items;
+                    commit('setFavoritesItemsCount', response.data.data.total);
+
+                    let created = null;
+
+                    let createdYear = null;
+                    let createdMonth = null;
+                    let createdDay = null;
+                    let createdHour = null;
+                    let createdMin = null;
+
+                    const actual = new Date();
+                    const actualYear = actual.getFullYear();
+                    const actualDay = new Date().getDate();
+
+                    let date = '';
+
+                    items.forEach((item) => {
+                        created = new Date(item.created_at.date);
+
+                        createdYear = created.getFullYear();
+                        createdMonth = created.getMonth() + 1;
+                        createdDay = created.getDate();
+                        createdHour = created.getHours();
+                        createdMin = created.getMinutes();
+
+                        if (actualDay - createdDay === 1)
+                            date = 'Ieri ' + (createdHour < 10 ? '0' : '') + createdHour + ':' + (createdMin < 10 ? '0' : '') + createdMin;
+                        else if (createdDay - actualDay === 0)
+                            date = 'Azi ' + (createdHour < 10 ? '0' : '') + createdHour + ':' + (createdMin < 10 ? '0' : '') + createdMin;
+                        else
+                            date = (createdDay < 10 ? '0' : '') + createdDay + ' ' + state.months[createdMonth - 1];
+
+                        if (createdYear !== actualYear)
+                            date = (createdDay < 10 ? '0' : '') + createdDay + ' ' + state.months[createdMonth - 1] + ' ' + createdYear;
+
+                        item.created_at = date;
+                    });
+
+                    commit('setFavorites', items);
                 } else {
-                    dispatch('loadFavorites');
+                    if (response.data.data === null)
+                        dispatch('loadFavorites');
+                    console.log('Get favoritesItems -> Error');
                 }
             });
         }

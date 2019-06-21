@@ -1,6 +1,6 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <v-layout justify-center>
-        <v-flex xs6 sm6 md6 lg6 xl6>
+        <v-flex xs12 sm12 md12 lg12 xl10>
             <v-card color="blue-grey darken-2" class="white--text">
                 <v-layout justify-center>
                     <v-form ref="form" v-model="valid" lazy-validation>
@@ -45,8 +45,162 @@
             <v-card>
                 <v-card-text>
                     <v-card-text>
+                        <v-expansion-panel v-model="showDetails">
+                            <v-expansion-panel-content>
+                                <template v-slot:header>
+                                    <div>Schimbă parola</div>
+                                </template>
+                                <v-divider/>
+                                <v-card>
+                                    <v-card-text>
+                                        <v-stepper v-model="e1">
+                                            <v-stepper-header>
+                                                <v-stepper-step color="success" :complete="e1 > 1" step="1">Generare cod
+                                                </v-stepper-step>
 
+                                                <v-divider></v-divider>
 
+                                                <v-stepper-step color="success" :complete="e1 > 2" step="2">Confirmare
+                                                    cod
+                                                </v-stepper-step>
+
+                                                <v-divider></v-divider>
+
+                                                <v-stepper-step color="success" :complete="e1 > 3" step="3">Actualizare
+                                                    parolă
+                                                </v-stepper-step>
+                                                <v-divider></v-divider>
+                                                <v-stepper-step color="success" :complete="e1 > 4" step="4">Rezultat
+                                                </v-stepper-step>
+                                            </v-stepper-header>
+
+                                            <v-stepper-items>
+                                                <v-stepper-content step="1">
+                                                    <v-card>
+                                                        <p class="pa-3">
+                                                            În continuare pentru a schimba parola, va fi necesar un cod,
+                                                            pe care îl veți primi pe adresa
+                                                            de e-mail.
+                                                        </p>
+                                                    </v-card>
+                                                    <v-checkbox
+                                                            v-model="hasCode"
+                                                            label="Am deja un cod"
+                                                            color="success"
+                                                            hide-details
+                                                            class="mb-4"></v-checkbox>
+                                                    <v-btn color="primary"
+                                                           class="font-weight-regular text-none subheading"
+                                                           @click="step1">{{stepIButton}}
+                                                    </v-btn>
+                                                    <v-btn flat class="font-weight-regular text-none subheading"
+                                                           @click="abort">
+                                                        Anulare
+                                                    </v-btn>
+                                                </v-stepper-content>
+
+                                                <v-stepper-content step="2">
+                                                    <v-card-text class="mb-3">
+                                                        <v-layout justify-center class="mb-2">
+                                                            <v-flex xl6>
+                                                                <v-form ref="codeForm" v-model="codeConfirm"
+                                                                        lazy-validation>
+                                                                    <v-text-field
+                                                                            label="Introduceți codul"
+                                                                            prepend-inner-icon="vpn_key"
+                                                                            flat
+                                                                            v-model="code"
+                                                                            solo-inverted
+                                                                            :rules="[rules.code.required]"
+                                                                    >
+                                                                    </v-text-field>
+                                                                    <v-label>Nu ați primit codul? <span
+                                                                            @click="generateCode" class="generate-code">Generați altul</span>
+                                                                    </v-label>
+                                                                </v-form>
+                                                            </v-flex>
+                                                        </v-layout>
+                                                    </v-card-text>
+
+                                                    <v-btn color="primary"
+                                                           class="font-weight-regular text-none subheading"
+                                                           :disabled="!codeConfirm"
+                                                           @click="step2">Confirmare cod
+                                                    </v-btn>
+                                                    <v-btn flat class="font-weight-regular text-none subheading"
+                                                           @click="abort">
+                                                        Anulare
+                                                    </v-btn>
+                                                </v-stepper-content>
+
+                                                <v-stepper-content step="3">
+                                                    <v-card-text class="mb-3">
+                                                        <v-layout row justify-center>
+                                                            <v-flex xl6>
+                                                                <v-form ref="passwordForm" v-model="passwordButton"
+                                                                        lazy-validation>
+                                                                    <v-text-field
+                                                                            v-model="password"
+                                                                            label="Parolă nouă"
+                                                                            prepend-inner-icon="lock"
+                                                                            flat
+                                                                            solo-inverted
+                                                                            :rules="[rules.password.required, rules.password.min]"
+                                                                            :type="showPassword ? 'text' : 'password'"
+                                                                            :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                                                                            hint="Cel putin 6 caractere"
+                                                                            @click:append="showPassword = !showPassword"
+                                                                    >
+                                                                    </v-text-field>
+
+                                                                    <v-text-field
+                                                                            v-model="confirmPassword"
+                                                                            prepend-inner-icon="lock"
+                                                                            label="Confirmare parolă"
+                                                                            flat
+                                                                            solo-inverted
+                                                                            :type="showRePassword ? 'text' : 'password'"
+                                                                            :append-icon="showRePassword ? 'visibility' : 'visibility_off'"
+                                                                            @click:append="showRePassword = !showRePassword"
+                                                                            :rules="[comparePasswords]"
+                                                                    >
+                                                                    </v-text-field>
+                                                                </v-form>
+                                                            </v-flex>
+                                                        </v-layout>
+                                                    </v-card-text>
+
+                                                    <v-btn color="primary"
+                                                           class="font-weight-regular text-none subheading"
+                                                           @click="step3" :disabled="!passwordButton">
+                                                        Actualizează parola
+                                                    </v-btn>
+
+                                                    <v-btn flat class="font-weight-regular text-none subheading"
+                                                           @click="e1 = 2">Înapoi
+                                                    </v-btn>
+                                                </v-stepper-content>
+
+                                                <v-stepper-content step="4">
+                                                    <v-card class="mb-4">
+                                                        <v-card-text>
+                                                            {{result}}
+                                                        </v-card-text>
+                                                    </v-card>
+                                                    <v-btn color="primary"
+                                                           class="font-weight-regular text-none subheading"
+                                                           @click="abort">Închide
+                                                    </v-btn>
+                                                </v-stepper-content>
+                                            </v-stepper-items>
+                                        </v-stepper>
+                                    </v-card-text>
+                                </v-card>
+                            </v-expansion-panel-content>
+                        </v-expansion-panel>
+                    </v-card-text>
+
+                    <v-card-text>
                         <v-text-field
                                 v-model="user.email"
                                 prepend-icon="email"
@@ -54,11 +208,10 @@
                         >
                         </v-text-field>
 
-
                         <v-text-field
                                 v-model="phone.value"
+                                mask="#### ### ###"
                                 prepend-icon="phone"
-                                type="number"
                                 min="0"
                                 onkeypress="return event.charCode >= 48"
                                 label="Număr de telefon"
@@ -123,9 +276,11 @@
                                 </v-card-text>
                             </v-card>
                         </v-dialog>
+
                     </v-card-text>
                     <v-card-actions class="justify-center">
-                        <v-btn @click="updateUser" :disabled="!valid" class="success font-weight-regular text-none subheading">
+                        <v-btn @click="updateUser" :disabled="!valid"
+                               class="success font-weight-regular text-none subheading">
                             Actualizează
                         </v-btn>
                     </v-card-actions>
@@ -141,6 +296,17 @@
     export default {
         data: () => ({
             valid: false,
+            showDetails: 1,
+            e1: 0,
+            showPassword: false,
+            showRePassword: false,
+            result: '',
+            hasCode: false,
+            code: null,
+            codeConfirm: false,
+            passwordButton: false,
+            stepIButton: 'Generează cod',
+
             rules: {
                 name: {
                     required: v => !!v || 'Numele este obligatoriu.',
@@ -150,6 +316,10 @@
                     required: value => !!value || 'Parola este obligatorie.',
                     min: v => v.length >= 6 || 'Cel putin 6 caractere.',
                 },
+
+                code: {
+                    required: value => !!value || 'Codul este obligatoriu.'
+                }
             },
 
 
@@ -158,6 +328,8 @@
                 value: null,
                 active: true,
             },
+            password: '',
+            confirmPassword: '',
             phone: {
                 value: null,
                 active: true,
@@ -225,6 +397,77 @@
 
                 this.$refs.inputUpload.value = null;
             },
+
+            generateCode() {
+                this.$store.dispatch('generateCode');
+            },
+
+            changePassword() {
+                this.$store.dispatch('changePassword').then(response => {
+                    if (response && response.data && response.data.responseType === 'success') {
+                        // commit('setSnack', {
+                        //     message: 'Parola a fost actualizată',
+                        //     color: state.colors.info,
+                        // });
+                        this.result = 'Parola a fost actualizată cu success';
+                    } else {
+                        // commit('setSnack', {
+                        //     message: 'Parola nu a putut fi actualizată',
+                        //     color: state.colors.error,
+                        // });
+                        this.result = 'Parola nu a fost actualizată';
+                    }
+                });
+            },
+
+            step1() {
+                if (!this.hasCode)
+                    this.generateCode();
+                this.e1 = 2;
+            },
+            step2() {
+                this.e1 = 3;
+            },
+            step3() {
+
+                if (!this.$refs.passwordForm.validate())
+                    return;
+
+                if (!this.comparePasswords)
+                    return;
+
+                this.$store.dispatch('changePassword',{
+                    code: this.code,
+                    password: this.password
+                }).then(response => {
+                    if (response && response.data && response.data.responseType === 'success') {
+                        // commit('setSnack', {
+                        //     message: 'Parola a fost actualizată',
+                        //     color: state.colors.info,
+                        // });
+                        this.result = 'Parola a fost actualizată cu success';
+                        this.e1 = 4;
+                    } else {
+                        this.$store.commit('setSnack', {
+                            message: response.data.errorMessage,
+                            color: this.$store.getters.colors.error,
+                        });
+                    }
+                });
+            },
+            abort() {
+                this.code = null;
+                this.password = '';
+                this.confirmPassword = '';
+                this.hasCode = false;
+                this.showDetails = 1;
+                this.e1 = 1;
+            },
+        },
+        computed: {
+            comparePasswords() {
+                return this.confirmPassword !== this.password ? 'Password don\'t match' : true;
+            },
         },
         created() {
             const user = this.$store.getters.user;
@@ -234,11 +477,20 @@
             this.phone.value = user.phone;
             this.location.value = user.location;
             if (user.avatar !== '')
-            this.avatar.url = process.env.VUE_APP_AVATAR_URL + user.avatar;
+                this.avatar.url = process.env.VUE_APP_AVATAR_URL + user.avatar;
         },
         components: {
             appRomanianMap: RomanianMap,
         },
+        watch: {
+            // whenever question changes, this function will run
+            hasCode: function (newCode) {
+                if (newCode)
+                    this.stepIButton = 'Omite pas';
+                else
+                    this.stepIButton = 'Generează cod';
+            }
+        }
 
 
     };
@@ -247,5 +499,10 @@
 <style scoped>
     .location-container {
         height: 400px;
+    }
+
+    .generate-code:hover {
+        cursor: pointer;
+        color: white;
     }
 </style>

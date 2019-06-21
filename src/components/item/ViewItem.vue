@@ -459,8 +459,9 @@
                     <v-btn v-if="user.phone" @click="number = true" large color="success"
                            class="text-none font-weight-regular subheading dim">
                         <v-icon left>phone</v-icon>
-                        <span v-if="number">{{user.phone}}</span>
-                        <span v-if="!number">{{user.phone.substring(0, 4) + maskPhone.toString()}}</span>
+                        <!--                        <span v-if="number">{{user.phone}}</span>-->
+                        <span v-if="number">{{formatPhone}}</span>
+                        <span v-if="!number">{{user.phone.substring(0, 4) + ' ' + maskPhone.toString()}}</span>
                     </v-btn>
 
                     <v-btn v-if="!isMine" large color="info" class="text-none font-weight-regular subheading dim">
@@ -507,7 +508,7 @@
             viewItem(item) {
                 this.item = item;
                 this.$router.replace({path: '/anunt/' + item.slug, query: {id: item.item_id}});
-                window.scrollTo(0,0);
+                window.scrollTo(0, 0);
             },
             editItem(item) {
                 this.$router.push({path: '/anunt/modificare/' + item.slug, query: {id: item.item_id}});
@@ -568,8 +569,11 @@
                 let characters = this.user.phone.length;
 
                 let mask = '';
-                for (let i = 0; i < characters; i++)
+                for (let i = 0; i < characters - 4; i++) {
+                    if (i === 3 || i === 6)
+                        mask += ' ';
                     mask += 'x';
+                }
                 return mask;
             },
             favorites() {
@@ -578,6 +582,11 @@
             isMine() {
                 return this.item.owner === this.$store.getters.user.id;
             },
+            formatPhone() {
+                let phone = this.user.phone;
+
+                return phone.substring(0, 4) + ' ' + phone.substring(4, 7) + ' ' + phone.substring(7, 10);
+            }
         },
         mounted() {
             //this.item = this.$store.getters.item(this.$route.query.id);
