@@ -268,9 +268,14 @@
                 this.confirmPassword = '';
                 this.hasCode = false;
                 this.e1 = 1;
+
+                this.$refs.emailForm.resetValidation();
+                this.$refs.codeForm.resetValidation();
+                this.$refs.passwordForm.resetValidation();
                 this.$store.dispatch('closeForgot');
                 this.$store.dispatch('showLogin');
             },
+
         },
         computed: {
             comparePasswords() {

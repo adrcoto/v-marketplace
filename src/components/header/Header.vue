@@ -62,7 +62,7 @@
         <v-toolbar prominent fixed app dark clipped-left :color="dark ? 'dark' : 'blue darken-3'">
             <v-toolbar-side-icon @click.stop="drawer = !drawer" class="hidden-md-and-up"></v-toolbar-side-icon>
             <v-toolbar-title>
-                <router-link to="/" tag="span" style="cursor: pointer">V-Marketplace</router-link>
+                <router-link to="/" tag="span" style="cursor: pointer"><strong>{{appName}}</strong></router-link>
             </v-toolbar-title>
 
             <v-spacer></v-spacer>
@@ -184,6 +184,7 @@
 
     export default {
         data: () => ({
+            appName: process.env.VUE_APP_TITLE,
             AVATAR_API_URL: process.env.VUE_APP_AVATAR_URL,
             noAvatar: '../../assets/logo.png',
             drawer: false,

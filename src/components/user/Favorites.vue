@@ -26,7 +26,7 @@
                 <v-flex v-if="favorites !== null" :key="favorite.item_id" v-for="favorite in favorites">
                     <v-hover>
                         <v-card @click.stop="viewItem(favorite)" style="cursor: pointer"
-                                :class="`elevation-${hover ? 10 : 2}`" class="item-card mb-4"
+                                :class="`elevation-${hover ? 10 : 2}`" class="item-card mb-3"
                                 slot-scope="{ hover }">
                             <v-layout row>
                                 <v-flex xs3 md3 lg3 x13>

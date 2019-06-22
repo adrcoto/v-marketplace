@@ -21,7 +21,7 @@
         <v-flex v-if="userItems.length > 0" :key="item.item_id" v-for="item in userItems">
             <v-hover>
                 <v-card @click.stop="viewItem(item)" style="cursor: pointer"
-                        :class="`elevation-${hover ? 10 : 2}`" class="item-card mb-4"
+                        :class="`elevation-${hover ? 10 : 2}`" class="item-card mb-3"
                         slot-scope="{ hover }">
                     <v-layout row>
                         <v-flex xs3 sm3 lg3 x13>

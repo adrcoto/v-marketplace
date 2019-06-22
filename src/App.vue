@@ -10,19 +10,22 @@
                 <router-view></router-view>
             </v-content>
         </v-container>
+        <app-footer/>
     </v-app>
 </template>
 
 <script>
     import Header from './components/header/Header';
     import Login from './components/auth/Login';
-    import Registe from './components/auth/Register';
+    import Register from './components/auth/Register';
+    import Footer from './components/footer/Footer'
 
     export default {
         components: {
             appHeader: Header,
             appLoginModal: Login,
-            appRegisterModal: Registe,
+            appRegisterModal: Register,
+            appFooter: Footer
         },
         computed: {
             dark() {

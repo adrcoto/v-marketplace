@@ -467,6 +467,8 @@
                 this.hasCode = false;
                 this.showDetails = 1;
                 this.e1 = 1;
+                this.$refs.codeForm.resetValidation();
+                this.$refs.passowrdForm.resetValidation();
             },
         },
         computed: {
