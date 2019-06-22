@@ -22,6 +22,7 @@
                             :append-icon="showPassword ? 'visibility' : 'visibility_off'"
                             :rules="[rules.password.required, rules.password.min]"
                             hint="Cel putin 6 caractere"
+                            @keyup.enter="login"
                             @click:append="showPassword = !showPassword"
                     ></v-text-field>
                     <v-layout class="ml-4" justfify-center>

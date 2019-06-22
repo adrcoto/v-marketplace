@@ -484,8 +484,9 @@
                     </v-btn>
                 </v-card-title>
                 <div class="pl-2">
-                    <iframe class="dim" height="215" id="gmap_canvas"
-                            :src="'https://maps.google.com/maps?q=' + item.city + '%2C%20' + item.district + '&t=&z=10&ie=UTF8&iwloc=&output=embed'"></iframe>
+                    <iframe class="dim" height="215"
+                            :src="'https://maps.google.com/maps?q=' + item.city + '%2C%20' + item.district + '&t=&z=10&ie=UTF8&iwloc=&output=embed'">
+                    </iframe>
                 </div>
             </v-card>
         </v-flex>

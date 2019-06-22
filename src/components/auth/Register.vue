@@ -40,6 +40,7 @@
                             :type="showRePassword ? 'text' : 'password'"
                             :append-icon="showRePassword ? 'visibility' : 'visibility_off'"
                             @click:append="showRePassword = !showRePassword"
+                            @keyup.enter="register"
                             :rules="[comparePasswords]"
                     ></v-text-field>
                     <v-layout class="ml-4" justfify-center>
