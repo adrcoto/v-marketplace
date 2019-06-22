@@ -59,7 +59,7 @@
         </v-navigation-drawer>
 
         <!--   Toolbar     -->
-        <v-toolbar  prominent fixed app dark clipped-left :color="dark ? 'dark' : 'blue darken-3'">
+        <v-toolbar prominent fixed app dark clipped-left :color="dark ? 'dark' : 'blue darken-3'">
             <v-toolbar-side-icon @click.stop="drawer = !drawer" class="hidden-md-and-up"></v-toolbar-side-icon>
             <v-toolbar-title>
                 <router-link to="/" tag="span" style="cursor: pointer">V-Marketplace</router-link>
@@ -113,34 +113,57 @@
             </v-toolbar-items>
 
             <v-toolbar-items class="hidden-md-and-up">
-                <v-btn icon v-if="auth" to="/profil" flat
-                       slot="activator">
-                    <v-avatar size="45px">
-                        <v-img :src="user.avatar === '' ? require('../../assets/logo.png') : AVATAR_API_URL + user.avatar"
-                               alt="Vuetify"></v-img>
-                    </v-avatar>
-                </v-btn>
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon v-if="auth" to="/profil" flat
+                               slot="activator" v-on="on">
+                            <v-avatar size="45px">
+                                <v-img :src="user.avatar === '' ? require('../../assets/logo.png') : AVATAR_API_URL + user.avatar"
+                                       alt="Vuetify"></v-img>
+                            </v-avatar>
+                        </v-btn>
+                    </template>
+                    <span>{{user.name}}</span>
+                </v-tooltip>
 
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon flat v-if="!auth"
+                               @click.stop="openLoginModal" v-on="on">
+                            <v-icon>lock_open</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Autentificare</span>
+                </v-tooltip>
 
-                <v-btn icon flat v-if="!auth"
-                       @click.stop="openLoginModal">
-                    <v-icon>lock_open</v-icon>
-                </v-btn>
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn flat icon v-if="!auth" v-on="on"
+                               @click.stop="openRegisterModal">
+                            <v-icon>face</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Creare cont</span>
+                </v-tooltip>
 
-                <v-btn flat icon v-if="!auth"
-                       @click.stop="openRegisterModal">
-                    <v-icon>face</v-icon>
-                </v-btn>
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon flat to="/anunt/nou" v-on="on">
+                            <v-icon>add_to_queue</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Adaugă anunț</span>
+                </v-tooltip>
 
-                <v-btn icon flat v-for="item in menuItems"
-                       :key="item.title"
-                       :to="item.link">
-                    <v-icon>{{item.icon}}</v-icon>
-                </v-btn>
+                <v-tooltip bottom v-if="auth">
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon flat v-if="auth" @click="logout" v-on="on">
+                            <v-icon>exit_to_app</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Deconectare</span>
+                </v-tooltip>
 
-                <v-btn icon flat v-if="auth" @click="logout">
-                    <v-icon>exit_to_app</v-icon>
-                </v-btn>
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
                         <v-btn icon @click="toggleDark" v-on="on">

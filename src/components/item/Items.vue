@@ -1,30 +1,30 @@
 <template>
     <v-layout justify-center row>
-        <!--        <v-flex sm2 class="ml-3 mr-3">-->
-        <!--            <v-card>-->
-        <!--                <v-layout column justify-center>-->
-        <!--                    <v-layout row>-->
-        <!--                        <v-card-title>-->
-        <!--                            Filtreaza rezultatele-->
-        <!--                        </v-card-title>-->
-        <!--                    </v-layout>-->
-        <!--                    <v-card-text>-->
-        <!--                        Pret-->
-        <!--                    </v-card-text>-->
-        <!--                    <v-layout row>-->
-        <!--                        <v-card-text>-->
+       <!--         <v-flex sm2 class="ml-3 mr-3">
+                    <v-card>
+                        <v-layout column justify-center>
+                            <v-layout row>
+                                <v-card-title>
+                                    Filtreaza rezultatele
+                                </v-card-title>
+                            </v-layout>
+                            <v-card-text>
+                                Pret
+                            </v-card-text>
+                            <v-layout row>
+                                <v-card-text>
 
-        <!--                            <v-text-field placeholder="Pret minim" type="number">-->
-        <!--                            </v-text-field>-->
-        <!--                        </v-card-text>-->
-        <!--                        <v-card-text>-->
-        <!--                            <v-text-field placeholder="Pret maxim" type="number">-->
-        <!--                            </v-text-field>-->
-        <!--                        </v-card-text>-->
-        <!--                    </v-layout>-->
-        <!--                </v-layout>-->
-        <!--            </v-card>-->
-        <!--        </v-flex>-->
+                                    <v-text-field placeholder="Pret minim" type="number">
+                                    </v-text-field>
+                                </v-card-text>
+                                <v-card-text>
+                                    <v-text-field placeholder="Pret maxim" type="number">
+                                    </v-text-field>
+                                </v-card-text>
+                            </v-layout>
+                        </v-layout>
+                    </v-card>
+                </v-flex>-->
         <v-label v-if="items.length === 0">Nici un rezultat!</v-label>
         <v-flex>
             <v-layout row wrap>
@@ -37,7 +37,7 @@
                                     width="92%">
                                 <v-img :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
                                        height="165">
-
+                                    <span v-if="item.negotiable" class="negotiable" title="Anunt negociabil"></span>
                                     <v-expand-transition>
                                         <div class="d-flex transition-fast-in-fast-out v-card--reveal"
                                              v-if="hover">
@@ -69,16 +69,16 @@
                                 </v-chip>
                                 <v-card-actions class="item-card-action">
                                     <div class="d-flex transition-fast-in-fast-out" v-if="hover">
-                                                    <span class="caption grey--text">
-                                                        <v-icon class="grey--text">location_on</v-icon>
-                                                        {{item.city}}, {{item.district}}
-                                                    </span>
+                                                                                                                                                                                          <span class="caption grey--text">
+                                                                                                                                                                                                                          <v-icon class="grey--text">location_on</v-icon>
+                                                                                                                                                                                                                                                                  {{item.city}}, {{item.district}}
+    </span>
                                     </div>
                                     <div v-else>
-                                                 <span class="caption grey--text">
-                                                    <v-icon class="grey--text">query_builder</v-icon>
-                                                    {{item.created_at}}
-                                                </span>
+        <span class="caption grey--text">
+                                        <v-icon class="grey--text">query_builder</v-icon>
+                                                                                  {{item.created_at}}
+    </span>
                                     </div>
                                     <v-spacer/>
                                 </v-card-actions>
@@ -142,10 +142,10 @@
             itemsMaxLength() {
                 return this.$store.getters.itemsCount;
             },
-            perPage(){
+            perPage() {
                 return this.$store.getters.perPage;
             },
-            page(){
+            page() {
                 return this.$store.getters.page;
             }
         },
@@ -209,4 +209,16 @@
     .hover-btn-pressed {
         color: orangered;
     }
+
+
+
+    .negotiable {
+        background: url("../../assets/banner.png");
+        text-indent: -1000em;
+        overflow: hidden;
+        display: inline-block;
+        width: 83px;
+        height: 83px;
+    }
+
 </style>
