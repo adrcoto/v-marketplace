@@ -440,7 +440,7 @@
         <!--Owner-->
         <v-flex xs1 sm1 md1 ml1 xl1>
             <v-card class="profile" v-if="user">
-                <v-card color="blue-grey darken-2" class="white--text">
+                <v-card img="http://demo.geekslabs.com/materialize/v2.2/layout03/images/user-profile-bg.jpg">
                     <div>
                         <v-card-title class="justify-center">
                             <v-avatar class="mr-2" size="85px">
@@ -449,7 +449,7 @@
                             </v-avatar>
                         </v-card-title>
                         <v-card-title class="justify-center wrap">
-                            <v-label dark>{{user.name}}</v-label>
+                            <v-label>{{user.name}}</v-label>
                         </v-card-title>
 
                     </div>

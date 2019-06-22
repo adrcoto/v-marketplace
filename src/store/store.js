@@ -183,7 +183,7 @@ export default new Vuex.Store({
                 if (filters[key])
                     params[key] = filters[key];
 
-                console.log(params);
+            console.log(params);
             return axios.post('forgot-password', params);
         },
 
@@ -281,6 +281,10 @@ export default new Vuex.Store({
         logout({commit, state}) {
             router.push('/');
             commit('clearAuthData');
+            commit('setFavorites', []);
+            commit('setFavoritesItemsCount', 0);
+            commit('setOwnerItems', []);
+            commit('setOwnerItemsCount', 0);
             commit('setSnack', {
                 message: 'La revedere',
                 color: state.colors.info,

@@ -71,7 +71,7 @@
                 <v-btn v-if="auth" to="/profil" class="text-none font-weight-regular subheading" flat
                        slot="activator">
                     <v-avatar size="45px">
-                        <v-img :src="user.avatar === '' ? require('../../assets/logo.png') : AVATAR_API_URL + user.avatar"
+                        <v-img :src="user.avatar === '' ? require('../../assets/no-avatar-view-item.png') : AVATAR_API_URL + user.avatar"
                                alt="Vuetify"></v-img>
                     </v-avatar>
                     <span class="ml-2">{{user.name}}</span>
@@ -113,12 +113,12 @@
             </v-toolbar-items>
 
             <v-toolbar-items class="hidden-md-and-up">
-                <v-tooltip bottom>
+                <v-tooltip v-if="auth" bottom>
                     <template v-slot:activator="{ on }">
                         <v-btn icon v-if="auth" to="/profil" flat
                                slot="activator" v-on="on">
                             <v-avatar size="45px">
-                                <v-img :src="user.avatar === '' ? require('../../assets/logo.png') : AVATAR_API_URL + user.avatar"
+                                <v-img :src="user.avatar === '' ? require('../../assets/no-avatar-view-item.png') : AVATAR_API_URL + user.avatar"
                                        alt="Vuetify"></v-img>
                             </v-avatar>
                         </v-btn>
@@ -126,7 +126,7 @@
                     <span>{{user.name}}</span>
                 </v-tooltip>
 
-                <v-tooltip bottom>
+                <v-tooltip v-if="!auth" bottom>
                     <template v-slot:activator="{ on }">
                         <v-btn icon flat v-if="!auth"
                                @click.stop="openLoginModal" v-on="on">
@@ -136,7 +136,7 @@
                     <span>Autentificare</span>
                 </v-tooltip>
 
-                <v-tooltip bottom>
+                <v-tooltip v-if="!auth" bottom>
                     <template v-slot:activator="{ on }">
                         <v-btn flat icon v-if="!auth" v-on="on"
                                @click.stop="openRegisterModal">

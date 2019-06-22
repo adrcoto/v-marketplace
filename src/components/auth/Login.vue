@@ -89,10 +89,7 @@
                 this.$store.dispatch('closeLogin');
                 //  this.$store.dispatch('clearError');
                 this.clearForm();
-            },
-            clearForm() {
-                this.email = '';
-                this.password = '';
+
             },
             openRegisterModal() {
                 this.$store.dispatch('showRegister');
@@ -101,21 +98,23 @@
             showForgotModal() {
                 this.$store.dispatch('closeLogin');
                 this.$store.dispatch('showForgot')
-            }
+            },
+            clearForm() {
+                this.email = '';
+                this.password = '';
+                this.$refs.form.resetValidation()
+            },
         },
         computed: {
             show() {
                 return this.$store.getters.showLogin;
             },
-            getForgot(){
+            getForgot() {
                 return this.$store.getters.showForgot;
             },
             dark() {
                 return this.$store.getters.darkTheme;
             }
-        },
-        destroyed() {
-            this.clearForm();
         },
         components: {
             appForgotPassword: ForgotPassword

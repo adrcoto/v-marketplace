@@ -1,30 +1,30 @@
 <template>
     <v-layout justify-center row>
-       <!--         <v-flex sm2 class="ml-3 mr-3">
-                    <v-card>
-                        <v-layout column justify-center>
-                            <v-layout row>
-                                <v-card-title>
-                                    Filtreaza rezultatele
-                                </v-card-title>
-                            </v-layout>
-                            <v-card-text>
-                                Pret
-                            </v-card-text>
-                            <v-layout row>
-                                <v-card-text>
+        <!--         <v-flex sm2 class="ml-3 mr-3">
+                     <v-card>
+                         <v-layout column justify-center>
+                             <v-layout row>
+                                 <v-card-title>
+                                     Filtreaza rezultatele
+                                 </v-card-title>
+                             </v-layout>
+                             <v-card-text>
+                                 Pret
+                             </v-card-text>
+                             <v-layout row>
+                                 <v-card-text>
 
-                                    <v-text-field placeholder="Pret minim" type="number">
-                                    </v-text-field>
-                                </v-card-text>
-                                <v-card-text>
-                                    <v-text-field placeholder="Pret maxim" type="number">
-                                    </v-text-field>
-                                </v-card-text>
-                            </v-layout>
-                        </v-layout>
-                    </v-card>
-                </v-flex>-->
+                                     <v-text-field placeholder="Pret minim" type="number">
+                                     </v-text-field>
+                                 </v-card-text>
+                                 <v-card-text>
+                                     <v-text-field placeholder="Pret maxim" type="number">
+                                     </v-text-field>
+                                 </v-card-text>
+                             </v-layout>
+                         </v-layout>
+                     </v-card>
+                 </v-flex>-->
         <v-label v-if="items.length === 0">Nici un rezultat!</v-label>
         <v-flex>
             <v-layout row wrap>
@@ -35,23 +35,27 @@
                                     :class="`elevation-${hover ? 20 : 2}`" class="item-card mb-4"
                                     slot-scope="{ hover }"
                                     width="92%">
-                                <v-img :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
+                                <v-img gradient lazy-src
+                                       :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
                                        height="165">
                                     <span v-if="item.negotiable" class="negotiable" title="Anunt negociabil"></span>
                                     <v-expand-transition>
                                         <div class="d-flex transition-fast-in-fast-out v-card--reveal"
                                              v-if="hover">
                                             <v-card-actions>
-                                                <v-btn :class="{'hover-btn-pressed': isFavorite(item.item_id), 'hover-btn': !like}"
-                                                       @click.stop="addToFavorites(item.item_id)"
-                                                       class="hover-btn"
-                                                       icon>
-                                                    <v-icon>favorite</v-icon>
-                                                </v-btn>
-                                                <v-btn class="hover-btn" icon>
-                                                    <v-icon>share</v-icon>
-                                                </v-btn>
                                                 <v-spacer></v-spacer>
+                                                <v-tooltip top>
+                                                    <template v-slot:activator="{ on }">
+                                                        <v-btn :class="{'hover-btn-pressed': isFavorite(item.item_id), 'hover-btn': !like}"
+                                                               @click.stop="addToFavorites(item.item_id)"
+                                                               class="hover-btn"
+                                                               v-on="on"
+                                                               icon>
+                                                            <v-icon>favorite</v-icon>
+                                                        </v-btn>
+                                                    </template>
+                                                    <span>{{isFavorite(item.item_id) ? 'Șterge din favorite' : 'Adaugă la favorite'}}</span>
+                                                </v-tooltip>
                                             </v-card-actions>
                                         </div>
                                     </v-expand-transition>
@@ -119,17 +123,18 @@
             addToFavorites(id) {
                 if (this.$store.getters.isAuthenticated) {
                     if (this.isFavorite(id)) {
-                        console.log('delete');
                         this.$store.dispatch('removeFromFavorite', id);
                     } else {
-                        console.log('add');
                         this.$store.dispatch('addToFavorite', id);
                     }
                 }
+                else
+                    this.$store.commit('showLogin');
             },
             isFavorite(id) {
-                if (this.favorites)
-                    return this.favorites.find(favorite => favorite.item === id);
+                if (this.favorites) {
+                    return this.favorites.find(favorite => favorite.item_id === id);
+                }
             },
         },
         computed: {
@@ -211,14 +216,14 @@
     }
 
 
-
     .negotiable {
         background: url("../../assets/banner.png");
         text-indent: -1000em;
         overflow: hidden;
         display: inline-block;
+        position: absolute;
         width: 83px;
-        height: 83px;
+        height: 82px;
     }
 
 </style>

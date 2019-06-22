@@ -112,7 +112,7 @@
                 this.confirmPassword = '';
                 this.$refs.form.resetValidation();
             },
-            openLogin(){
+            openLogin() {
                 this.$store.dispatch('closeRegister');
                 this.$store.dispatch('showLogin');
             }
@@ -127,9 +127,6 @@
             dark() {
                 return this.$store.getters.darkTheme;
             }
-        },
-        destroyed() {
-            this.clearForm();
         },
     };
 </script>
