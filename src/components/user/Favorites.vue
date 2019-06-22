@@ -41,12 +41,12 @@
                                                 <div class="item-card-title title">
                                                     {{favorite.title}}
                                                 </div>
-                                                <div class="mt-4">
-                                                    <v-icon>location_on</v-icon>
+                                                <div class="mt-4 caption grey--text">
+                                                    <v-icon class="grey--text">location_on</v-icon>
                                                     {{favorite.city}}, {{favorite.district}}
                                                 </div>
-                                                <div class="mt-1">
-                                                    <v-icon>query_builder</v-icon>
+                                                <div class="mt-1 caption grey--text">
+                                                    <v-icon class="grey--text">query_builder</v-icon>
                                                     {{favorite.created_at}}
                                                 </div>
                                             </div>

@@ -1,7 +1,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <v-layout justify-center>
         <v-flex xs12 sm12 md12 lg12 xl10>
-            <v-card img="https://cdn.vuetifyjs.com/images/parallax/material2.jpg" class="white--text">
+            <v-card :img="require('../../assets/setting.jpg')" class="white--text">
                 <v-layout justify-center>
                     <v-form ref="form" v-model="valid" lazy-validation>
                         <v-card-title class="mr-3">

@@ -386,6 +386,7 @@
                     </v-layout>
                 </v-card-text>
             </v-card>
+
             <!-- Owner Items -->
             <v-card class="pa-1" v-if="userItems !== undefined && userItems !== null && userItems.length > 1">
                 <v-card-title class="subheading">
@@ -407,18 +408,22 @@
                                             </v-img>
                                         </v-flex>
                                         <v-flex xs7 md7 lg7 x17>
-                                            <div class="ml-3 mt-3">
+                                            <div class="ml-3 mt-1">
                                                 <div class="item-card-title title">
                                                     {{userItem.title}}
                                                 </div>
-                                                <div>
-                                                    <v-icon>location_on</v-icon>
-                                                    {{userItem.city}}, {{userItem.district}}
+                                                <div class="mt-3">
+                                                    <span class="caption grey--text">
+                                                        <v-icon class="grey--text">location_on</v-icon>
+                                                        {{userItem.city}}, {{userItem.district}}
+                                                    </span>
                                                 </div>
-                                                <v-spacer/>
+
                                                 <div>
-                                                    <v-icon>query_builder</v-icon>
-                                                    {{userItem.created_at}}
+                                                     <span class="caption grey--text">
+                                                        <v-icon class="grey--text">query_builder</v-icon>
+                                                        {{userItem.created_at}}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </v-flex>
@@ -440,7 +445,7 @@
         <!--Owner-->
         <v-flex xs1 sm1 md1 ml1 xl1>
             <v-card class="profile" v-if="user">
-                <v-card img="http://demo.geekslabs.com/materialize/v2.2/layout03/images/user-profile-bg.jpg">
+                <v-card :img="require('../../assets/view-item-user.jpg')">
                     <div>
                         <v-card-title class="justify-center">
                             <v-avatar class="mr-2" size="85px">

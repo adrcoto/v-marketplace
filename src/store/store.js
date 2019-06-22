@@ -753,7 +753,7 @@ export default new Vuex.Store({
                     let date = '';
 
                     items.forEach((item) => {
-                        created = new Date(item.created_at.date);
+                        created = new Date(item.created_at);
 
                         createdYear = created.getFullYear();
                         createdMonth = created.getMonth() + 1;

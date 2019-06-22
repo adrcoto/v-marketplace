@@ -64,8 +64,7 @@
                                           class="ml-3 mt-4 mr-2 item-card-title font-weight-bold">
                                     {{item.title}}
                                 </v-layout>
-                                <!--                                        </v-card-title>-->
-                                <!---->
+
                                 <v-chip app class="price" color="primary">
                                     {{item.price}}
                                     <span class="ml-2" v-if="item.currency === 0">lei</span>
@@ -73,16 +72,16 @@
                                 </v-chip>
                                 <v-card-actions class="item-card-action">
                                     <div class="d-flex transition-fast-in-fast-out" v-if="hover">
-                                                                                                                                                                                          <span class="caption grey--text">
-                                                                                                                                                                                                                          <v-icon class="grey--text">location_on</v-icon>
-                                                                                                                                                                                                                                                                  {{item.city}}, {{item.district}}
-    </span>
+                                        <span class="caption grey--text">
+                                            <v-icon class="grey--text">location_on</v-icon>
+                                            {{item.city}}, {{item.district}}
+                                        </span>
                                     </div>
                                     <div v-else>
-        <span class="caption grey--text">
-                                        <v-icon class="grey--text">query_builder</v-icon>
-                                                                                  {{item.created_at}}
-    </span>
+                                        <span class="caption grey--text">
+                                            <v-icon class="grey--text">query_builder</v-icon>
+                                            {{item.created_at}}
+                                        </span>
                                     </div>
                                     <v-spacer/>
                                 </v-card-actions>

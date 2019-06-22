@@ -32,16 +32,16 @@
                         <v-flex xs6 sm6 md6 lg6 xl7>
                             <v-layout>
                                 <v-flex>
-                                    <div class="ml-3 mt-3">
-                                        <div class="item-card-title title">
+                                    <div class="ml-3 mt-4">
+                                        <div class="item-card-title title ">
                                             {{item.title}}
                                         </div>
-                                        <div class="mt-4">
-                                            <v-icon>location_on</v-icon>
+                                        <div class="mt-3 caption grey--text">
+                                            <v-icon class="grey--text">location_on</v-icon>
                                             {{item.city}}, {{item.district}}
                                         </div>
-                                        <div class="mt-1">
-                                            <v-icon>query_builder</v-icon>
+                                        <div class="mt-1 caption grey--text">
+                                            <v-icon class="grey--text">query_builder</v-icon>
                                             {{item.created_at}}
                                         </div>
                                     </div>
