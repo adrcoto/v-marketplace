@@ -191,7 +191,7 @@
                 name: '',
             },
             perPage: [
-                15, 20, 30
+                15, 20, 30, 40, 50, 80
             ],
             subcategory: {
                 value: 0,

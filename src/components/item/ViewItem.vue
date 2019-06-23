@@ -595,6 +595,7 @@
             }
         },
         mounted() {
+            window.scrollTo(0, 0);
             //this.item = this.$store.getters.item(this.$route.query.id);
             const actual = new Date();
             axios.get('/item/' + this.$route.query.id).then(response => {
