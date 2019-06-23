@@ -30,6 +30,8 @@
                                       :label="location.name"
                                       @click="location.dialog = true"
                                       v-model="locationFilter.value"
+                                      :append-icon="(locationFilter.city || locationFilter.searchDistrict) ? 'clear' : ''"
+                                      @click:append="clearLocation"
                         ></v-text-field>
                         <v-dialog max-width="875" v-model="location.dialog">
                             <v-card>
