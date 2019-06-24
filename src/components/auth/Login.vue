@@ -130,7 +130,7 @@
 
     .forgot-password:hover {
         cursor: pointer;
-        color: white;
+        color: rgba(255, 255, 255, 0.7);
         text-decoration: underline;
     }
 

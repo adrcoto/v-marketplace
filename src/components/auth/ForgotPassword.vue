@@ -300,16 +300,18 @@
 <style scoped>
     .generate-code:hover {
         cursor: pointer;
-        color: white;
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: underline;
     }
 
     .generate-code-white:hover {
         cursor: pointer;
         color: black;
+        text-decoration: underline;
     }
 
     .v-input--selection-controls {
         margin-top: 0;
-        padding-top: 4;
+        padding-top: 0;
     }
 </style>

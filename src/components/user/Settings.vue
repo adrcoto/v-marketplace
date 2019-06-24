@@ -197,6 +197,7 @@
                                                                     </v-text-field>
                                                                     <v-label>Nu ați primit codul? <span
                                                                             @click="generateCode"
+                                                                            class="code"
                                                                             :class="{'generate-code': dark, 'generate-code-white': !dark }">Generați altul</span>
                                                                     </v-label>
                                                                 </v-form>
@@ -509,13 +510,18 @@
         height: 400px;
     }
 
-    .generate-code:hover {
+    .code {
         cursor: pointer;
-        color: white;
     }
 
+    .generate-code:hover {
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: underline;
+    }
+
+
     .generate-code-white:hover {
-        cursor: pointer;
+        text-decoration: underline;
         color: black;
     }
 </style>
