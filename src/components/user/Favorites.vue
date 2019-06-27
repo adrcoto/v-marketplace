@@ -53,7 +53,7 @@
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
-                                <v-flex xs2 md2 lg2 x11>
+                                <v-flex>
                                     <v-layout column align-end class="mr-3">
                                         <div class="mt-2 mb-5">
                                             <v-chip dark color="primary" class="subheading">

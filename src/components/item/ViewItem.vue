@@ -1,7 +1,10 @@
 <template>
     <v-layout row justify-center>
+        <v-flex xs1 sm1 md1 lg1 xl1>
+
+        </v-flex>
         <!--Item && OwnerItems-->
-        <v-flex lg7 md10 sm10 xl5 xs11 mr-4>
+        <v-flex xs11 sm10 md10 lg7 xl5>
             <div v-if="!item">Loading Please wait...</div>
 
             <v-card v-if="item" class="pa-1 mb-3">
@@ -38,6 +41,7 @@
                         </v-chip>
                     </v-flex>
                 </v-layout>
+
 
                 <!--                Images-->
                 <v-card-text class="mb-1">
@@ -392,55 +396,55 @@
                     Anuțurile utilizatorului &nbsp; <span class="font-weight-medium"> {{user.name}}</span>
                 </v-card-title>
                 <v-divider/>
-                <v-layout column justify-center class="mt-3">
-                    <v-flex :key="userItem.item_id" v-for="userItem in userItems"
-                            v-if="item.item_id !== userItem.item_id">
-                        <v-hover>
-                            <v-card @click="viewItem(userItem)" style="cursor: pointer"
-                                    :class="`elevation-${hover ? 12 : 2}`" class="item-card mb-3 ml-3 mr-3"
-                                    slot-scope="{ hover }">
-                                <v-layout row>
-                                    <v-flex xs3 md3 lg3 x13>
-                                        <v-img :src="userItem.images.length > 0 ? API_URL + userItem.images[0].filename : require('../../assets/no-available-image.png')"
-                                               height="125">
-                                        </v-img>
-                                    </v-flex>
-                                    <v-flex xs7 md7 lg7 x17>
-                                        <div class="ml-3 mt-1">
-                                            <div class="item-card-title title">
-                                                {{userItem.title}}
-                                            </div>
-                                            <div class="mt-3">
-                                                    <span class="caption grey--text">
-                                                        <v-icon class="grey--text">location_on</v-icon>
-                                                        {{userItem.city}}, {{userItem.district}}
-                                                    </span>
-                                            </div>
-
-                                            <div>
-                                                     <span class="caption grey--text">
-                                                        <v-icon class="grey--text">query_builder</v-icon>
-                                                        {{userItem.created_at}}
-                                                    </span>
-                                            </div>
-                                        </div>
-                                    </v-flex>
-                                    <v-flex xs2 md2 lg2 x12>
-                                        <v-chip dark color="primary mt-2" class="subheading">
-                                            {{userItem.price}}
-                                            <span class="ml-2" v-if="item.currency === 0">lei</span>
-                                            <span class="ml-2" v-else>€</span>
-                                        </v-chip>
-                                    </v-flex>
-                                </v-layout>
-                            </v-card>
-                        </v-hover>
-                    </v-flex>
-                </v-layout>
             </v-card>
+            <v-layout column justify-center class="mt-3">
+                <v-flex :key="userItem.item_id" v-for="userItem in userItems"
+                        v-if="item.item_id !== userItem.item_id">
+                    <v-hover>
+                        <v-card @click="viewItem(userItem)" style="cursor: pointer"
+                                :class="`elevation-${hover ? 12 : 2}`" class="item-card mb-3 "
+                                slot-scope="{ hover }">
+                            <v-layout row>
+                                <v-flex xs3 md3 lg3 x13>
+                                    <v-img :src="userItem.images.length > 0 ? API_URL + userItem.images[0].filename : require('../../assets/no-available-image.png')"
+                                           height="125">
+                                    </v-img>
+                                </v-flex>
+                                <v-flex xs7 md7 lg7 x17>
+                                    <div class="ml-3 mt-2">
+                                        <div class="item-card-title title">
+                                            {{userItem.title}}
+                                        </div>
+                                        <div class="mt-2">
+                                            <span class="caption grey--text">
+                                                <v-icon class="grey--text">location_on</v-icon>
+                                                {{userItem.city}}, {{userItem.district}}
+                                            </span>
+                                        </div>
+
+                                        <div>
+                                            <span class="caption grey--text">
+                                                <v-icon class="grey--text">query_builder</v-icon>
+                                                {{userItem.created_at}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </v-flex>
+                                <v-flex>
+                                    <v-chip dark color="primary mt-2" class="subheading">
+                                        {{userItem.price}}
+                                        <span class="ml-2" v-if="item.currency === 0">lei</span>
+                                        <span class="ml-2" v-else>€</span>
+                                    </v-chip>
+                                </v-flex>
+                            </v-layout>
+                        </v-card>
+                    </v-hover>
+                </v-flex>
+            </v-layout>
         </v-flex>
         <!--Owner-->
-        <v-flex xs1 sm1 md1 ml1 xl1>
+        <v-flex ml-4 xs1 sm1 md1 lg1 xl1>
             <v-card class="profile" v-if="user">
                 <v-card :img="require('../../assets/view-item-user.jpg')">
                     <div>
@@ -451,9 +455,8 @@
                             </v-avatar>
                         </v-card-title>
                         <v-card-title class="justify-center wrap">
-                            <v-label>{{user.name}}</v-label>
+                            <v-label dark>{{user.name}}</v-label>
                         </v-card-title>
-
                     </div>
                 </v-card>
 
@@ -483,7 +486,7 @@
                         <span>Actualizeaă anunțul</span>
                     </v-btn>
                 </v-card-title>
-                <div class="pl-2">
+                <div class="pl-2 pr-2">
                     <iframe class="dim" height="215"
                             :src="'https://maps.google.com/maps?q=' + item.city + '%2C%20' + item.district + '&t=&z=10&ie=UTF8&iwloc=&output=embed'">
                     </iframe>
@@ -641,7 +644,9 @@
     }
 
     .profile {
-        position: fixed;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 90px;
         width: 275px;
     }
 

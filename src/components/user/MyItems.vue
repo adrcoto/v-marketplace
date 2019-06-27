@@ -32,11 +32,11 @@
                         <v-flex xs6 sm6 md6 lg6 xl7>
                             <v-layout>
                                 <v-flex>
-                                    <div class="ml-3 mt-4">
+                                    <div class="ml-3 mt-3">
                                         <div class="item-card-title title ">
                                             {{item.title}}
                                         </div>
-                                        <div class="mt-3 caption grey--text">
+                                        <div class="mt-4 caption grey--text">
                                             <v-icon class="grey--text">location_on</v-icon>
                                             {{item.city}}, {{item.district}}
                                         </div>
