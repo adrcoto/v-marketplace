@@ -106,7 +106,7 @@
 <script>
     export default {
         data: () => ({
-            API_URL: 'http://dev.shop/storage/',
+            API_URL: process.env.VUE_APP_API_URL,
             like: false,
             show: false,
             pagesVisible: 10,

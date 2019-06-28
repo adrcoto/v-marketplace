@@ -630,7 +630,7 @@
         },
         data: () => ({
             itemCopy: null,
-            API_URL: 'http://dev.shop/storage/',
+            API_URL: process.env.VUE_APP_API_URL,
             valid: false,
             showDetails: true,
             showContactData: true,
@@ -1096,7 +1096,6 @@
 
         },
         created() {
-            this.$store.dispatch('loadCategories');
             this.loadUser();
 
             if (this.user.location) {
@@ -1180,20 +1179,6 @@
                         return 80;
                     case 'xl':
                         return 70;
-                }
-            },
-            imageHeight() {
-                switch (this.$vuetify.breakpoint.name) {
-                    case 'xs':
-                        return 'xs';
-                    case 'sm':
-                        return 'sm';
-                    case 'md':
-                        return 'md';
-                    case 'lg':
-                        return 'lg';
-                    case 'xl':
-                        return 'xl';
                 }
             },
             categories() {

@@ -21,6 +21,8 @@ const state = {
 
     favoritesItemsPage: 1,
     favoritesItemsPerPage: 10,
+
+    viewOwnerItemsPage: 1,
 };
 
 const mutations = {
@@ -64,6 +66,10 @@ const mutations = {
     setFavoritesItemsPerPage(state, perPage) {
         state.favoritesItemsPerPage = perPage;
     },
+
+    setViewOwnerItemsPage(state, page) {
+        state.viewOwnerItemsPage = page;
+    }
 };
 
 
@@ -97,6 +103,9 @@ const getters = {
     },
     favoritesItemsPerPage: state => {
         return state.favoritesItemsPerPage;
+    },
+    viewOwnerItemsPage: state => {
+        return state.viewOwnerItemsPage;
     }
 };
 

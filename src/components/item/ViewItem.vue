@@ -408,11 +408,12 @@
                                 <v-flex xs3 md3 lg3 x13>
                                     <v-img :src="userItem.images.length > 0 ? API_URL + userItem.images[0].filename : require('../../assets/no-available-image.png')"
                                            height="125">
+                                        <span v-if="userItem.negotiable" class="negotiable" title="Anunt negociabil"></span>
                                     </v-img>
                                 </v-flex>
                                 <v-flex xs7 md7 lg7 x17>
                                     <div class="ml-3 mt-2">
-                                        <div class="item-card-title title">
+                                        <div class="item-card-title font-weight-medium subheading">
                                             {{userItem.title}}
                                         </div>
                                         <div class="mt-2">
@@ -430,7 +431,7 @@
                                         </div>
                                     </div>
                                 </v-flex>
-                                <v-flex>
+                                <v-flex class="ml-3">
                                     <v-chip dark color="primary mt-2" class="subheading">
                                         {{userItem.price}}
                                         <span class="ml-2" v-if="item.currency === 0">lei</span>
@@ -442,6 +443,15 @@
                     </v-hover>
                 </v-flex>
             </v-layout>
+            <div class="text-xs-center" v-if="userItems.length > 0">
+                <v-pagination
+                        :value="page"
+                        :length="Math.ceil(count / 10)"
+                        circle
+                        :total-visible="pagesVisible"
+                        @input="changePage"
+                ></v-pagination>
+            </div>
         </v-flex>
         <!--Owner-->
         <v-flex ml-4 xs1 sm1 md1 lg1 xl1>
@@ -497,23 +507,26 @@
 </template>
 
 <script>
-    import axios from '../../axios-auth';
 
     export default {
         data() {
             return {
-                API_URL: 'http://dev.shop/storage/',
+                API_URL: process.env.VUE_APP_API_URL,
                 AVATAR_API_URL: process.env.VUE_APP_AVATAR_URL,
                 number: false,
-                item: null,
-                user: null,
-                userItems: null,
-                itemsLength: 0,
+                pagesVisible: 10,
+                // item: {},
+                // user: {},
+                // userItems: [],
                 cycle: false,
                 months: ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec'],
             };
         },
         methods: {
+            changePage(page) {
+                this.$store.commit('setViewOwnerItemsPage', page);
+                this.getItems();
+            },
             viewItem(item) {
                 this.item = item;
                 this.$router.replace({path: '/anunt/' + item.slug, query: {id: item.item_id}});
@@ -568,9 +581,38 @@
                     this.$store.dispatch('showLogin');
                 }
             },
+            getItems() {
+                const actual = new Date();
+                this.$store.dispatch('_ownerItems', this.$route.query.id).then(res => {
+                    if (res && res.data && res.data.responseType === 'success') {
+                        const userItems = res.data.data.items;
+                        userItems.forEach((userItem) => {
+                            userItem.created_at = this.calculateDate(actual, new Date(userItem.created_at.date));
+                        });
+
+                        this.$store.commit('_setOwnerItems', userItems);
+                        this.$store.commit('_setOwnerItemsCount', res.data.data.total);
+                    }
+                }); // ends axios getItems
+            }
         },
 
         computed: {
+            page() {
+                return this.$store.getters.viewOwnerItemsPage;
+            },
+            count() {
+                return this.$store.getters._ownerItemsCount;
+            },
+            item() {
+                return this.$store.getters._item.item;
+            },
+            user() {
+                return this.$store.getters._item.user;
+            },
+            userItems() {
+                return this.$store.getters._ownerItems;
+            },
             getStatus() {
                 return this.item.used ? 'Utilizat' : 'Nou';
             },
@@ -595,43 +637,65 @@
                 let phone = this.user.phone;
 
                 return phone.substring(0, 4) + ' ' + phone.substring(4, 7) + ' ' + phone.substring(7, 10);
-            }
+            },
+
         },
         mounted() {
             window.scrollTo(0, 0);
             //this.item = this.$store.getters.item(this.$route.query.id);
-            const actual = new Date();
-            axios.get('/item/' + this.$route.query.id).then(response => {
+            /*     axios.get('/item/' + this.$route.query.id).then(response => {
+                     if (response && response.data && response.data.responseType === 'success') {
+
+                         this.item = response.data.data.item;
+                         this.user = response.data.data.user;
+
+                         const actual = new Date();
+                         const created = new Date(this.item.created_at.date);
+
+                         this.item.created_at = this.calculateDate(actual, created);
+
+                         axios.get('/items/' + this.user.id).then(res => {
+                             if (res && res.data && res.data.responseType === 'success') {
+                                 this.userItems = res.data.data.items;
+                                 this.itemsLength = res.data.data.total - 1;
+
+                                 this.userItems.forEach((userItem) => {
+                                     userItem.created_at = this.calculateDate(actual, new Date(userItem.created_at.date));
+                                 });
+                             } else {
+
+                             }
+                         });
+                     } else {
+                         this.$store.commit('setSnack', {
+                             message: 'Eroare la încărcarea anunțului',
+                             color: this.$store.getters.colors.warning,
+                         });
+                     }
+                 });*/
+            this.$store.dispatch('getItem', this.$route.query.id).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
 
-                    this.item = response.data.data.item;
-                    this.user = response.data.data.user;
-
+                    const item = response.data.data.item;
                     const actual = new Date();
-                    const created = new Date(this.item.created_at.date);
+                    const created = new Date(item.created_at.date);
 
-                    this.item.created_at = this.calculateDate(actual, created);
+                    item.created_at = this.calculateDate(actual, created);
 
-                    axios.get('/items/' + this.user.id).then(res => {
-                        if (res && res.data && res.data.responseType === 'success') {
-                            this.userItems = res.data.data;
-                            this.userItems.forEach((userItem) => {
-                                userItem.created_at = this.calculateDate(actual, new Date(userItem.created_at.date));
-                            });
+                    const object = {
+                        item: item,
+                        user: response.data.data.user,
+                    };
 
-                            this.itemsLength = res.data.data.maxLength - 1;
-                        } else {
+                    this.$store.commit('setItem', object);
 
-                        }
-                    });
-                } else {
-                    this.$store.commit('setSnack', {
-                        message: 'Error loading item',
-                        color: this.$store.getters.colors.warning,
-                    });
+                    this.getItems();
+
+                } //ends if response usccess
+                else {
+                    console.log('eerror loading item');
                 }
-            });
-
+            }); //ends axios getItem
         },
     };
 </script>
@@ -649,6 +713,15 @@
         top: 90px;
         width: 275px;
     }
+    .negotiable {
+        background: url("../../assets/banner.png");
+        text-indent: -1000em;
+        overflow: hidden;
+        display: inline-block;
+        position: absolute;
+        width: 83px;
+        height: 82px;
+    }
 
     .item-card-title {
         height: 50px;
@@ -657,10 +730,6 @@
 
     .dim {
         width: 100%;
-    }
-
-    .item-card-title {
-        overflow: hidden;
     }
 
     .desc {

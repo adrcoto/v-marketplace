@@ -32,6 +32,7 @@
                                 <v-flex xs3 md3 lg3 x13>
                                     <v-img :src="favorite.images.length > 0 ? API_URL + favorite.images[0].filename : require('../../assets/no-available-image.png')"
                                            height="155">
+                                        <span v-if="favorite.negotiable" class="negotiable" title="Anunt negociabil"></span>
                                     </v-img>
                                 </v-flex>
                                 <v-flex xs6 sm6 md6 lg6 xl8>
@@ -97,7 +98,7 @@
 <script>
     export default {
         data: () => ({
-            API_URL: 'http://dev.shop/storage/',
+            API_URL: process.env.VUE_APP_API_URL,
             pagesVisible: 10,
             perPageOptions: [
                 10, 15, 20, 30
@@ -145,6 +146,15 @@
     .item-card-title {
         height: 50px;
         overflow: hidden;
+    }
+    .negotiable {
+        background: url("../../assets/banner.png");
+        text-indent: -1000em;
+        overflow: hidden;
+        display: inline-block;
+        position: absolute;
+        width: 83px;
+        height: 82px;
     }
 
 

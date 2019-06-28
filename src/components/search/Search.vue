@@ -94,6 +94,8 @@
                                 return-object
                                 flat
                                 solo-inverted
+                                :append-icon="categoryFilter.value ? 'clear' : ''"
+                                @click:append="clearCategory"
                                 hide-details
                                 prepend-inner-icon="view_module"
                                 @change="setCategoryFilter"

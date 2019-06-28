@@ -25,8 +25,9 @@
                         slot-scope="{ hover }">
                     <v-layout row>
                         <v-flex xs3 sm3 lg3 x13>
-                            <v-img :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
+                            <v-img  :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
                                    height="155">
+                                <span v-if="item.negotiable" class="negotiable" title="Anunt negociabil"></span>
                             </v-img>
                         </v-flex>
                         <v-flex xs6 sm6 md6 lg6 xl7>
@@ -97,7 +98,7 @@
 
     export default {
         data: () => ({
-            API_URL: 'http://dev.shop/storage/',
+            API_URL: process.env.VUE_APP_API_URL,
             itemsLength: null,
             pagesVisible: 10,
             perPageOptions: [
@@ -155,5 +156,15 @@
     .item-card-title {
         height: 50px;
         overflow: hidden;
+    }
+
+    .negotiable {
+        background: url("../../assets/banner.png");
+        text-indent: -1000em;
+        overflow: hidden;
+        display: inline-block;
+        position: absolute;
+        width: 83px;
+        height: 82px;
     }
 </style>

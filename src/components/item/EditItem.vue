@@ -1,4 +1,4 @@
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+<template>
         <app-create-item edit/>
 </template>
 
@@ -14,25 +14,4 @@
 </script>
 
 <style scoped>
-    .category-container {
-        height: 300px;
-    }
-
-    .location-container {
-        height: 400px;
-    }
-
-    .space {
-        height: 50px;
-    }
-
-    .location-category {
-        margin-left: 28px;
-    }
-
-    .icon-error {
-        color: red;
-    }
-
-
 </style>

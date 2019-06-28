@@ -27,6 +27,11 @@ export default new Vuex.Store({
         ownerItemsCount: 0,
         favorites: [],
         favoritesItemsCount: 0,
+        viewOwnerItemsCount: 0,
+
+        item: {},
+        _ownerItems: [],
+        _ownerItemsCount: 0,
 
         months: ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec'],
         categories: [],
@@ -83,6 +88,16 @@ export default new Vuex.Store({
         setTypes(state, payload) {
             state.types = payload;
         },
+
+        _setOwnerItems(state, payload) {
+            state._ownerItems = payload;
+        },
+        _setOwnerItemsCount(state, payload) {
+            state._ownerItemsCount = payload;
+        },
+        setItem(state, payload){
+            state.item = payload;
+        }
     },
     getters: {
         token: state => {
@@ -130,6 +145,16 @@ export default new Vuex.Store({
         colors: state => {
             return state.colors;
         },
+        _ownerItems: state => {
+            return state._ownerItems;
+        },
+        _ownerItemsCount: state => {
+            return state._ownerItemsCount;
+        },
+        _item: state => {
+            return state.item;
+        },
+
     },
 
     /**
@@ -837,8 +862,19 @@ export default new Vuex.Store({
                     });
                 }
             });
+        },
+
+        getItem({commit, state, dispatch}, id) {
+            return axios.get('/item/' + id);
+        },
+
+        _ownerItems({commit, state, dispatch}, id) {
+            return axios.get('/items/' + id, {
+                params: {
+                    page: filter.state.viewOwnerItemsPage
+                }
+            });
         }
-        ,
     },
     modules: {
         loginModal,
