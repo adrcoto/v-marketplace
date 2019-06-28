@@ -5,6 +5,7 @@
                     v-model="isMap"
                     label="Arată harta"
                     color="success"
+					class="ml-1"
             ></v-switch>
         </v-layout>
         <v-layout row wrap>
@@ -2268,7 +2269,7 @@
 
     .map_group:hover .st0, .region_active .st0 {
         /*fill-opacity: 0.5;*/
-        fill: green;
+        fill: #4caf50;
     }
 
     /*a:focus {*/
@@ -2277,7 +2278,7 @@
     /*}*/
 
     .active {
-        fill: green;
+        fill: #4caf50;
     }
 
     .st1 {

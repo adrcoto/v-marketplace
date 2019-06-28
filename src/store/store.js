@@ -43,6 +43,8 @@ export default new Vuex.Store({
             warning: 'warning',
             info: 'info',
         },
+
+        loading: false,
     },
     mutations: {
         authUser(state, userData) {
@@ -97,6 +99,9 @@ export default new Vuex.Store({
         },
         setItem(state, payload){
             state.item = payload;
+        },
+        setLoading(state, payload){
+            state.loading = payload;
         }
     },
     getters: {
@@ -154,7 +159,9 @@ export default new Vuex.Store({
         _item: state => {
             return state.item;
         },
-
+        loading: state => {
+            return state.loading;
+        }
     },
 
     /**
@@ -169,6 +176,7 @@ export default new Vuex.Store({
          * @param authData
          */
         register({commit, state}, authData) {
+            commit('setLoading', true);
             axios.post('/register', {
                 name: authData.name,
                 email: authData.email,
@@ -176,6 +184,7 @@ export default new Vuex.Store({
                 url: process.env.VUE_APP_URL + '/verificare-cont',
             }).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
+                    commit('setLoading', false);
                     console.log('Register -> Success');
                     commit('closeRegister');
                     router.push('/verificare-cont/0');
@@ -349,7 +358,6 @@ export default new Vuex.Store({
          * @param dispatch
          */
         loadItems({commit, state, dispatch}, payload) {
-
             let params = {};
 
             const filters = {

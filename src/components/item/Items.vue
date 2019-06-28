@@ -44,18 +44,14 @@
                                              v-if="hover">
                                             <v-card-actions>
                                                 <v-spacer></v-spacer>
-                                                <v-tooltip top>
-                                                    <template v-slot:activator="{ on }">
-                                                        <v-btn :class="{'hover-btn-pressed': isFavorite(item.item_id), 'hover-btn': !like}"
-                                                               @click.stop="addToFavorites(item.item_id)"
-                                                               class="hover-btn"
-                                                               v-on="on"
-                                                               icon>
-                                                            <v-icon>favorite</v-icon>
-                                                        </v-btn>
-                                                    </template>
-                                                    <span>{{isFavorite(item.item_id) ? 'Șterge din favorite' : 'Adaugă la favorite'}}</span>
-                                                </v-tooltip>
+
+                                                <v-btn :class="{'hover-btn-pressed': isFavorite(item.item_id), 'hover-btn': !like}"
+                                                       @click.stop="addToFavorites(item.item_id)"
+                                                       class="hover-btn"
+                                                       v-on="on"
+                                                       icon>
+                                                    <v-icon>favorite</v-icon>
+                                                </v-btn>
                                             </v-card-actions>
                                         </div>
                                     </v-expand-transition>
@@ -71,15 +67,15 @@
                                     <span class="ml-2" v-else>€</span>
                                 </v-chip>
                                 <v-card-actions class="item-card-action">
-                                    <div class="d-flex transition-fast-in-fast-out" v-if="hover">
+                                    <div class="d-flex transition-fast-in-fast-out align-center" v-if="hover">
+                                        <v-icon class="grey--text">location_on</v-icon>
                                         <span class="caption grey--text">
-                                            <v-icon class="grey--text">location_on</v-icon>
-                                            {{item.city}}, {{item.district}}
+                                             {{item.city}}, {{item.district}}
                                         </span>
                                     </div>
-                                    <div v-else>
-                                        <span class="caption grey--text">
-                                            <v-icon class="grey--text">query_builder</v-icon>
+                                    <div class="d-flex align-center" v-else>
+                                        <v-icon class="grey--text">query_builder</v-icon>
+                                        <span class="ml-1 caption grey--text">
                                             {{item.created_at}}
                                         </span>
                                     </div>
@@ -126,8 +122,7 @@
                     } else {
                         this.$store.dispatch('addToFavorite', id);
                     }
-                }
-                else
+                } else
                     this.$store.commit('showLogin');
             },
             isFavorite(id) {

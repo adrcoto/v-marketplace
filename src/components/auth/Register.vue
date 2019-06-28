@@ -2,7 +2,19 @@
     <v-dialog persistent v-model="showRegister" max-width="400px">
         <v-card>
             <v-card-title>
-                <h2>Creare cont</h2>
+                <v-layout>
+                    <v-flex>
+                        <h2>Creare cont</h2>
+                    </v-flex>
+                    <v-flex class="text-md-right">
+                        <v-progress-circular v-if="loading"
+                                size="31"
+                                width="3"
+                                color="success"
+                                indeterminate>
+                        </v-progress-circular>
+                    </v-flex>
+                </v-layout>
             </v-card-title>
             <v-card-text>
                 <v-form ref="form" v-model="valid" lazy-validation>
@@ -32,7 +44,6 @@
                             @click:append="showPassword = !showPassword"
                     ></v-text-field>
                     <v-text-field
-                            v-if="password.length >= passwordLength"
                             v-model="confirmPassword"
                             prepend-icon="lock_open"
                             label="Confirmare parola"
@@ -47,18 +58,19 @@
                             <span @click="openLogin" class="font-weight-light.font-italic caption custom"
                                   :class="{'forgot-password': dark, 'forgot-password-white': !dark }">Am deja un cont</span>
                     </v-layout>
-                </v-form>
-                <v-card-text>
-                    <v-layout align-center justify-space-around row fill-height>
-                        <v-btn class="text-none font-weight-regular subheading" color="warning" @click="close">
-                            Renunta
-                        </v-btn>
-                        <v-btn class="text-none font-weight-regular subheading" :disabled="!valid" color="success"
-                               @click="register">
-                            Urmatorul pas
-                        </v-btn>
+                    <v-layout row>
+                      <v-progress-linear v-if="loading" color="success" indeterminate></v-progress-linear>
                     </v-layout>
-                </v-card-text>
+                </v-form>
+                <v-layout mt-4 align-center justify-space-around row fill-height>
+                    <v-btn class="text-none font-weight-regular subheading" color="warning" @click="close">
+                        Renunta
+                    </v-btn>
+                    <v-btn class="text-none font-weight-regular subheading" :disabled="!valid" color="success"
+                           @click="register">
+                        Urmatorul pas
+                    </v-btn>
+                </v-layout>
             </v-card-text>
         </v-card>
     </v-dialog>
@@ -127,6 +139,9 @@
             },
             dark() {
                 return this.$store.getters.darkTheme;
+            },
+            login(){
+                return this.$store.getters.loading;
             }
         },
     };
@@ -148,5 +163,11 @@
     .custom {
         color: #9E9E9E;
         margin-left: 9px;
+    }
+
+    .loading {
+        position: absolute;
+        top: 100px;
+        left: 150px;
     }
 </style>

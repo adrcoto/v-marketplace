@@ -33,56 +33,7 @@
                                       :append-icon="(locationFilter.city || locationFilter.searchDistrict) ? 'clear' : ''"
                                       @click:append="clearLocation"
                         ></v-text-field>
-                        <v-dialog max-width="875" v-model="location.dialog">
-                            <v-card>
-                                <!-- Toolbar -->
-                                <v-toolbar dark color="blue darken-3">
-                                    <!-- Toolbar -> Title -->
-                                    <v-toolbar-title>
-                                        <v-card-title class="subheading">Locație</v-card-title>
-                                    </v-toolbar-title>
-                                    <v-spacer></v-spacer>
-                                    <!-- Toolbar -> Title -->
-                                    <v-toolbar-title>
-                                        <v-card-title class="subheading" v-model="location.district">
-                                            {{location.district}}
-                                        </v-card-title>
-                                    </v-toolbar-title>
-                                </v-toolbar>
-                                <!-- Location container -->
-                                <v-card-text>
-                                    <v-layout class="location-container" row>
-                                        <!-- Map -->
-                                        <v-flex class="scroll-y" xs9>
-                                            <app-romanian-map
-                                                    @selectedDistrict="districtWasSelected"></app-romanian-map>
-                                        </v-flex>
-                                        <v-divider vertical/>
-                                        <!-- Cities list -> Title -->
-                                        <v-flex class="scroll-y" xs3>
-                                            <v-list class="ml-3" dense>
-                                                <div v-if="location.district">
-                                                    <v-list-tile @click="searchDistrict(location.district)">
-                                                        <v-list-tile-title>
-                                                            Județul {{location.district}}
-                                                        </v-list-tile-title>
-                                                    </v-list-tile>
-                                                    <v-divider></v-divider>
-                                                </div>
-                                                <v-list-tile v-for="city in location.cities" :key="city.name"
-                                                             @click="setLocation(city.name)">
-                                                    <v-list-tile-title>
-                                                        {{city.name}}
-                                                    </v-list-tile-title>
-                                                </v-list-tile>
-                                            </v-list>
-                                        </v-flex>
-                                    </v-layout>
-                                </v-card-text>
-                            </v-card>
-                        </v-dialog>
                     </v-flex>
-
                     <v-flex xs5 xl4 class="ml-2">
                         <v-select
                                 light
@@ -94,7 +45,7 @@
                                 return-object
                                 flat
                                 solo-inverted
-                                :append-icon="categoryFilter.value ? 'clear' : ''"
+                                :append-icon="categoryFilter.value ? 'clear' : 'keyboard_arrow_down'"
                                 @click:append="clearCategory"
                                 hide-details
                                 prepend-inner-icon="view_module"
@@ -105,6 +56,54 @@
                 </v-layout>
             </v-card-title>
         </v-card>
+        <v-dialog max-width="875" v-model="location.dialog">
+            <v-card>
+                <!-- Toolbar -->
+                <v-toolbar dark color="blue darken-3">
+                    <!-- Toolbar -> Title -->
+                    <v-toolbar-title>
+                        <v-card-title class="subheading">Locație</v-card-title>
+                    </v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <!-- Toolbar -> Title -->
+                    <v-toolbar-title>
+                        <v-card-title class="subheading" v-model="location.district">
+                            {{location.district}}
+                        </v-card-title>
+                    </v-toolbar-title>
+                </v-toolbar>
+                <!-- Location container -->
+                <v-card-text>
+                    <v-layout class="location-container" row>
+                        <!-- Map -->
+                        <v-flex class="scroll-y" xs9>
+                            <app-romanian-map
+                                    @selectedDistrict="districtWasSelected"></app-romanian-map>
+                        </v-flex>
+                        <v-divider vertical/>
+                        <!-- Cities list -> Title -->
+                        <v-flex class="scroll-y" xs3>
+                            <v-list class="ml-3" dense>
+                                <div v-if="location.district">
+                                    <v-list-tile @click="searchDistrict(location.district)">
+                                        <v-list-tile-title>
+                                            Județul {{location.district}}
+                                        </v-list-tile-title>
+                                    </v-list-tile>
+                                    <v-divider></v-divider>
+                                </div>
+                                <v-list-tile v-for="city in location.cities" :key="city.name"
+                                             @click="setLocation(city.name)">
+                                    <v-list-tile-title>
+                                        {{city.name}}
+                                    </v-list-tile-title>
+                                </v-list-tile>
+                            </v-list>
+                        </v-flex>
+                    </v-layout>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
 
         <transition name="slide" type="animation">
             <v-card class="mt-4" v-if="categoryFilter.value || subcategoryFilter.value">
@@ -123,7 +122,6 @@
                 </v-card-title>
             </v-card>
         </transition>
-        <!--        v-if="qFilter || locationFilter.city || locationFilter.district ||categoryFilter.value || subcategoryFilter.value"-->
         <transition name="slide" type="animation">
             <v-layout class="mt-1" row wrap align-center>
                 <v-chip label color="primary" close text-color="white" class="mr-2" @input="clearFilters">

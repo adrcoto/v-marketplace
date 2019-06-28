@@ -4,11 +4,11 @@
             <v-flex xs12 sm5 offset-sm3>
                 <v-card>
                     <v-card-text>
-                        <v-alert :value="!verify" color="success" icon="check_circle" outline>
+                        <v-alert :value="verify" color="success" icon="check_circle" outline>
                             <h2>Contul dumneavoastră a fost verificat cu succes!</h2>
                             <p>In 5 secunde veti fi redirectionat.</p>
                         </v-alert>
-                        <v-layout v-if="verify" column justify-center class="text-md-center">
+                        <v-layout v-if="!verify" column justify-center class="text-md-center">
                             <v-flex>
                                 <h1>Contul dumneavoastra a fost creat cu succes.</h1>
                             </v-flex>
