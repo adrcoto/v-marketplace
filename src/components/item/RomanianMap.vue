@@ -1647,7 +1647,7 @@
                 <v-list dense>
                     <v-list-tile v-model="district.active" @click="getDistrict(district.id)">
                         <v-list-tile-content>
-                            <v-list-tile-title class="text-md-center">
+                            <v-list-tile-title class="text-xs-center">
                                 {{district.name}}
                             </v-list-tile-title>
                         </v-list-tile-content>

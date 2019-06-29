@@ -5,7 +5,8 @@
         </v-flex>
         <!--Item && OwnerItems-->
         <v-flex xs11 sm10 md10 lg7 xl5>
-            <div v-if="!item">Loading Please wait...</div>
+
+            <h2 class="text-xs-center mt-5" v-if="!item">{{loadingMessage}}</h2>
 
             <v-card v-if="item" class="pa-1 mb-3">
                 <!--Title-->
@@ -408,7 +409,8 @@
                                 <v-flex xs3 md3 lg3 x13>
                                     <v-img :src="userItem.images.length > 0 ? API_URL + userItem.images[0].filename : require('../../assets/no-available-image.png')"
                                            height="125">
-                                        <span v-if="userItem.negotiable" class="negotiable" title="Anunt negociabil"></span>
+                                        <span v-if="userItem.negotiable" class="negotiable"
+                                              title="Anunt negociabil"></span>
                                     </v-img>
                                 </v-flex>
                                 <v-flex xs7 md7 lg7 x17>
@@ -508,6 +510,8 @@
 
 <script>
 
+    import {calculateDate} from "../../util/util";
+
     export default {
         data() {
             return {
@@ -515,11 +519,8 @@
                 AVATAR_API_URL: process.env.VUE_APP_AVATAR_URL,
                 number: false,
                 pagesVisible: 10,
-                // item: {},
-                // user: {},
-                // userItems: [],
-                cycle: false,
-                months: ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec'],
+                loadingMessage: 'Loading ... please wait',
+                cycle: true,
             };
         },
         methods: {
@@ -534,30 +535,6 @@
             },
             editItem(item) {
                 this.$router.push({path: '/anunt/modificare/' + item.slug, query: {id: item.item_id}});
-            },
-            calculateDate(actual, created) {
-                const actualYear = actual.getFullYear();
-                const actualDay = new Date().getDate();
-
-                const createdYear = created.getFullYear();
-                const createdMonth = created.getMonth() + 1;
-                const createdDay = created.getDate();
-                const createdHour = created.getHours();
-                const createdMin = created.getMinutes();
-
-                let date = '';
-
-                if (actualDay - createdDay === 1)
-                    date = 'Ieri ' + createdHour + ':' + createdMin;
-                else if (createdDay - actualDay === 0)
-                    date = 'Azi ' + createdHour + ':' + createdMin;
-                else
-                    date = createdDay + ' ' + this.months[createdMonth - 1];
-
-                if (createdYear !== actualYear)
-                    date = createdDay + ' ' + this.months[createdMonth - 1] + ' ' + createdYear;
-
-                return date;
             },
             isFavorite(id) {
                 if (this.favorites)
@@ -583,11 +560,14 @@
             },
             getItems() {
                 const actual = new Date();
+                const actualYear = actual.getFullYear();
+                const actualDay = new Date().getDate();
+
                 this.$store.dispatch('_ownerItems', this.$route.query.id).then(res => {
                     if (res && res.data && res.data.responseType === 'success') {
                         const userItems = res.data.data.items;
                         userItems.forEach((userItem) => {
-                            userItem.created_at = this.calculateDate(actual, new Date(userItem.created_at.date));
+                            userItem.created_at = calculateDate(actual, actualDay, actualYear, new Date(userItem.created_at.date));
                         });
 
                         this.$store.commit('_setOwnerItems', userItems);
@@ -642,58 +622,32 @@
         },
         mounted() {
             window.scrollTo(0, 0);
-            //this.item = this.$store.getters.item(this.$route.query.id);
-            /*     axios.get('/item/' + this.$route.query.id).then(response => {
-                     if (response && response.data && response.data.responseType === 'success') {
-
-                         this.item = response.data.data.item;
-                         this.user = response.data.data.user;
-
-                         const actual = new Date();
-                         const created = new Date(this.item.created_at.date);
-
-                         this.item.created_at = this.calculateDate(actual, created);
-
-                         axios.get('/items/' + this.user.id).then(res => {
-                             if (res && res.data && res.data.responseType === 'success') {
-                                 this.userItems = res.data.data.items;
-                                 this.itemsLength = res.data.data.total - 1;
-
-                                 this.userItems.forEach((userItem) => {
-                                     userItem.created_at = this.calculateDate(actual, new Date(userItem.created_at.date));
-                                 });
-                             } else {
-
-                             }
-                         });
-                     } else {
-                         this.$store.commit('setSnack', {
-                             message: 'Eroare la încărcarea anunțului',
-                             color: this.$store.getters.colors.warning,
-                         });
-                     }
-                 });*/
-            this.$store.dispatch('getItem', this.$route.query.id).then(response => {
+            this.$store.dispatch('getItem', {
+                id: this.$route.query.id,
+                slug: this.$route.params.title
+            }).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
 
                     const item = response.data.data.item;
                     const actual = new Date();
-                    const created = new Date(item.created_at.date);
+                    const actualYear = actual.getFullYear();
+                    const actualDay = new Date().getDate();
 
-                    item.created_at = this.calculateDate(actual, created);
+                    // item.created_at = this.calculateDate(actual, created);
+
+                    item.created_at = calculateDate(actual, actualDay, actualYear, new Date(item.created_at.date));
 
                     const object = {
                         item: item,
                         user: response.data.data.user,
                     };
-
                     this.$store.commit('setItem', object);
 
                     this.getItems();
-
+                    this.loadingMessage = 'Loading ... please wait';
                 } //ends if response usccess
                 else {
-                    console.log('eerror loading item');
+                    this.loadingMessage = 'Nici un rezulat';
                 }
             }); //ends axios getItem
         },
@@ -713,6 +667,7 @@
         top: 90px;
         width: 275px;
     }
+
     .negotiable {
         background: url("../../assets/banner.png");
         text-indent: -1000em;

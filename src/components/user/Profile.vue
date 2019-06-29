@@ -9,9 +9,9 @@
                 <v-tab-item v-for="n in tabItems.length" :key="n">
                     <!--                    <v-layout justify-center>-->
                     <!--                        <v-flex lg8 md10 sm10 xl6 xs11>-->
-                    <div class="pa-4">
+                    <keep-alive class="pa-4">
                         <component :is="'app-' + components[tab]"></component>
-                    </div>
+                    </keep-alive>
                     <!--                        </v-flex>-->
                     <!--                    </v-layout>-->
                 </v-tab-item>

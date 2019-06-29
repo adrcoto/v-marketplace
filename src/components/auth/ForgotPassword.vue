@@ -174,6 +174,8 @@
 </template>
 
 <script>
+    import {getMessage} from "../../util/util";
+
     export default {
         data: () => ({
             email: '',
@@ -226,7 +228,7 @@
                         this.$store.commit('setLoading', false);
                     } else {
                         this.$store.commit('setSnack', {
-                            message: response.data.errorMessage,
+                            message: getMessage(response.data.errorMessage),
                             color: this.$store.getters.colors.error,
                         });
                         this.$store.commit('setLoading', false);
@@ -249,7 +251,6 @@
                 this.e1 = 3;
             },
             step3() {
-
                 if (!this.$refs.passwordForm.validate())
                     return;
 
@@ -266,10 +267,15 @@
                         this.e1 = 4;
                     } else {
                         this.$store.commit('setSnack', {
-                            message: response.data.errorMessage,
+                            message: getMessage(response.data.errorMessage),
                             color: this.$store.getters.colors.error,
                         });
-                        this.e1 = 2;
+                        if (response.data.errorMessage === 'email' ||
+                            response.data.errorMessage === 'email.email' ||
+                            response.data.errorMessage === 'email.exists')
+                            this.e1 = 1;
+                        else
+                            this.e1 = 2;
                     }
                 });
             },
@@ -339,6 +345,7 @@
     .fade-leave-active {
         transition: 1s;
     }
+
     .loading {
         position: absolute;
         top: 53px;

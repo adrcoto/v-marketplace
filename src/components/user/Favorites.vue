@@ -15,12 +15,12 @@
                 </v-select>
             </div>
         </v-layout>
-        <div class="text-md-center" v-else>
+        <div class="text-xs-center" v-else>
             Nu aveți anunțuri favorite
         </div>
         <v-layout column justify-center>
             <v-flex>
-                <div class="text-md-center" v-if="favorites === null"> Nu aveți anuțuri favorite</div>
+                <div class="text-xs-center" v-if="favorites === null"> Nu aveți anuțuri favorite</div>
             </v-flex>
 <!--            <transition-group name="slide" type="animation">-->
                 <v-flex v-if="favorites !== null" :key="favorite.item_id" v-for="favorite in favorites">

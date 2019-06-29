@@ -1,7 +1,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <v-layout justify-center>
-        <v-flex xs12 sm12 md12 lg12 xl10>
-            <v-card :img="require('../../assets/setting.jpg')" class="white--text">
+        <v-flex xs12 sm8 md8 lg7 xl7>
+            <v-card :img="require('../../assets/settings-background.png')" class="white--text">
                 <v-layout justify-center>
                     <v-form ref="form" v-model="valid" lazy-validation>
                         <v-card-title class="mr-3">
@@ -135,7 +135,7 @@
                     </v-card-text>
 
 
-                    <v-card-actions class="justify-center">
+                    <v-card-actions class="justify-center mt-2">
                         <v-btn @click="updateUser" :disabled="!valid"
                                class="success font-weight-regular text-none subheading">
                             Actualizează
@@ -284,4 +284,9 @@
     .password:hover {
         cursor: pointer;
     }
+
+    .location-container {
+        height: 400px;
+    }
+
 </style>

@@ -11,7 +11,7 @@
                         <v-layout v-if="!verify" column justify-center class="text-xs-center">
                             <h1>Contul dumneavoastra a fost creat cu succes.</h1>
                             <v-flex class="justify-center">
-                                    <img alt="asdas" src="../../assets/email-verification.png">
+                                <img alt="asdas" src="../../assets/email-verification.png">
                             </v-flex>
                             <v-flex>
                                 <h2>Verificați-vă adresa de e-mail!</h2>
@@ -47,6 +47,7 @@
 </template>
 
 <script>
+    import {getMessage} from "../../util/util";
 
     export default {
         data() {
@@ -54,7 +55,8 @@
         },
         methods: {
             resendEmail() {
-                this.$store.dispatch('sendVerificationEmail');
+                if (localStorage.getItem('verification'))
+                    this.$store.dispatch('sendVerificationEmail');
             }
         },
         computed: {
@@ -73,11 +75,21 @@
                 code: this.$route.params.code,
             };
 
-            if (authData.code.length === 128) {
-                this.$store.dispatch('verify', authData);
-                setTimeout(() => {
-                    this.$router.push('/');
-                }, 5000);
+            if (authData.code.length >= 120) {
+                this.$store.dispatch('verify', authData).then(response => {
+                    if (response && response.data && response.data.responseType === 'success') {
+                        this.$store.state.verify = true;
+                        localStorage.removeItem('verification');
+                        setTimeout(() => {
+                            this.$router.push('/');
+                        }, 5000);
+                    } else {
+                        this.$store.commit('setSnack', {
+                            message: getMessage(response.data.errorMessage),
+                            color: this.$store.getters.colors.error,
+                        });
+                    }
+                });
             }
         },
     };

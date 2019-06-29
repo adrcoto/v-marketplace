@@ -1,7 +1,9 @@
 <template>
     <v-layout>
-        <v-flex class="text-md-center">
-            Mesaje
+        <v-flex class="text-xs-center">
+            <h2>
+                Mesaje
+            </h2>
         </v-flex>
     </v-layout>
 </template>

@@ -422,4 +422,8 @@
             transform: translateY(20px);
         }
     }
+
+    .location-container {
+        height: 400px;
+    }
 </style>

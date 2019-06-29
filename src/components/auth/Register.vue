@@ -6,13 +6,15 @@
                     <v-flex>
                         <h2>Creare cont</h2>
                     </v-flex>
-                    <v-flex class="text-md-right">
-                        <v-progress-circular v-if="loading"
-                                size="31"
-                                width="3"
-                                color="success"
-                                indeterminate>
-                        </v-progress-circular>
+                    <v-flex class="text-xs-right">
+                        <transition name="fade">
+                            <v-progress-circular v-if="loading"
+                                                 size="31"
+                                                 width="3"
+                                                 color="success"
+                                                 indeterminate>
+                            </v-progress-circular>
+                        </transition>
                     </v-flex>
                 </v-layout>
             </v-card-title>
@@ -137,7 +139,7 @@
             dark() {
                 return this.$store.getters.darkTheme;
             },
-            loading(){
+            loading() {
                 return this.$store.getters.loading;
             }
         },
@@ -145,6 +147,16 @@
 </script>
 
 <style scoped>
+    .fade-enter,
+    .fade-leave-to {
+        opacity: 0;
+    }
+
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: 1s;
+    }
+
     .forgot-password:hover {
         cursor: pointer;
         color: white;

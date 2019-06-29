@@ -29,7 +29,7 @@
                                         label="Descriere"
                                         prepend-icon="description"
                                         v-model="description"
-                                        class="text-md-justify"
+                                        class="text-xs-justify"
                             >
                             </v-textarea>
                         </v-flex>
@@ -1302,6 +1302,5 @@
     .preview {
         border: 2px solid green;
     }
-
 
 </style>

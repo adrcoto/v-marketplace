@@ -8,8 +8,10 @@ import registerModal from './modules/registerModal';
 import darkTheme from './modules/darkTheme';
 import filter from './modules/filtres'
 
+//util
+import {getMessage, getItemMessage, calculateDate} from "../util/util";
+
 import notification from './modules/notification';
-// axios.defaults.headers.common.Authorization = 'Bearer ' + token
 
 Vue.use(Vuex);
 
@@ -175,6 +177,10 @@ export default new Vuex.Store({
      * Actions
      */
     actions: {
+
+        /**
+         * Authentification --------------------
+         */
         /**
          * Register user
          * @param commit
@@ -191,31 +197,15 @@ export default new Vuex.Store({
             }).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
                     commit('setLoading', false);
-                    console.log('Register -> Success');
                     commit('closeRegister');
                     router.push('/verificare-cont/0');
                     localStorage.setItem('verification', authData.email);
                 } else {
-                    console.log('Register -> Error');
                     commit('setLoading', false);
-                    let message = '';
-
-                    if (response.data.errorMessage === 'Introduceți un nume' ||
-                        response.data.errorMessage === 'Numele este prea lung' ||
-                        response.data.errorMessage === 'Introduceți o adresă de e-mail' ||
-                        response.data.errorMessage === 'Adresa de e-mail trebuie să fie validă' ||
-                        response.data.errorMessage === 'Există deja un utilizator cu această adresă de e-mail' ||
-                        response.data.errorMessage === 'Introduceți o parolă' ||
-                        response.data.errorMessage === 'Parola trebuie să conțină minim 6 caractere')
-                        message = response.data.errorMessage;
-                    else
-                        message = 'Nu s-a putut crea contul. Verificati daca sunteti conectat la Internet';
-
                     commit('setSnack', {
-                        message: message,
+                        message: getMessage(response.data.errorMessage),
                         color: state.colors.error,
                     });
-
                 }
             });
         },
@@ -239,11 +229,27 @@ export default new Vuex.Store({
                     commit('setLoading', false)
                 } else {
                     commit('setSnack', {
-                        message: 'E-mail-ul nu a putut fi fost trimis',
+                        message: 'E-mail-ul nu a putut fi trimis',
                         color: state.colors.info
                     });
                     commit('setLoading', false)
                 }
+            });
+        },
+
+        /**
+         * Verify account
+         * @param commit
+         * @param state
+         * @param authData
+         */
+        verify({commit, state}, authData) {
+            if (state.token)
+                return 0;
+
+            return axios.post('verify', {
+                code: authData.code,
+                email: localStorage.getItem('verification')
             });
         },
 
@@ -254,9 +260,7 @@ export default new Vuex.Store({
          * @param payload
          */
         generateCode({commit, state}, payload) {
-
             let params = {};
-
             const filters = {
                 email: payload.email,
                 change: payload.change,
@@ -265,7 +269,6 @@ export default new Vuex.Store({
             for (let key in filters)
                 if (filters[key])
                     params[key] = filters[key];
-
             return axios.post('forgot-password', params);
         },
 
@@ -302,7 +305,6 @@ export default new Vuex.Store({
                         color: state.colors.info,
                     });
                     commit('closeLogin');
-                    console.log('Login -> Success');
                     const authData = {
                         token: response.data.data.jwt,
                         user: {
@@ -320,9 +322,8 @@ export default new Vuex.Store({
                     router.push('/profil');
                     dispatch('loadAllFavorites');
                 } else {
-                    console.log('Login -> Error');
                     commit('setSnack', {
-                        message: response.data.errorMessage,
+                        message: getMessage(response.data.errorMessage),
                         color: state.colors.error,
                     });
                 }
@@ -353,6 +354,7 @@ export default new Vuex.Store({
                     },
                 };
                 commit('authUser', authData);
+                dispatch('loadAllFavorites');
             });
         },
 
@@ -375,28 +377,26 @@ export default new Vuex.Store({
         },
 
         /**
-         * Verify account
+         * Update user
          * @param commit
          * @param state
-         * @param authData
-         * @returns {number}
+         * @param dispatch
+         * @param payload
          */
-        verify({commit, state}, authData) {
-            if (state.token)
-                return 0;
+        updateUser({commit, state, dispatch}, payload) {
+            const token = state.token;
+            axios.defaults.headers.common.Authorization = 'Bearer ' + token;
 
-
-            axios.post('verify', {
-                code: authData.code,
-                email: localStorage.getItem('verification')
-            }).then(response => {
-                console.log(response);
+            axios.patch('/user', payload).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
-                    state.verify = true;
-                    localStorage.removeItem('verification');
+                    dispatch('tryAutoLogin');
+                    commit('setSnack', {
+                        message: 'Profilul a fost actualizat',
+                        color: state.colors.info,
+                    });
                 } else {
                     commit('setSnack', {
-                        message: response.data.errorMessage,
+                        message: getMessage(response.data.errorMessage),
                         color: state.colors.error,
                     });
                 }
@@ -404,11 +404,42 @@ export default new Vuex.Store({
         },
 
         /**
-         * Gets all items from server
+         *
          * @param commit
          * @param state
-         * @param payload
          * @param dispatch
+         * @param payload
+         */
+        updateAvatar({commit, state, dispatch}, payload) {
+            const token = state.token;
+            axios.defaults.headers.common.Authorization = 'Bearer ' + token;
+
+            axios.post('/user', payload).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    dispatch('tryAutoLogin');
+                    commit('setSnack', {
+                        message: 'Profilul a fost actualizat',
+                        color: state.colors.info,
+                    });
+                } else {
+                    commit('setSnack', {
+                        message: 'Poza de profil nu a putut fi actualizata',
+                        color: state.colors.error,
+                    });
+                }
+            });
+        },
+
+        /**
+         * Items --------------------
+         */
+
+        /**
+         * Load items
+         * @param commit
+         * @param state
+         * @param dispatch
+         * @param payload
          */
         loadItems({commit, state, dispatch}, payload) {
             let params = {};
@@ -430,57 +461,26 @@ export default new Vuex.Store({
             axios.get('/search', {params}).then(response => {
 
                 if (response && response.data && response.data.responseType === 'success') {
-                    console.log('Get Items-> Success');
-
-
                     let items = response.data.data.items;
                     commit('setItemsCount', response.data.data.total);
 
                     let created = null;
-
-                    let createdYear = null;
-                    let createdMonth = null;
-                    let createdDay = null;
-                    let createdHour = null;
-                    let createdMin = null;
-
                     const actual = new Date();
                     const actualYear = actual.getFullYear();
                     const actualDay = new Date().getDate();
 
-                    let date = '';
-
                     items.forEach((item) => {
                         created = new Date(item.created_at.date);
-
-                        createdYear = created.getFullYear();
-                        createdMonth = created.getMonth() + 1;
-                        createdDay = created.getDate();
-                        createdHour = created.getHours();
-                        createdMin = created.getMinutes();
-
-                        if (actualDay - createdDay === 1)
-                            date = 'Ieri ' + (createdHour < 10 ? '0' : '') + createdHour + ':' + (createdMin < 10 ? '0' : '') + createdMin;
-                        else if (createdDay - actualDay === 0)
-                            date = 'Azi ' + (createdHour < 10 ? '0' : '') + createdHour + ':' + (createdMin < 10 ? '0' : '') + createdMin;
-                        else
-                            date = (createdDay < 10 ? '0' : '') + createdDay + ' ' + state.months[createdMonth - 1];
-
-                        if (createdYear !== actualYear)
-                            date = (createdDay < 10 ? '0' : '') + createdDay + ' ' + state.months[createdMonth - 1] + ' ' + createdYear;
-
-                        item.created_at = date;
+                        item.created_at = calculateDate(actual, actualDay, actualYear, created);
                     });
 
                     commit('setItems', items);
                 } else {
                     if (response.data.data === null)
                         dispatch('loadItems');
-                    console.log('Get -> Error');
                 }
             });
-        }
-        ,
+        },
 
         /**
          * Load one item
@@ -490,165 +490,7 @@ export default new Vuex.Store({
          */
         loadItem({commit}, payload) {
             return axios.get('/item/' + payload);
-        }
-        ,
-
-        /**
-         * Load owner items
-         * @param commit
-         * @param state
-         * @param dispatch
-         * @returns {Promise<AxiosResponse<T>>}
-         */
-        loadOwnerItems({commit, state, dispatch}) {
-            const token = sessionStorage.getItem('token');
-            axios.defaults.headers.common.Authorization = 'Bearer ' + token;
-            return axios.get('/item', {
-                params: {
-                    page: filter.state.ownerItemsPage,
-                    perPage: filter.state.ownerItemsPerPage,
-                },
-            }).then(response => {
-                if (response && response.data && response.data.responseType === 'success') {
-                    console.log('Get Owner Items-> Success');
-
-
-                    let items = response.data.data.items;
-                    commit('setOwnerItemsCount', response.data.data.total);
-
-                    let created = null;
-
-                    let createdYear = null;
-                    let createdMonth = null;
-                    let createdDay = null;
-                    let createdHour = null;
-                    let createdMin = null;
-
-                    const actual = new Date();
-                    const actualYear = actual.getFullYear();
-                    const actualDay = new Date().getDate();
-
-                    let date = '';
-
-                    items.forEach((item) => {
-                        created = new Date(item.created_at.date);
-
-                        createdYear = created.getFullYear();
-                        createdMonth = created.getMonth() + 1;
-                        createdDay = created.getDate();
-                        createdHour = created.getHours();
-                        createdMin = created.getMinutes();
-
-                        if (actualDay - createdDay === 1)
-                            date = 'Ieri ' + (createdHour < 10 ? '0' : '') + createdHour + ':' + (createdMin < 10 ? '0' : '') + createdMin;
-                        else if (createdDay - actualDay === 0)
-                            date = 'Azi ' + (createdHour < 10 ? '0' : '') + createdHour + ':' + (createdMin < 10 ? '0' : '') + createdMin;
-                        else
-                            date = (createdDay < 10 ? '0' : '') + createdDay + ' ' + state.months[createdMonth - 1];
-
-                        if (createdYear !== actualYear)
-                            date = (createdDay < 10 ? '0' : '') + createdDay + ' ' + state.months[createdMonth - 1] + ' ' + createdYear;
-
-                        item.created_at = date;
-                    });
-
-                    commit('setOwnerItems', items);
-                } else {
-                    if (response.data.data === null)
-                        dispatch('loadOwnerItems');
-                    console.log('Get OwnerItems -> Error');
-                }
-            });
-        }
-        ,
-
-        /**
-         * Gets all available categories
-         * @param commit
-         * @param dispatch
-         */
-        loadCategories({commit, dispatch}) {
-            axios.get('/categories').then(response => {
-                if (response && response.data && response.data.responseType === 'success') {
-                    console.log('Get Categories-> Success');
-                    let res = response.data.data;
-                    let categories = [];
-
-                    res.forEach((cat) => {
-                        const category = {
-                            id: cat.id,
-                            name: cat.name,
-                        };
-                        categories.push(category);
-                    });
-                    commit('setCategories', categories);
-                } else {
-                    console.log('Get Categories-> Error');
-                    dispatch('loadCategories');
-                }
-            });
-        }
-        ,
-        /**
-         * Gets all available subcategories for a given category
-         * @param commit
-         * @param category
-         */
-        loadSubcategories({commit}, category) {
-            return axios.get('/subcategories/' + category).then(response => {
-                if (response && response.data && response.data.responseType === 'success') {
-                    console.log('Get Subcategories -> Success');
-                    let res = response.data.data;
-                    let subcategories = [];
-
-                    res.forEach((sub) => {
-                        const subcategory = {
-                            id: sub.id,
-                            name: sub.name,
-                        };
-                        subcategories.push(subcategory);
-                    });
-                    commit('setSubcategories', subcategories);
-                } else {
-                    console.log('Get Subcategories -> Error');
-                }
-            });
         },
-
-        /**
-         * Clear subcategories
-         * @param commit
-         */
-        clearLoadedSubcategories({commit}) {
-            commit('setSubcategories', {});
-        },
-
-        /**
-         * Gets all avaible types for a given subcategory
-         * @param commit
-         * @param subcategory
-         */
-        loadTypes({commit}, subcategory) {
-            axios.get('/types/' + subcategory).then(response => {
-                if (response && response.data && response.data.responseType === 'success') {
-                    console.log('Get Types -> Success');
-                    let res = response.data.data;
-                    let types = [];
-
-                    res.forEach((t) => {
-                        const type = {
-                            id: t.id,
-                            name: t.name,
-                        };
-                        types.push(type);
-                    });
-                    commit('setTypes', types);
-                } else {
-                    console.log('Get Types -> Error');
-                }
-            });
-        }
-        ,
 
         /**
          * Add new item
@@ -660,7 +502,6 @@ export default new Vuex.Store({
         addItem({commit, state, dispatch}, item) {
             axios.post('/item', item).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
-                    console.log('Add item -> Success');
 
                     commit('setSnack', {
                         message: 'Anunțul a fost adăugat cu success.',
@@ -672,15 +513,13 @@ export default new Vuex.Store({
                         router.push({path: '/profil'});
                     }, 1000);
                 } else {
-                    console.log('Add item -> Error');
                     commit('setSnack', {
-                        message: response.data.errorMessage,
+                        message: getItemMessage(response.data.errorMessage),
                         color: state.colors.error,
                     });
                 }
             });
-        }
-        ,
+        },
 
         /**
          * Delete item
@@ -701,13 +540,12 @@ export default new Vuex.Store({
                     dispatch('loadOwnerItems');
                 } else {
                     commit('setSnack', {
-                        message: response.data.errorMessage,
+                        message: getItemMessage(response.data.errorMessage),
                         color: state.colors.error,
                     });
                 }
             });
-        }
-        ,
+        },
 
         /**
          * Update item
@@ -732,70 +570,144 @@ export default new Vuex.Store({
                     }, 1000);
                 } else {
                     commit('setSnack', {
-                        message: response.data.errorMessage,
+                        message: getItemMessage(response.data.errorMessage),
                         color: state.colors.error,
                     });
                 }
             });
-        }
-        ,
+        },
 
         /**
-         * Update user
+         * Load owner items
          * @param commit
          * @param state
          * @param dispatch
-         * @param payload
+         * @returns {Promise<AxiosResponse<T>>}
          */
-        updateUser({commit, state, dispatch}, payload) {
-
-            const token = state.token;
+        loadOwnerItems({commit, state, dispatch}) {
+            const token = sessionStorage.getItem('token');
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
-
-            axios.patch('/user', payload).then(response => {
+            return axios.get('/item', {
+                params: {
+                    page: filter.state.ownerItemsPage,
+                    perPage: filter.state.ownerItemsPerPage,
+                },
+            }).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
-                    dispatch('tryAutoLogin');
-                    commit('setSnack', {
-                        message: 'Profilul a fost actualizat',
-                        color: state.colors.info,
+
+                    let items = response.data.data.items;
+                    commit('setOwnerItemsCount', response.data.data.total);
+
+                    const actual = new Date();
+                    const actualYear = actual.getFullYear();
+                    const actualDay = new Date().getDate();
+
+                    items.forEach((item) => {
+                        item.created_at = calculateDate(actual, actualDay, actualYear, new Date(item.created_at.date));
                     });
+
+                    commit('setOwnerItems', items);
                 } else {
-                    commit('setSnack', {
-                        message: response.data.errorMessage,
-                        color: state.colors.error,
-                    });
+                    if (response.data.data === null)
+                        dispatch('loadOwnerItems');
                 }
             });
-        }
-        ,
+        },
 
         /**
-         *
-         * @param commit
-         * @param state
-         * @param dispatch
-         * @param payload
+         * Categories --------------------
          */
-        updateAvatar({commit, state, dispatch}, payload) {
-            const token = state.token;
-            axios.defaults.headers.common.Authorization = 'Bearer ' + token;
 
-            axios.post('/user', payload).then(response => {
+        /**
+         * Gets all available categories
+         * @param commit
+         * @param dispatch
+         */
+        loadCategories({commit, dispatch}) {
+            axios.get('/categories').then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
-                    dispatch('tryAutoLogin');
-                    commit('setSnack', {
-                        message: 'Profilul a fost actualizat',
-                        color: state.colors.info,
+                    let res = response.data.data;
+                    let categories = [];
+
+                    res.forEach((cat) => {
+                        const category = {
+                            id: cat.id,
+                            name: cat.name,
+                        };
+                        categories.push(category);
                     });
+                    commit('setCategories', categories);
                 } else {
-                    commit('setSnack', {
-                        message: response.data.errorMessage,
-                        color: state.colors.error,
-                    });
+                    dispatch('loadCategories');
                 }
             });
-        }
-        ,
+        },
+
+        /**
+         * Gets all available subcategories for a given category
+         * @param commit
+         * @param dispatch
+         * @param category
+         * @returns {Promise<AxiosResponse<T> | never>}
+         */
+        loadSubcategories({commit, dispatch}, category) {
+            return axios.get('/subcategories/' + category).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    let res = response.data.data;
+                    let subcategories = [];
+
+                    res.forEach((sub) => {
+                        const subcategory = {
+                            id: sub.id,
+                            name: sub.name,
+                        };
+                        subcategories.push(subcategory);
+                    });
+                    commit('setSubcategories', subcategories);
+                } else {
+                    dispatch('loadSubcategories', category);
+                }
+            });
+        },
+
+        /**
+         * Clear subcategories
+         * @param commit
+         */
+        clearLoadedSubcategories({commit}) {
+            commit('setSubcategories', {});
+        },
+
+        /**
+         * Gets all avaible types for a given subcategory
+         * @param commit
+         * @param dispatch
+         * @param subcategory
+         */
+        loadTypes({commit, dispatch}, subcategory) {
+            axios.get('/types/' + subcategory).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    let res = response.data.data;
+                    let types = [];
+
+                    res.forEach((t) => {
+                        const type = {
+                            id: t.id,
+                            name: t.name,
+                        };
+                        types.push(type);
+                    });
+                    commit('setTypes', types);
+                } else {
+                    dispatch('loadTypes', subcategory);
+                }
+            });
+        },
+
+
+        /**
+         * Favorites --------------------
+         */
 
         /**
          * Looad favorite items
@@ -813,53 +725,26 @@ export default new Vuex.Store({
                 }
             }).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
-                    console.log('Get Favorites Items-> Success');
 
                     let items = response.data.data.items;
                     commit('setFavoritesItemsCount', response.data.data.total);
 
                     let created = null;
 
-                    let createdYear = null;
-                    let createdMonth = null;
-                    let createdDay = null;
-                    let createdHour = null;
-                    let createdMin = null;
-
                     const actual = new Date();
                     const actualYear = actual.getFullYear();
                     const actualDay = new Date().getDate();
 
-                    let date = '';
-
                     items.forEach((item) => {
                         created = new Date(item.created_at);
 
-                        createdYear = created.getFullYear();
-                        createdMonth = created.getMonth() + 1;
-                        createdDay = created.getDate();
-                        createdHour = created.getHours();
-                        createdMin = created.getMinutes();
-
-                        if (actualDay - createdDay === 1)
-                            date = 'Ieri ' + (createdHour < 10 ? '0' : '') + createdHour + ':' + (createdMin < 10 ? '0' : '') + createdMin;
-                        else if (createdDay - actualDay === 0)
-                            date = 'Azi ' + (createdHour < 10 ? '0' : '') + createdHour + ':' + (createdMin < 10 ? '0' : '') + createdMin;
-                        else
-                            date = (createdDay < 10 ? '0' : '') + createdDay + ' ' + state.months[createdMonth - 1];
-
-                        if (createdYear !== actualYear)
-                            date = (createdDay < 10 ? '0' : '') + createdDay + ' ' + state.months[createdMonth - 1] + ' ' + createdYear;
-
-                        item.created_at = date;
+                        item.created_at = calculateDate(actual, actualDay, actualYear, created);
                     });
 
                     commit('setFavorites', items);
-                    // dispatch('loadAllFavorites');
                 } else {
                     if (response.data.data === null)
                         dispatch('loadFavorites');
-                    console.log('Get favoritesItems -> Error');
                 }
             });
         },
@@ -875,14 +760,13 @@ export default new Vuex.Store({
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
             return axios.get('/favorites/all', {}).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
-                    console.log('Get All Favorites Items-> Success');
+
                     let items = response.data.data;
 
                     commit('setAllFavorites', items);
                 } else {
                     if (response.data.data === null)
                         dispatch('loadAllFavorites');
-                    console.log('Get All favoritesItems -> Error');
                 }
             });
         },
@@ -918,8 +802,7 @@ export default new Vuex.Store({
                     });
                 }
             });
-        }
-        ,
+        },
 
         /**
          * Remove from favorite
@@ -948,8 +831,21 @@ export default new Vuex.Store({
             });
         },
 
-        getItem({commit, state, dispatch}, id) {
-            return axios.get('/item/' + id);
+        /**
+         * Get View Item
+         * @param commit
+         * @param state
+         * @param dispatch
+         * @param payload
+         * @returns {Promise<AxiosResponse<T>>}
+         */
+        getItem({commit, state, dispatch}, payload) {
+
+            return axios.get('/item/' + payload.id, {
+                params: {
+                    slug: payload.slug
+                }
+            });
         },
 
         _ownerItems({commit, state, dispatch}, id) {

@@ -1,8 +1,8 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <v-layout column justify-center>
-        <div class="text-md-center" v-if="userItems.length < 1">
+        <h2 class="text-sx-center" v-if="userItems.length < 1">
             Nu există anuțuri
-        </div>
+        </h2>
         <v-layout row v-else>
             <v-spacer></v-spacer>
             <div style="width: 50px">
@@ -50,14 +50,14 @@
                             </v-layout>
                         </v-flex>
                         <v-flex x3 sm3 md3 lg3 xl2>
-                            <v-card-text class="text-md-right mt-1">
+                            <v-card-text class="text-xs-right mt-1">
                                 <v-chip dark color="primary" class="subheading">
                                     {{item.price}}
                                     <span class="ml-2" v-if="item.currency === 0">lei</span>
                                     <span class="ml-2" v-else>€</span>
                                 </v-chip>
                             </v-card-text>
-                            <div class="text-md-right mr-2 mt-4">
+                            <div class="text-xs-right mr-2 mt-4">
                                 <v-tooltip left>
                                     <template v-slot:activator="{ on }">
                                         <v-btn @click.stop="deleteItem(item.item_id)" icon color="error" v-on="on">

@@ -151,6 +151,8 @@
 </template>
 
 <script>
+    import {getMessage} from "../../util/util";
+
     export default {
         data: () => ({
             e1: 0,
@@ -228,18 +230,19 @@
                     password: this.password
                 }).then(response => {
                     if (response && response.data && response.data.responseType === 'success') {
-                        // commit('setSnack', {
-                        //     message: 'Parola a fost actualizată',
-                        //     color: state.colors.info,
-                        // });
                         this.result = 'Parola a fost actualizată cu success';
                         this.e1 = 4;
                     } else {
                         this.$store.commit('setSnack', {
-                            message: response.data.errorMessage,
+                            message: getMessage(response.data.errorMessage),
                             color: this.$store.getters.colors.error,
                         });
-                        this.e1 = 2;
+                        if (response.data.errorMessage === 'email' ||
+                            response.data.errorMessage === 'email.email' ||
+                            response.data.errorMessage === 'email.exists')
+                            this.e1 = 1;
+                        else
+                            this.e1 = 2;
                     }
                 });
             },
