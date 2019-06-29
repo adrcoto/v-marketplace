@@ -10,7 +10,7 @@
                         </v-alert>
                         <v-layout v-if="!verify" column justify-center class="text-xs-center">
                             <h1>Contul dumneavoastra a fost creat cu succes.</h1>
-                            <v-flex class="justify-center">
+                            <v-flex class="justify-center mt-4 mb-2">
                                 <img alt="asdas" src="../../assets/email-verification.png">
                             </v-flex>
                             <v-flex>

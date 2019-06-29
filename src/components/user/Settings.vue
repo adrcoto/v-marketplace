@@ -72,7 +72,6 @@
                                 <span>Modifică</span>
                             </v-tooltip>
                         </v-text-field>
-
                         <v-text-field
                                 v-model="location.value"
                                 prepend-icon="location_on"
@@ -131,7 +130,6 @@
                         <v-dialog max-width="600px" v-model="showDetails">
                             <app-change-password @closeDialog="showDetails = false"/>
                         </v-dialog>
-
                     </v-card-text>
 
 
@@ -141,7 +139,6 @@
                             Actualizează
                         </v-btn>
                     </v-card-actions>
-
                 </v-card-text>
             </v-card>
         </v-flex>

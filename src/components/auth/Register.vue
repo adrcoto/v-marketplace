@@ -6,19 +6,18 @@
                     <v-flex>
                         <h2>Creare cont</h2>
                     </v-flex>
-                    <v-flex class="text-xs-right">
-                        <transition name="fade">
-                            <v-progress-circular v-if="loading"
-                                                 size="31"
-                                                 width="3"
-                                                 color="success"
-                                                 indeterminate>
-                            </v-progress-circular>
-                        </transition>
-                    </v-flex>
                 </v-layout>
             </v-card-title>
             <v-card-text>
+                <transition name="fade">
+                    <v-progress-linear
+                            v-if="loading"
+                            height="4"
+                            class="loading"
+                            color="success"
+                            indeterminate>
+                    </v-progress-linear>
+                </transition>
                 <v-form ref="form" v-model="valid" lazy-validation>
                     <v-text-field v-model="name"
                                   prepend-icon="account_circle"
@@ -176,7 +175,9 @@
 
     .loading {
         position: absolute;
-        top: 100px;
-        left: 150px;
+        top: 65px;
+        width: 92%;
+        left: 15px;
+        margin: 0 auto;
     }
 </style>
