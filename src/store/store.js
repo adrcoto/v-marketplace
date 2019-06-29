@@ -26,6 +26,7 @@ export default new Vuex.Store({
         ownerItems: [],
         ownerItemsCount: 0,
         favorites: [],
+        allFavorites: [],
         favoritesItemsCount: 0,
         viewOwnerItemsCount: 0,
 
@@ -97,11 +98,14 @@ export default new Vuex.Store({
         _setOwnerItemsCount(state, payload) {
             state._ownerItemsCount = payload;
         },
-        setItem(state, payload){
+        setItem(state, payload) {
             state.item = payload;
         },
-        setLoading(state, payload){
+        setLoading(state, payload) {
             state.loading = payload;
+        },
+        setAllFavorites(state, payload) {
+            state.allFavorites = payload;
         }
     },
     getters: {
@@ -161,6 +165,9 @@ export default new Vuex.Store({
         },
         loading: state => {
             return state.loading;
+        },
+        allFavorites: state => {
+            return state.allFavorites;
         }
     },
 
@@ -168,7 +175,6 @@ export default new Vuex.Store({
      * Actions
      */
     actions: {
-
         /**
          * Register user
          * @param commit
@@ -188,12 +194,55 @@ export default new Vuex.Store({
                     console.log('Register -> Success');
                     commit('closeRegister');
                     router.push('/verificare-cont/0');
+                    localStorage.setItem('verification', authData.email);
                 } else {
                     console.log('Register -> Error');
+                    commit('setLoading', false);
+                    let message = '';
+
+                    if (response.data.errorMessage === 'Introduceți un nume' ||
+                        response.data.errorMessage === 'Numele este prea lung' ||
+                        response.data.errorMessage === 'Introduceți o adresă de e-mail' ||
+                        response.data.errorMessage === 'Adresa de e-mail trebuie să fie validă' ||
+                        response.data.errorMessage === 'Există deja un utilizator cu această adresă de e-mail' ||
+                        response.data.errorMessage === 'Introduceți o parolă' ||
+                        response.data.errorMessage === 'Parola trebuie să conțină minim 6 caractere')
+                        message = response.data.errorMessage;
+                    else
+                        message = 'Nu s-a putut crea contul. Verificati daca sunteti conectat la Internet';
+
                     commit('setSnack', {
-                        message: response.data.errorMessage,
+                        message: message,
                         color: state.colors.error,
                     });
+
+                }
+            });
+        },
+
+        /**
+         * Send verifiation email
+         * @param commit
+         * @param state
+         */
+        sendVerificationEmail({commit, state}) {
+            commit('setLoading', true);
+            axios.post('/resend-verification', {
+                url: process.env.VUE_APP_URL + '/verificare-cont',
+                email: localStorage.getItem('verification'),
+            }).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    commit('setSnack', {
+                        message: 'E-mail-ul a fost trimis cu success',
+                        color: state.colors.info
+                    });
+                    commit('setLoading', false)
+                } else {
+                    commit('setSnack', {
+                        message: 'E-mail-ul nu a putut fi fost trimis',
+                        color: state.colors.info
+                    });
+                    commit('setLoading', false)
                 }
             });
         },
@@ -217,7 +266,6 @@ export default new Vuex.Store({
                 if (filters[key])
                     params[key] = filters[key];
 
-            console.log(params);
             return axios.post('forgot-password', params);
         },
 
@@ -270,6 +318,7 @@ export default new Vuex.Store({
                     sessionStorage.setItem('token', authData.token);
                     commit('authUser', authData);
                     router.push('/profil');
+                    dispatch('loadAllFavorites');
                 } else {
                     console.log('Login -> Error');
                     commit('setSnack', {
@@ -335,12 +384,16 @@ export default new Vuex.Store({
         verify({commit, state}, authData) {
             if (state.token)
                 return 0;
+
+
             axios.post('verify', {
                 code: authData.code,
+                email: localStorage.getItem('verification')
             }).then(response => {
                 console.log(response);
                 if (response && response.data && response.data.responseType === 'success') {
                     state.verify = true;
+                    localStorage.removeItem('verification');
                 } else {
                     commit('setSnack', {
                         message: response.data.errorMessage,
@@ -695,11 +748,6 @@ export default new Vuex.Store({
          * @param payload
          */
         updateUser({commit, state, dispatch}, payload) {
-            const config = {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            };
 
             const token = state.token;
             axios.defaults.headers.common.Authorization = 'Bearer ' + token;
@@ -767,7 +815,6 @@ export default new Vuex.Store({
                 if (response && response.data && response.data.responseType === 'success') {
                     console.log('Get Favorites Items-> Success');
 
-
                     let items = response.data.data.items;
                     commit('setFavoritesItemsCount', response.data.data.total);
 
@@ -808,14 +855,37 @@ export default new Vuex.Store({
                     });
 
                     commit('setFavorites', items);
+                    // dispatch('loadAllFavorites');
                 } else {
                     if (response.data.data === null)
                         dispatch('loadFavorites');
                     console.log('Get favoritesItems -> Error');
                 }
             });
-        }
-        ,
+        },
+
+        /**
+         * Load all favorites
+         * @param commit
+         * @param dispatch
+         * @param state
+         */
+        loadAllFavorites({commit, dispatch, state}) {
+            const token = sessionStorage.getItem('token');
+            axios.defaults.headers.common.Authorization = 'Bearer ' + token;
+            return axios.get('/favorites/all', {}).then(response => {
+                if (response && response.data && response.data.responseType === 'success') {
+                    console.log('Get All Favorites Items-> Success');
+                    let items = response.data.data;
+
+                    commit('setAllFavorites', items);
+                } else {
+                    if (response.data.data === null)
+                        dispatch('loadAllFavorites');
+                    console.log('Get All favoritesItems -> Error');
+                }
+            });
+        },
 
         /**
          * Add to favorite
@@ -831,6 +901,11 @@ export default new Vuex.Store({
                 item: item,
             }).then(response => {
                 if (response && response.data && response.data.responseType === 'success') {
+                    const favorite = {
+                        user: state.user.id,
+                        item: item,
+                    };
+                    state.allFavorites.push(favorite);
                     dispatch('loadFavorites');
                     commit('setSnack', {
                         message: 'Anunțul a fost adăugat în lista de favorite',
@@ -863,6 +938,7 @@ export default new Vuex.Store({
                         message: 'Anunțul a fost șters din lista de fovorite',
                         color: state.colors.info,
                     });
+                    state.allFavorites.splice(state.allFavorites.findIndex(favorite => favorite.item === id), 1);
                 } else {
                     commit('setSnack', {
                         message: 'Anunțul nu a putut fi șters din lista de fovorite',

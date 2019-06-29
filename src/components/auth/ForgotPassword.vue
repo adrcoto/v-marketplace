@@ -18,14 +18,23 @@
             <v-divider></v-divider>
             <v-stepper-step color="success" :complete="e1 > 4" step="4">Rezultat
             </v-stepper-step>
+            <transition name="fade">
+                <v-progress-linear
+                        v-if="loading"
+                        class="loading"
+                        height="5"
+                        color="success"
+                        indeterminate>
+                </v-progress-linear>
+            </transition>
         </v-stepper-header>
         <v-stepper-items>
             <v-stepper-content step="1">
                 <v-card-text>
                     <v-layout justify-center>
-                        <v-flex xl8>
+                        <v-flex xs9 sm9 md9 lg9 xl9>
                             <v-form ref="emailForm" v-model="emailConfirm"
-                                    lazy-validation class="mb-5">
+                                    lazy-validation class="mb-4">
                                 <v-text-field
                                         label="Introduceți adresa de e-mail"
                                         prepend-inner-icon="email"
@@ -61,7 +70,7 @@
             <v-stepper-content step="2">
                 <v-card-text>
                     <v-layout justify-center>
-                        <v-flex xl9>
+                        <v-flex xs9 sm9 md9 lg9 xl9>
                             <v-form ref="codeForm" v-model="codeConfirm"
                                     lazy-validation class="mb-5">
                                 <v-text-field
@@ -100,7 +109,7 @@
             <v-stepper-content step="3">
                 <v-card-text>
                     <v-layout row justify-center>
-                        <v-flex xl9>
+                        <v-flex xs9 sm9 md9 lg9 xl9>
                             <v-form ref="passwordForm" v-model="passwordButton"
                                     lazy-validation>
                                 <v-text-field
@@ -203,6 +212,7 @@
                 if (!this.$refs.emailForm.validate())
                     return;
 
+                this.$store.commit('setLoading', true);
                 this.$store.dispatch('generateCode', {
                     email: this.email,
                     change: ''
@@ -213,11 +223,13 @@
                             color: this.$store.getters.colors.info,
                         });
                         this.e1 = 2;
+                        this.$store.commit('setLoading', false);
                     } else {
                         this.$store.commit('setSnack', {
                             message: response.data.errorMessage,
                             color: this.$store.getters.colors.error,
                         });
+                        this.$store.commit('setLoading', false);
                     }
                 });
             },
@@ -271,7 +283,7 @@
 
                 this.$refs.emailForm.resetValidation();
                 this.$refs.codeForm.resetValidation();
-                this.$refs.passwordForm.resetValidation();
+                // this.$refs.passwordForm.resetValidation();
                 this.$store.dispatch('closeForgot');
                 this.$store.dispatch('showLogin');
             },
@@ -283,7 +295,10 @@
             },
             dark() {
                 return this.$store.getters.darkTheme;
-            }
+            },
+            loading() {
+                return this.$store.getters.loading;
+            },
         },
         watch: {
             // whenever question changes, this function will run
@@ -313,5 +328,19 @@
     .v-input--selection-controls {
         margin-top: 0;
         padding-top: 0;
+    }
+
+    .fade-enter,
+    .fade-leave-to {
+        opacity: 0;
+    }
+
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: 1s;
+    }
+    .loading {
+        position: absolute;
+        top: 53px;
     }
 </style>

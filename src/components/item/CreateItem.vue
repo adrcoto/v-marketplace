@@ -943,9 +943,13 @@
 
             addOrDelete() {
                 this.$v.$touch();
-                if (!this.$refs.form.validate())
+                if (!this.$refs.form.validate()) {
+                    this.$store.commit('setSnack', {
+                        message: 'Vă rugăm corectați câmpurile',
+                        color: this.$store.getters.colors.error,
+                    });
                     return;
-
+                }
                 if (this.category.id === null || this.subcategory.id === null || this.location.name === '')
                     return;
 

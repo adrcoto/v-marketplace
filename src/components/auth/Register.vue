@@ -58,9 +58,6 @@
                             <span @click="openLogin" class="font-weight-light.font-italic caption custom"
                                   :class="{'forgot-password': dark, 'forgot-password-white': !dark }">Am deja un cont</span>
                     </v-layout>
-                    <v-layout row>
-                      <v-progress-linear v-if="loading" color="success" indeterminate></v-progress-linear>
-                    </v-layout>
                 </v-form>
                 <v-layout mt-4 align-center justify-space-around row fill-height>
                     <v-btn class="text-none font-weight-regular subheading" color="warning" @click="close">
@@ -140,7 +137,7 @@
             dark() {
                 return this.$store.getters.darkTheme;
             },
-            login(){
+            loading(){
                 return this.$store.getters.loading;
             }
         },

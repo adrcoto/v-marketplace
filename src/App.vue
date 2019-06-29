@@ -1,6 +1,5 @@
 <template>
     <v-app :dark="dark">
-
         <app-header/>
         <app-notification/>
         <app-login-modal/>

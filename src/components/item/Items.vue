@@ -44,11 +44,9 @@
                                              v-if="hover">
                                             <v-card-actions>
                                                 <v-spacer></v-spacer>
-
                                                 <v-btn :class="{'hover-btn-pressed': isFavorite(item.item_id), 'hover-btn': !like}"
                                                        @click.stop="addToFavorites(item.item_id)"
                                                        class="hover-btn"
-                                                       v-on="on"
                                                        icon>
                                                     <v-icon>favorite</v-icon>
                                                 </v-btn>
@@ -57,7 +55,7 @@
                                     </v-expand-transition>
                                 </v-img>
                                 <v-layout align-start justify-start style="font-size: 15px"
-                                          class="ml-3 mt-4 mr-2 item-card-title font-weight-bold">
+                                          class="ml-2 mt-4 mr-2 item-card-title font-weight-bold">
                                     {{item.title}}
                                 </v-layout>
 
@@ -80,6 +78,11 @@
                                         </span>
                                     </div>
                                     <v-spacer/>
+                                    <transition name="fade">
+                                        <v-icon v-if="isFavorite(item.item_id)" class="hover-btn-pressed">
+                                            star
+                                        </v-icon>
+                                    </transition>
                                 </v-card-actions>
                             </v-card>
                         </v-hover>
@@ -127,7 +130,7 @@
             },
             isFavorite(id) {
                 if (this.favorites) {
-                    return this.favorites.find(favorite => favorite.item_id === id);
+                    return this.favorites.find(favorite => favorite.item === id);
                 }
             },
         },
@@ -136,7 +139,7 @@
                 return this.$store.getters.items;
             },
             favorites() {
-                return this.$store.getters.favorites;
+                return this.$store.getters.allFavorites;
             },
             itemsMaxLength() {
                 return this.$store.getters.itemsCount;
@@ -153,6 +156,15 @@
 
 
 <style scoped>
+    .fade-enter,
+    .fade-leave-to {
+        opacity: 0;
+    }
+
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: 0.5s;
+    }
 
     @media (min-width: 1264px) and (max-width: 1903px) {
         .flex.lg5-custom {
@@ -197,7 +209,7 @@
     }
 
     .hover-btn {
-        color: orange;
+        color: #ff9800;
         opacity: .9;
     }
 

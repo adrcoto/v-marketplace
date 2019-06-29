@@ -58,7 +58,6 @@
                                 </v-chip>
                             </v-card-text>
                             <div class="text-md-right mr-2 mt-4">
-
                                 <v-tooltip left>
                                     <template v-slot:activator="{ on }">
                                         <v-btn @click.stop="deleteItem(item.item_id)" icon color="error" v-on="on">

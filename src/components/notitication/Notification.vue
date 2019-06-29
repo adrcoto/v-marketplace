@@ -14,7 +14,7 @@
                 show: false,
                 message: '',
                 color: '',
-                timeout: 5000,
+                timeout: 3000,
             };
         },
         created: function () {
@@ -22,7 +22,10 @@
 
                 const msg = this.$store.state.notification.snack;
                 if (msg !== '') {
-                    this.show = true;
+                    this.show = false;
+                    setTimeout(() => {
+                        this.show = true;
+                    }, 200);
                     this.message = this.$store.state.notification.snack;
                     this.color = this.$store.state.notification.color;
                     this.$store.commit('setSnack', {message: '', color: ''});
