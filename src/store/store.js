@@ -483,16 +483,6 @@ export default new Vuex.Store({
         },
 
         /**
-         * Load one item
-         * @param commit
-         * @param payload
-         * @returns {Promise<AxiosResponse<T>>}
-         */
-        loadItem({commit}, payload) {
-            return axios.get('/item/' + payload);
-        },
-
-        /**
          * Add new item
          * @param commit
          * @param state

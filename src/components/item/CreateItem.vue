@@ -1110,7 +1110,10 @@
                 this.location.chip = true;
             }
             if (this.edit) {
-                this.$store.dispatch('loadItem', this.$route.query.id).then(response => {
+                this.$store.dispatch('getItem', {
+                    id: this.$route.query.id,
+                    slug: this.$route.params.title
+                }).then(response => {
                     if (response && response.data && response.data.responseType === 'success') {
 
                         this.itemCopy = response.data.data.item;
@@ -1161,8 +1164,6 @@
                         this.registered = response.data.data.item.registered;
                         this.firstOwner = response.data.data.item.first_owner;
                         this.rightHandDrive = response.data.data.item.right_hand_drive;
-                    } else {
-
                     }
                 });
             }
