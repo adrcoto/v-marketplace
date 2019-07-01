@@ -1,8 +1,10 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <v-layout column justify-center>
-        <h2 class="text-sx-center" v-if="userItems.length < 1">
-            Nu există anuțuri
-        </h2>
+        <v-layout v-if="userItems.length < 1" mt-5 justify-center class="text-xs-center">
+            <v-label>
+                Nu există anuțuri
+            </v-label>
+        </v-layout>
         <v-layout row v-else>
             <v-spacer></v-spacer>
             <div style="width: 50px">
@@ -25,7 +27,7 @@
                         slot-scope="{ hover }">
                     <v-layout row>
                         <v-flex xs3 sm3 lg3 x13>
-                            <v-img  :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
+                            <v-img :src="item.images.length > 0 ? API_URL + item.images[0].filename : require('../../assets/no-available-image.png')"
                                    height="155">
                                 <span v-if="item.negotiable" class="negotiable" title="Anunt negociabil"></span>
                             </v-img>

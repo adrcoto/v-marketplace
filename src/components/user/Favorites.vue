@@ -1,6 +1,6 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <v-layout column justify-center>
-        <v-layout row v-if="favorites.length > 1">
+        <v-layout row v-if="favorites.length >= 1">
             <v-spacer></v-spacer>
             <div style="width: 50px">
                 <v-select
@@ -15,72 +15,74 @@
                 </v-select>
             </div>
         </v-layout>
-        <div class="text-xs-center" v-else>
-            Nu aveți anunțuri favorite
-        </div>
+        <v-layout v-if="favorites.length < 1" mt-5 justify-center class="text-xs-center">
+            <v-label>
+                Nu aveți anunțuri favorite
+            </v-label>
+        </v-layout>
         <v-layout column justify-center>
             <v-flex>
                 <div class="text-xs-center" v-if="favorites === null"> Nu aveți anuțuri favorite</div>
             </v-flex>
-<!--            <transition-group name="slide" type="animation">-->
-                <v-flex v-if="favorites !== null" :key="favorite.item_id" v-for="favorite in favorites">
-                    <v-hover>
-                        <v-card @click.stop="viewItem(favorite)" style="cursor: pointer"
-                                :class="`elevation-${hover ? 10 : 2}`" class="item-card mb-3"
-                                slot-scope="{ hover }">
-                            <v-layout row>
-                                <v-flex xs3 md3 lg3 x13>
-                                    <v-img :src="favorite.images.length > 0 ? API_URL + favorite.images[0].filename : require('../../assets/no-available-image.png')"
-                                           height="155">
-                                        <span v-if="favorite.negotiable" class="negotiable" title="Anunt negociabil"></span>
-                                    </v-img>
-                                </v-flex>
-                                <v-flex xs6 sm6 md6 lg6 xl8>
-                                    <v-layout>
-                                        <v-flex>
-                                            <div class="ml-3 mt-3">
-                                                <div class="item-card-title title">
-                                                    {{favorite.title}}
-                                                </div>
-                                                <div class="mt-4 caption grey--text">
-                                                    <v-icon class="grey--text">location_on</v-icon>
-                                                    {{favorite.city}}, {{favorite.district}}
-                                                </div>
-                                                <div class="mt-1 caption grey--text">
-                                                    <v-icon class="grey--text">query_builder</v-icon>
-                                                    {{favorite.created_at}}
-                                                </div>
+            <!--            <transition-group name="slide" type="animation">-->
+            <v-flex v-if="favorites !== null" :key="favorite.item_id" v-for="favorite in favorites">
+                <v-hover>
+                    <v-card @click.stop="viewItem(favorite)" style="cursor: pointer"
+                            :class="`elevation-${hover ? 10 : 2}`" class="item-card mb-3"
+                            slot-scope="{ hover }">
+                        <v-layout row>
+                            <v-flex xs3 md3 lg3 x13>
+                                <v-img :src="favorite.images.length > 0 ? API_URL + favorite.images[0].filename : require('../../assets/no-available-image.png')"
+                                       height="155">
+                                    <span v-if="favorite.negotiable" class="negotiable" title="Anunt negociabil"></span>
+                                </v-img>
+                            </v-flex>
+                            <v-flex xs6 sm6 md6 lg6 xl8>
+                                <v-layout>
+                                    <v-flex>
+                                        <div class="ml-3 mt-3">
+                                            <div class="item-card-title title">
+                                                {{favorite.title}}
                                             </div>
-                                        </v-flex>
-                                    </v-layout>
-                                </v-flex>
-                                <v-flex>
-                                    <v-layout column align-end class="mr-3">
-                                        <div class="mt-2 mb-5">
-                                            <v-chip dark color="primary" class="subheading">
-                                                {{favorite.price}}
-                                                <span class="ml-2" v-if="favorite.currency === 0">lei</span>
-                                                <span class="ml-2" v-else>€</span>
-                                            </v-chip>
+                                            <div class="mt-4 caption grey--text">
+                                                <v-icon class="grey--text">location_on</v-icon>
+                                                {{favorite.city}}, {{favorite.district}}
+                                            </div>
+                                            <div class="mt-1 caption grey--text">
+                                                <v-icon class="grey--text">query_builder</v-icon>
+                                                {{favorite.created_at}}
+                                            </div>
                                         </div>
-                                        <div class="mt-1">
-                                            <v-tooltip left>
-                                                <template v-slot:activator="{ on }">
-                                                    <v-btn @click.stop="removeFromFavorites(favorite.item_id)" icon
-                                                           color="warning" v-on="on">
-                                                        <v-icon>star_half</v-icon>
-                                                    </v-btn>
-                                                </template>
-                                                <span>Șterge anunțul din lista de favorite</span>
-                                            </v-tooltip>
-                                        </div>
-                                    </v-layout>
-                                </v-flex>
-                            </v-layout>
-                        </v-card>
-                    </v-hover>
-                </v-flex>
-<!--            </transition-group>-->
+                                    </v-flex>
+                                </v-layout>
+                            </v-flex>
+                            <v-flex>
+                                <v-layout column align-end class="mr-3">
+                                    <div class="mt-2 mb-5">
+                                        <v-chip dark color="primary" class="subheading">
+                                            {{favorite.price}}
+                                            <span class="ml-2" v-if="favorite.currency === 0">lei</span>
+                                            <span class="ml-2" v-else>€</span>
+                                        </v-chip>
+                                    </div>
+                                    <div class="mt-1">
+                                        <v-tooltip left>
+                                            <template v-slot:activator="{ on }">
+                                                <v-btn @click.stop="removeFromFavorites(favorite.item_id)" icon
+                                                       color="warning" v-on="on">
+                                                    <v-icon>star_half</v-icon>
+                                                </v-btn>
+                                            </template>
+                                            <span>Șterge anunțul din lista de favorite</span>
+                                        </v-tooltip>
+                                    </div>
+                                </v-layout>
+                            </v-flex>
+                        </v-layout>
+                    </v-card>
+                </v-hover>
+            </v-flex>
+            <!--            </transition-group>-->
         </v-layout>
         <v-spacer/>
         <div class="text-xs-center" v-if="favorites.length > 0">
@@ -147,6 +149,7 @@
         height: 50px;
         overflow: hidden;
     }
+
     .negotiable {
         background: url("../../assets/banner.png");
         text-indent: -1000em;

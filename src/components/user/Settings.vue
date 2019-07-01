@@ -1,5 +1,5 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-    <v-layout justify-center>
+    <v-layout justify-center mt-5>
         <v-flex xs12 sm8 md8 lg7 xl7>
             <v-card :img="require('../../assets/settings-background.png')" class="white--text">
                 <v-layout justify-center>
